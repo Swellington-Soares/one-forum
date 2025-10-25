@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: forum
+
+  flyway:
+    enabled: false
