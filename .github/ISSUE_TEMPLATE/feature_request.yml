@@ -1,0 +1,39 @@
+name: "✨ Feature Request"
+description: "Sugira uma nova funcionalidade"
+title: "[FEATURE]: descreva a ideia"
+labels: ["enhancement"]
+assignees: []
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Qual o problema?"
+      description: "Existe alguma dor ou necessidade por trás da funcionalidade?"
+      placeholder: "Usuários não conseguem editar postagens..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "Solução proposta"
+      description: "Como a nova funcionalidade deve funcionar?"
+      placeholder: "Adicionar botão de edição nos tópicos..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Critérios de Aceitação"
+      placeholder: |
+        - Deve permitir editar título e conteúdo
+        - Registrar data da última edição
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: "Observações"
+      description: "Algo relevante antes do desenvolvimento?"
