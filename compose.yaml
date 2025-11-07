@@ -2,7 +2,7 @@ services:
   mariadb:
     image: 'mariadb:latest'
     environment:
-      - 'MARIADB_DATABASE=springforum'
+      - 'MARIADB_DATABASE=forum'
       - 'MARIADB_PASSWORD=root'
       - 'MARIADB_ROOT_PASSWORD=root'
       - 'MARIADB_USER=root'
