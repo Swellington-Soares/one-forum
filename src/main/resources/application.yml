@@ -3,4 +3,8 @@ spring:
     name: forum
 
   flyway:
-    enabled: false
+    user: root
+    password: root
+    default-schema: forum
+    driver-class-name: org.mariadb.jdbc.Driver
+    create-schemas: true

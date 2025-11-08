@@ -1,7 +1,9 @@
 package br.one.forum;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 public class TestForumApplication {
 
     public static void main(String[] args) {
