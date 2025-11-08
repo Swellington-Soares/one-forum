@@ -15,32 +15,31 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString(exclude = {"comments", "likedTopics", "createdTopics"})
+@ToString(exclude = {"comments", "likedTopics", "createdTopics", "profile"})
 @Entity
 @Table(name = "user")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Integer id;
 
     @Size(max = 255)
-    @Column(name = "email")
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Size(max = 64)
     @NotNull
-    @Column(name = "password", nullable = false, length = 64)
+    @Column(nullable = false, length = 64)
     private String password;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
 
-    @ManyToMany(mappedBy = "likedBy")
+    @ManyToMany(mappedBy = "likedBy", fetch = FetchType.LAZY)
     private Set<Topic> likedTopics = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -54,19 +53,27 @@ public class User {
         this.password = password;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null)
+            createdAt = Instant.now();
+    }
+
+
     @Override
-    public final boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null) return false;
-        Class<?> oEffectiveClass = object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass() : object.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        User user = (User) object;
-        return getId() != null && Objects.equals(getId(), user.getId());
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> otherClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+        if (getClass() != otherClass) return false;
+        User other = (User) o;
+        return id != null && id.equals(other.getId());
     }
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+        return Objects.hashCode(id);
     }
 }

@@ -13,25 +13,24 @@ import java.util.Set;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"likedBy", "comments", "user"})
-@Builder
+@AllArgsConstructor
+@ToString(exclude = {"likedBy", "comments", "user", "categories"})
 @Entity
 @Table(name = "topic")
 public class Topic {
+
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
-    @Lob
-    @Column(name = "title", nullable = false)
+    @Column(nullable = false)
     private String title;
 
     @NotNull
     @Lob
-    @Column(name = "content", nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
     @NotNull
@@ -39,23 +38,22 @@ public class Topic {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at")
-    private Instant createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt = Instant.now();
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "category_has_topics",
+            name = "category_has_topic",
             joinColumns = @JoinColumn(name = "topic_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<Category> categories = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "likes",
             joinColumns = @JoinColumn(name = "topic_id"),
@@ -70,21 +68,28 @@ public class Topic {
         this.title = title;
         this.content = content;
         this.user = user;
+        this.createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = Instant.now();
     }
 
     @Override
     public final boolean equals(Object object) {
         if (this == object) return true;
         if (object == null) return false;
-        Class<?> oEffectiveClass = object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass() : object.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        Topic topic = (Topic) object;
-        return getId() != null && Objects.equals(getId(), topic.getId());
+        Class<?> oClass = object instanceof HibernateProxy
+                ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass()
+                : object.getClass();
+        if (getClass() != oClass) return false;
+        Topic other = (Topic) object;
+        return id != null && id.equals(other.getId());
     }
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+        return Objects.hashCode(id);
     }
 }

@@ -26,11 +26,9 @@ public class Profile {
     private User user;
 
     @NotNull
-    @Lob
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Lob
     @Column(name = "photo")
     private String photo;
 
