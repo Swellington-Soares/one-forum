@@ -15,17 +15,19 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"comments", "likedTopics", "createdTopics", "profile"})
+@ToString(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Integer id;
 
     @Size(max = 255)
     @Column(unique = true, nullable = false)
+    @ToString.Include
     private String email;
 
     @Size(max = 64)
@@ -34,6 +36,7 @@ public class User {
     private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @ToString.Include
     private Instant createdAt = Instant.now();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -76,4 +79,10 @@ public class User {
     public final int hashCode() {
         return Objects.hashCode(id);
     }
+
+    @ToString.Include(name = "password")
+    private String maskedPassword(){
+        return "[PROTECTED]";
+    }
+
 }
