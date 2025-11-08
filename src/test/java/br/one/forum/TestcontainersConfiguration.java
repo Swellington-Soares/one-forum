@@ -3,18 +3,18 @@ package br.one.forum;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
+@SuppressWarnings("resource")
 public class TestcontainersConfiguration {
 
     @Bean
     @ServiceConnection
     MariaDBContainer<?> mariaDbContainer() {
 
-        return new MariaDBContainer<>(DockerImageName.parse("mariadb:latest"))
+        return new MariaDBContainer<>(DockerImageName.parse("mariadb:11.3"))
                 .withPassword("root")
                 .withUsername("root")
                 .withDatabaseName("forum_test");

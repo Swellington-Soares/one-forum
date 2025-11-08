@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 public class TestForumApplication {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.from(ForumApplication::main).with(TestcontainersConfiguration.class).run(args);
     }
 
