@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FakeUserFactory {
 
-    public User getOne() {
+    public static User getOne() {
         var user = new User();
         user.setEmail(DataFaker.faker().internet().emailAddress());
         user.setPassword(DataFaker.faker().credentials().password(6, 8));
@@ -18,7 +18,7 @@ public class FakeUserFactory {
         return user;
     }
 
-    public List<User> getMore(int max) {
+    public static List<User> getMore(int max) {
         var list = new ArrayList<User>();
         if (max > 0) {
             for (int i = 1; i <= max; i++) {

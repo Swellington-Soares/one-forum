@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FakeTopicFactory {
 
-    public Topic getOne(List<User> owners) {
+    public static Topic getOne(List<User> owners) {
         if (owners == null || owners.isEmpty()) {
             throw new IllegalArgumentException("Owner list is null or empty");
         }
@@ -17,11 +17,10 @@ public class FakeTopicFactory {
         topic.setUser(owners.get(DataFaker.faker().number().numberBetween(0, owners.size() - 1)));
         topic.setContent(DataFaker.faker().lorem().paragraph(1));
         topic.setTitle(DataFaker.faker().book().title());
-        topic.addCategory(FakeCategoryFactory.get());
         return topic;
     }
 
-    public List<Topic> getMore(int max, List<User> owners) {
+    public static List<Topic> getMore(int max, List<User> owners) {
         var list = new ArrayList<Topic>();
         for (int i = 1; i <= max; i++) {
             list.add(getOne(owners));

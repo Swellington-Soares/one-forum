@@ -3,7 +3,6 @@ package br.one.forum.services;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
 import br.one.forum.repositories.TopicRepository;
-import br.one.forum.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +12,7 @@ public class TopicService {
 
     private final TopicRepository topicRepository;
 
-    public void toggleLike(Topic topic, User user){
+    public void toggleLike(Topic topic, User user) {
         topic.toggleLike(user);
         topicRepository.save(topic);
     }
