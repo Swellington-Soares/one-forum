@@ -9,8 +9,8 @@ import org.mapstruct.*;
 public interface TopicResponseMapper {
     Topic toEntity(TopicResponseDto topicResponseDto);
 
-    @Mapping(target = "likes",  expression = "java(topic.getLikeCount())")
-    @Mapping(target = "likedByCurrentUser",  expression = "java(topic.isLikedByUser(user))")
+    @Mapping(target = "likes", expression = "java(topic.getLikeCount())")
+    @Mapping(target = "likedByCurrentUser", expression = "java(topic.isLikedByUser(user))")
     TopicResponseDto toDto(Topic topic, @Context User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
