@@ -3,10 +3,7 @@ package br.one.forum.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.HashSet;
@@ -19,7 +16,9 @@ import java.util.Set;
 @Table(name = "category")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
 public class Category {
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +27,7 @@ public class Category {
     @Size(max = 50)
     @NotNull
     @Column(name = "name", nullable = false)
+    @ToString.Include
     private String name;
 
     @ManyToMany(mappedBy = "categories")
@@ -53,4 +53,6 @@ public class Category {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+
 }
