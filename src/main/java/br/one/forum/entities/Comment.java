@@ -3,10 +3,8 @@ package br.one.forum.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.time.Instant;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -15,7 +13,7 @@ import java.util.Objects;
 @ToString(exclude = {"topic", "user"})
 @Entity
 @Table(name = "comments")
-public class Comment {
+public final class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,26 +43,10 @@ public class Comment {
     }
 
     @PrePersist
-    protected void onCreate() {
+    private void onCreate() {
         if (createdAt == null) {
             createdAt = Instant.now();
         }
     }
 
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Class<?> otherClass = o instanceof HibernateProxy
-                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
-                : o.getClass();
-        if (getClass() != otherClass) return false;
-        Comment other = (Comment) o;
-        return id != null && id.equals(other.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hashCode(id);
-    }
 }

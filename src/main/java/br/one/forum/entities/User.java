@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -17,8 +15,8 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "users")
+public final class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,60 +28,54 @@ public class User {
     @ToString.Include
     private String email;
 
-    @Size(max = 64)
     @NotNull
     @Column(nullable = false, length = 64)
     private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @ToString.Include
+    @Setter(AccessLevel.NONE)
     private Instant createdAt = Instant.now();
+
+    @Column(name = "update_at", nullable = false)
+    @Setter(AccessLevel.NONE)
+    private Instant updateAt = Instant.now();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
 
     @ManyToMany(mappedBy = "likedBy", fetch = FetchType.LAZY)
+    @Setter(AccessLevel.NONE)
     private Set<Topic> likedTopics = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter(AccessLevel.NONE)
     private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter(AccessLevel.NONE)
     private Set<Topic> createdTopics = new HashSet<>();
 
-    public User(String email, String password) {
+    public User(@NotNull String email, @NotNull String password, @NotNull Profile profile) {
         this.email = email;
         this.password = password;
+        this.profile = profile;
     }
 
     @PrePersist
-    protected void onCreate() {
+    private void onCreate() {
         if (createdAt == null)
             createdAt = Instant.now();
     }
 
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Class<?> otherClass = o instanceof HibernateProxy
-                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
-                : o.getClass();
-        if (getClass() != otherClass) return false;
-        User other = (User) o;
-        return id != null && id.equals(other.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hashCode(id);
+    @PreUpdate
+    private void onUpdate() {
+        updateAt = Instant.now();
     }
 
     @ToString.Include(name = "password")
-    private String maskedPassword(){
+    private String maskedPassword() {
         return "[PROTECTED]";
     }
-
 
 }

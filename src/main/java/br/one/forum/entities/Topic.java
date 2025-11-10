@@ -3,8 +3,7 @@ package br.one.forum.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.proxy.HibernateProxy;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -17,8 +16,8 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString(exclude = {"likedBy", "comments", "user", "categories"})
 @Entity
-@Table(name = "topic")
-public class Topic {
+@Table(name = "topics")
+public final class Topic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,10 +38,11 @@ public class Topic {
     private User user;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt = Instant.now();
+    @Setter(AccessLevel.NONE)
+    private Instant createdAt;
 
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
+    @Setter(AccessLevel.NONE)
     private Instant updatedAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -51,6 +51,7 @@ public class Topic {
             joinColumns = @JoinColumn(name = "topic_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
+    @Setter(AccessLevel.NONE)
     private Set<Category> categories = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -59,52 +60,35 @@ public class Topic {
             joinColumns = @JoinColumn(name = "topic_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @Setter(AccessLevel.NONE)
     private Set<User> likedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter(AccessLevel.NONE)
     private Set<Comment> comments = new HashSet<>();
 
-    public Topic(String title, String content, User user) {
+    public Topic(String title, String content, User user, Category category) {
         this.title = title;
         this.content = content;
         this.user = user;
-        this.createdAt = Instant.now();
+        category.addTopic(this);
+        this.categories.add(category);
+    }
+
+    public Topic(String title, String content, User user, String category) {
+        this(title, content, user, new Category(category));
+    }
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = Instant.now();
     }
 
     @PreUpdate
-    protected void onUpdate() {
+    private void onUpdate() {
         updatedAt = Instant.now();
     }
 
-    @Override
-    public final boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null) return false;
-        Class<?> oClass = object instanceof HibernateProxy
-                ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass()
-                : object.getClass();
-        if (getClass() != oClass) return false;
-        Topic other = (Topic) object;
-        return id != null && id.equals(other.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    public void toggleLike(User likeUser) {
-        if (likeUser == null) return;
-        if (likeUser.equals(user)) return;
-
-        if (likedBy.contains(likeUser)) {
-            likedBy.remove(likeUser);
-            likeUser.getLikedTopics().remove(this);
-        } else {
-            likedBy.add(likeUser);
-            likeUser.getLikedTopics().add(this);
-        }
-    }
 
     public int getLikeCount() {
         return likedBy.size();
@@ -114,4 +98,9 @@ public class Topic {
         return testUser != null && likedBy.stream().anyMatch(u -> Objects.equals(u.getId(), testUser.getId()));
     }
 
+    public void addCategory(String s) {
+        if (StringUtils.hasText(s)) {
+            categories.add(new Category(s.trim().toUpperCase()));
+        }
+    }
 }
