@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 @Getter
 @Setter
@@ -41,11 +42,11 @@ public final class Topic {
     @Setter(AccessLevel.NONE)
     private Instant createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     @Setter(AccessLevel.NONE)
     private Instant updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "category_has_topic",
             joinColumns = @JoinColumn(name = "topic_id"),
@@ -98,11 +99,16 @@ public final class Topic {
         return testUser != null && likedBy.stream().anyMatch(u -> Objects.equals(u.getId(), testUser.getId()));
     }
 
-    public void addCategory(String s) {
-        if (StringUtils.hasText(s)) {
-            categories.add(new Category(s.trim().toUpperCase()));
+    public void addCategory(String name, Function<String, Category> categoryResolver) {
+        if (StringUtils.hasText(name)) {
+            var normalized = name.trim().toUpperCase();
+            var category = categoryResolver.apply(normalized);
+            if (category != null && categories.stream().noneMatch(c -> c.equals(category))) {
+                categories.add(category);
+            }
         }
     }
+
 
     public void toggleLike(User likeUser) {
         if (likeUser == null) return;
