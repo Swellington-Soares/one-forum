@@ -103,4 +103,17 @@ public final class Topic {
             categories.add(new Category(s.trim().toUpperCase()));
         }
     }
+
+    public void toggleLike(User likeUser) {
+        if (likeUser == null) return;
+        if (likeUser.equals(user)) return;
+
+        if (likedBy.contains(likeUser)) {
+            likedBy.remove(likeUser);
+            likeUser.getLikedTopics().remove(this);
+        } else {
+            likedBy.add(likeUser);
+            likeUser.getLikedTopics().add(this);
+        }
+    }
 }
