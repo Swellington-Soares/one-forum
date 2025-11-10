@@ -85,6 +85,25 @@ public class ServiceTest {
         assertThat(refreshed.getLikedBy()).doesNotContain(user2);
     }
 
+
+
+    @Test
+    void shouldLikeAndUnlikeATopicWithMethod() {
+
+        topico1.toggleLike(user2);
+        topicRepository.save(topico1);
+
+        Topic updated = topicRepository.findById(topico1.getId()).orElseThrow();
+        assertThat(updated.getLikedBy()).contains(user2);
+
+//        // user2 remove like
+//        updated.getLikedBy().remove(user2);
+//        topicRepository.save(updated);
+//
+//        Topic refreshed = topicRepository.findById(topico1.getId()).orElseThrow();
+//        assertThat(refreshed.getLikedBy()).doesNotContain(user2);
+    }
+
     @Test
     void shouldDetectIfUserAlreadyLikedTopic() {
         topico2.getLikedBy().add(user1);
@@ -125,7 +144,8 @@ public class ServiceTest {
                 .collect(Collectors.toList());
 
         assertThat(comments).hasSize(2);
-        assertThat(comments).extracting(Comment::getContent)
+        assertThat(comments)
+                .extracting(Comment::getContent)
                 .containsExactlyInAnyOrder("Comentário 1", "Comentário 2");
     }
 }

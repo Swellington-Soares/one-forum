@@ -92,4 +92,26 @@ public class Topic {
     public final int hashCode() {
         return Objects.hashCode(id);
     }
+
+    public void toggleLike(User likeUser) {
+        if (likeUser == null) return;
+        if (likeUser.equals(user)) return;
+
+        if (likedBy.contains(likeUser)) {
+            likedBy.remove(likeUser);
+            likeUser.getLikedTopics().remove(this);
+        } else {
+            likedBy.add(likeUser);
+            likeUser.getLikedTopics().add(this);
+        }
+    }
+
+    public int getLikeCount() {
+        return likedBy.size();
+    }
+
+    public boolean isLikedByUser(User testUser) {
+        return testUser != null && likedBy.stream().anyMatch(u -> Objects.equals(u.getId(), testUser.getId()));
+    }
+
 }
