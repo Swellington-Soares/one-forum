@@ -22,6 +22,6 @@ public class TopicController {
     @GetMapping("/{id}")
     TopicResponseDto getTopic(@PathVariable("id") Topic topic) {
         var user = userRepository.findById(11).orElseThrow();
-        return topicResponseMapper.toDto(topic, null);
+        return topicResponseMapper.toDto(topic, user);
     }
 }

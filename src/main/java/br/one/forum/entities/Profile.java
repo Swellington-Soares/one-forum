@@ -30,7 +30,6 @@ public final class Profile {
     @Column(name = "photo")
     private String photo;
 
-
     public Profile(User user, String name) {
         this.user = user;
         this.name = name;

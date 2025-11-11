@@ -12,7 +12,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "categories", uniqueConstraints = {
+@Table(
+        name = "categories", uniqueConstraints = {
         @UniqueConstraint(columnNames = "name")
 })
 @NoArgsConstructor
@@ -39,10 +40,8 @@ public final class Category {
         this.name = name;
     }
 
-
-    public void addTopics(Topic... topics) {
-        this.topics.addAll(List.of(topics));
-
+    public void addTopics(List<Topic> topics) {
+        this.topics.addAll(topics);
     }
 
     public Category addTopic(Topic topic) {
