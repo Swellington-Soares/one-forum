@@ -1,5 +1,6 @@
 package br.one.forum;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,4 +19,6 @@ public class ForumApplication {
     public static void main(String[] args) {
         SpringApplication.run(ForumApplication.class, args);
     }
+
+
 }

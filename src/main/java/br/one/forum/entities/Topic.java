@@ -46,7 +46,7 @@ public final class Topic {
     @Setter(AccessLevel.NONE)
     private Instant updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinTable(
             name = "category_has_topic",
             joinColumns = @JoinColumn(name = "topic_id"),
@@ -106,6 +106,13 @@ public final class Topic {
             if (category != null && categories.stream().noneMatch(c -> c.equals(category))) {
                 categories.add(category);
             }
+        }
+    }
+
+    public void addCategory(@NotNull Category category) {
+        if (categories.stream().noneMatch(c -> c.getName().equals(category.getName().toUpperCase()))) {
+            category.setName(category.getName().toUpperCase());
+            categories.add(category);
         }
     }
 

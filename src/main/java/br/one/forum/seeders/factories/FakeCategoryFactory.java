@@ -1,4 +1,6 @@
-package br.one.forum.factories;
+package br.one.forum.seeders.factories;
+
+import br.one.forum.entities.Category;
 
 import java.util.List;
 import java.util.Random;
@@ -19,5 +21,9 @@ public class FakeCategoryFactory {
 
     public static String get() {
         return categories.get(new Random().nextInt(0, categories.size()));
+    }
+
+    public static List<Category> getAll() {
+        return categories.stream().map(Category::new).toList();
     }
 }

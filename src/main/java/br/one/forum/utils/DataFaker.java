@@ -1,4 +1,4 @@
-package br.one.forum;
+package br.one.forum.utils;
 
 import net.datafaker.Faker;
 
@@ -13,6 +13,4 @@ public class DataFaker {
         }
         return instance;
     }
-
-
 }

@@ -1,6 +1,6 @@
-package br.one.forum.factories;
+package br.one.forum.seeders.factories;
 
-import br.one.forum.DataFaker;
+import br.one.forum.utils.DataFaker;
 import br.one.forum.entities.Profile;
 import br.one.forum.entities.User;
 
