@@ -2,9 +2,19 @@ spring:
   application:
     name: forum
 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+        format_sql: true
+
   flyway:
     user: root
     password: root
     default-schema: forum
     driver-class-name: org.mariadb.jdbc.Driver
     create-schemas: true
+    enabled: false

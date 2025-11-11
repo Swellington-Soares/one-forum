@@ -1,10 +1,11 @@
 package br.one.forum.service;
 
 
+import br.one.forum.DataFaker;
 import br.one.forum.TestcontainersConfiguration;
-import br.one.forum.entities.Comment;
-import br.one.forum.entities.Topic;
-import br.one.forum.entities.User;
+import br.one.forum.entities.*;
+import br.one.forum.factories.FakeTopicFactory;
+import br.one.forum.factories.FakeUserFactory;
 import br.one.forum.repositories.CommentRepository;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
@@ -38,39 +39,38 @@ public class ServiceTest {
     @Autowired
     private CommentRepository commentRepository;
 
-    private User user1;
-    private User user2;
-    private Topic topico1;
-    private Topic topico2;
-    private Topic topico3;
+    private List<User> users;
+    private List<Topic> topics;
+
 
     @BeforeEach
     void setup() {
-        user1 = userRepository.save(new User("user1@forum.com", "pw"));
-        user2 = userRepository.save(new User("user2@forum.com", "pw"));
-
-        topico1 = new Topic("Tópico 1", "Conteúdo 1", user1);
-        topico2 = new Topic("Tópico 2", "Conteúdo 2", user1);
-        topico3 = new Topic("Tópico 3", "Conteúdo 3", user2);
-
-        topicRepository.saveAll(List.of(topico1, topico2, topico3));
+        users = FakeUserFactory.getMore(2);
+        userRepository.saveAll(users);
+        topics = FakeTopicFactory.getMore(3, users);
+        for (int i = 0; i<topics.size(); i++) {
+            topics.get(i).setTitle("Tópico " + (i + 1));
+        }
+        topicRepository.saveAll(topics);
     }
 
     @Test
     void shouldListAllTopicosOfAUser() {
         List<Topic> topicosDoUser1 = topicRepository.findAll()
                 .stream()
-                .filter(t -> t.getUser().equals(user1))
+                .filter(t -> t.getUser().equals(users.getFirst()))
                 .collect(Collectors.toList());
 
-        assertThat(topicosDoUser1).hasSize(2);
+        assertThat(topicosDoUser1).hasSize(3);
         assertThat(topicosDoUser1).extracting(Topic::getTitle)
-                .containsExactlyInAnyOrder("Tópico 1", "Tópico 2");
+                .containsExactlyInAnyOrder("Tópico 1", "Tópico 2", "Tópico 3");
     }
 
     @Test
     void shouldLikeAndUnlikeATopic() {
         // user2 curte topico1
+        var topico1 = topics.getFirst();
+        var user2 = users.get(1);
         topico1.getLikedBy().add(user2);
         topicRepository.save(topico1);
 
@@ -85,8 +85,22 @@ public class ServiceTest {
         assertThat(refreshed.getLikedBy()).doesNotContain(user2);
     }
 
+
+    @Test
+    void shouldLikeAndUnlikeATopicWithMethod() {
+        var topico1 = topics.getFirst();
+        var user2 = users.get(1);
+        topico1.toggleLike(user2);
+        topicRepository.save(topico1);
+
+        Topic updated = topicRepository.findById(topico1.getId()).orElseThrow();
+        assertThat(updated.getLikedBy()).contains(user2);
+    }
+
     @Test
     void shouldDetectIfUserAlreadyLikedTopic() {
+        var topico2 = topics.getFirst();
+        var user1 = users.getFirst();
         topico2.getLikedBy().add(user1);
         topicRepository.save(topico2);
 
@@ -99,7 +113,10 @@ public class ServiceTest {
 
     @Test
     void shouldListTopicsByLikeCount() {
-
+        var topico1 = topics.getFirst();
+        var topico3 = topics.getLast();
+        var user1 = users.getFirst();
+        var user2 = users.getLast();
         topico1.getLikedBy().add(user2);
         topico3.getLikedBy().addAll(List.of(user1, user2));
 
@@ -115,6 +132,10 @@ public class ServiceTest {
 
     @Test
     void shouldAddAndListComments() {
+        var topico1 = topics.getFirst();
+        var user1 = users.getFirst();
+        var user2 = users.getLast();
+
         Comment c1 = new Comment(topico1, user2, "Comentário 1");
         Comment c2 = new Comment(topico1, user1, "Comentário 2");
 
@@ -125,7 +146,8 @@ public class ServiceTest {
                 .collect(Collectors.toList());
 
         assertThat(comments).hasSize(2);
-        assertThat(comments).extracting(Comment::getContent)
+        assertThat(comments)
+                .extracting(Comment::getContent)
                 .containsExactlyInAnyOrder("Comentário 1", "Comentário 2");
     }
 }

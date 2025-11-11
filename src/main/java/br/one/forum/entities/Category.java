@@ -3,54 +3,49 @@ package br.one.forum.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.proxy.HibernateProxy;
+import lombok.*;
 
 import java.util.HashSet;
-import java.util.Objects;
+import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "category")
+@Table(
+        name = "categories", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "name")
+})
 @NoArgsConstructor
-@AllArgsConstructor
-public class Category {
+@ToString(onlyExplicitlyIncluded = true)
+public final class Category {
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Integer id;
 
     @Size(max = 50)
     @NotNull
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
+    @ToString.Include
     private String name;
 
     @ManyToMany(mappedBy = "categories")
+    @Setter(AccessLevel.NONE)
     private Set<Topic> topics = new HashSet<>();
-
 
     public Category(String name) {
         this.name = name;
     }
 
-    @Override
-    public final boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null) return false;
-        Class<?> oEffectiveClass = object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass() : object.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        Category category = (Category) object;
-        return getName() != null && Objects.equals(getName(), category.getName());
+    public void addTopics(List<Topic> topics) {
+        this.topics.addAll(topics);
     }
 
-    @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public Category addTopic(Topic topic) {
+        this.topics.add(topic);
+        return this;
     }
 }
