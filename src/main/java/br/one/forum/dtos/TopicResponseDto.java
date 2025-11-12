@@ -30,6 +30,6 @@ public record TopicResponseDto(Integer id, @NotNull String title, @NotNull Strin
     /**
      * DTO for {@link br.one.forum.entities.Category}
      */
-    public record TopicCategoryDto(@NotNull @Size(max = 50) String name) implements Serializable {
+    public record TopicCategoryDto(Integer id,@NotNull @Size(max = 50) String name) implements Serializable {
     }
 }

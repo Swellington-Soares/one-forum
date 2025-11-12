@@ -6,6 +6,7 @@ import br.one.forum.entities.Topic;
 import br.one.forum.mappers.TopicResponseMapper;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
+import br.one.forum.services.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ public class TopicController {
     private final TopicResponseMapper topicResponseMapper;
     private final UserRepository userRepository;
     private final TopicRepository topicRepository;
+    private final TopicService topicService;
 
     @GetMapping("/{id}")
     TopicResponseDto getTopic(@PathVariable("id") Topic topic) {
@@ -30,9 +32,8 @@ public class TopicController {
     }
 
     @GetMapping("/")
-    List<TopicResponseDto> getTopic( ) {
-        return topicRepository.findAll().stream().map(topic -> topicResponseMapper.toDto(topic, null))
-                .toList();
+    List<TopicResponseDto> getTopics( ) {
+        return topicService.getAllTopics();
     }
 
 
