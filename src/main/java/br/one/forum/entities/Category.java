@@ -40,7 +40,7 @@ public final class Category {
         setName(name);
     }
 
-    void setName(@NotNull String name) {
+    public void setName(@NotNull String name) {
         this.name = name.toUpperCase();
     }
 
