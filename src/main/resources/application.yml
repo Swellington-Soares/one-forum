@@ -1,3 +1,12 @@
+app:
+  upload:
+    base-dir: uploads/
+    images:
+      dir: images/
+      max-size: 5MB
+      allowed-types: image/jpeg,image/png
+
+
 spring:
   application:
     name: forum
