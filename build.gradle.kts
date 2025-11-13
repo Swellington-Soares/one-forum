@@ -1,3 +1,5 @@
+import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
+
 plugins {
     java
     id("org.springframework.boot") version "3.5.7"
