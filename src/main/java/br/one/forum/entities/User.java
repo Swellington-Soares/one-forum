@@ -1,9 +1,12 @@
 package br.one.forum.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -28,18 +31,20 @@ public class User {
     @ToString.Include
     private String email;
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false, length = 64)
     private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @ToString.Include
     @Setter(AccessLevel.NONE)
-    private Instant createdAt = Instant.now();
+    @CreationTimestamp
+    private Instant createdAt;
 
     @Column(name = "update_at", nullable = false)
     @Setter(AccessLevel.NONE)
-    private Instant updateAt = Instant.now();
+    @UpdateTimestamp
+    private Instant updateAt;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
@@ -62,16 +67,16 @@ public class User {
         this.profile = profile;
     }
 
-    @PrePersist
-    private void onCreate() {
-        if (createdAt == null)
-            createdAt = Instant.now();
-    }
-
-    @PreUpdate
-    private void onUpdate() {
-        updateAt = Instant.now();
-    }
+//    @PrePersist
+//    private void onCreate() {
+//        if (createdAt == null)
+//            createdAt = Instant.now();
+//    }
+//
+//    @PreUpdate
+//    private void onUpdate() {
+//        updateAt = Instant.now();
+//    }
 
     @ToString.Include(name = "password")
     private String maskedPassword() {
