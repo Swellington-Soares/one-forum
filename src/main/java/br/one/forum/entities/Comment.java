@@ -1,8 +1,11 @@
 package br.one.forum.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -13,7 +16,7 @@ import java.time.Instant;
 @ToString(exclude = {"topic", "user"})
 @Entity
 @Table(name = "comments")
-public final class Comment {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,14 +32,16 @@ public final class Comment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false)
     private String content;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
     private Instant createdAt;
 
     @Column(name = "update_at")
+    @UpdateTimestamp
     private Instant updateAt;
 
     public Comment(Topic topic, User user, String content) {
@@ -44,17 +49,4 @@ public final class Comment {
         this.user = user;
         this.content = content;
     }
-
-    @PrePersist
-    private void onCreate() {
-        if (createdAt == null) {
-            createdAt = Instant.now();
-        }
-    }
-
-    @PreUpdate
-    private void onUpdate() {
-        updateAt = Instant.now();
-    }
-
 }

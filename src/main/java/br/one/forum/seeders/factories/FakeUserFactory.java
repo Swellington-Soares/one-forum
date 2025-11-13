@@ -1,5 +1,6 @@
 package br.one.forum.seeders.factories;
 
+import br.one.forum.security.PasswordCrypt;
 import br.one.forum.utils.DataFaker;
 import br.one.forum.entities.Profile;
 import br.one.forum.entities.User;
@@ -12,8 +13,9 @@ public class FakeUserFactory {
 
     public static User getOne() {
         var user = new User();
+        var password = new PasswordCrypt().passwordEncoder().encode("12345678");
         user.setEmail(DataFaker.faker().internet().emailAddress());
-        user.setPassword(DataFaker.faker().credentials().password(6, 8));
+        user.setPassword(password);
         user.setProfile(new Profile(user, DataFaker.faker().name().firstName()));
         return user;
     }

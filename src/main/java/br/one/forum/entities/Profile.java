@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = "user")
-public final class Profile {
+public class Profile {
 
     @Id
     @Column(name = "user_id", nullable = false)

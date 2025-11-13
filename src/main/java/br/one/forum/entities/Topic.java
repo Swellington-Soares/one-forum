@@ -3,6 +3,8 @@ package br.one.forum.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
@@ -18,7 +20,7 @@ import java.util.function.Function;
 @ToString(exclude = {"likedBy", "comments", "user", "categories"})
 @Entity
 @Table(name = "topics")
-public final class Topic {
+public class Topic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +42,12 @@ public final class Topic {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Setter(AccessLevel.NONE)
+    @CreationTimestamp
     private Instant createdAt;
 
     @Column(name = "updated_at")
     @Setter(AccessLevel.NONE)
+    @UpdateTimestamp
     private Instant updatedAt;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
@@ -79,17 +83,6 @@ public final class Topic {
     public Topic(String title, String content, User user, String category) {
         this(title, content, user, new Category(category));
     }
-
-    @PrePersist
-    public void onCreate() {
-        createdAt = Instant.now();
-    }
-
-    @PreUpdate
-    private void onUpdate() {
-        updatedAt = Instant.now();
-    }
-
 
     public int getLikeCount() {
         return likedBy.size();

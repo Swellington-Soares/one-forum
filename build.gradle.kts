@@ -1,3 +1,5 @@
+import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
+
 plugins {
     java
     id("org.springframework.boot") version "3.5.7"
@@ -57,6 +59,17 @@ dependencies {
 
     testImplementation("net.datafaker:datafaker:2.5.2")
     implementation("net.datafaker:datafaker:2.5.2")
+
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+
+}
+
+tasks.register<JavaExec>("runSeed") {
+    group = "application"
+    description = "Run database seed on start"
+    mainClass.set("br.one.forum.ForumApplication")
+    classpath = sourceSets["main"].runtimeClasspath
+    args("--add-seed")
 }
 
 tasks.withType<Test> {
