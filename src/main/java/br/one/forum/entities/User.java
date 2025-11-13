@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -61,22 +62,21 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Set<Topic> createdTopics = new HashSet<>();
 
+    @Column
+    private boolean emailVerified = Boolean.FALSE;
+
+    @Column
+    private boolean locked = Boolean.FALSE;
+
+    @Column
+    @Accessors(chain = true)
+    private boolean deleted = Boolean.FALSE;
+
     public User(@NotNull String email, @NotNull String password, @NotNull Profile profile) {
         this.email = email;
         this.password = password;
         this.profile = profile;
     }
-
-//    @PrePersist
-//    private void onCreate() {
-//        if (createdAt == null)
-//            createdAt = Instant.now();
-//    }
-//
-//    @PreUpdate
-//    private void onUpdate() {
-//        updateAt = Instant.now();
-//    }
 
     @ToString.Include(name = "password")
     private String maskedPassword() {
