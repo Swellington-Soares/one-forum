@@ -64,6 +64,14 @@ dependencies {
 
 }
 
+tasks.register<JavaExec>("runSeed") {
+    group = "application"
+    description = "Run database seed on start"
+    mainClass.set("br.one.forum.ForumApplication")
+    classpath = sourceSets["main"].runtimeClasspath
+    args("--add-seed")
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }
