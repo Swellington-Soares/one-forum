@@ -18,7 +18,7 @@ import java.util.function.Function;
 @ToString(exclude = {"likedBy", "comments", "user", "categories"})
 @Entity
 @Table(name = "topics")
-public final class Topic {
+public class Topic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

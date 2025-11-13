@@ -18,7 +18,7 @@ import java.util.Set;
 })
 @NoArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public final class Category {
+public class Category {
 
     @Id
     @Column(name = "id", nullable = false)

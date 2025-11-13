@@ -13,7 +13,7 @@ import java.time.Instant;
 @ToString(exclude = {"topic", "user"})
 @Entity
 @Table(name = "comments")
-public final class Comment {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
