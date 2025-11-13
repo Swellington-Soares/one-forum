@@ -6,7 +6,6 @@ app:
       max-size: 5MB
       allowed-types: image/jpeg,image/png
 
-
 spring:
   application:
     name: forum
@@ -27,3 +26,11 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     create-schemas: true
     enabled: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    enabled: true
+    path: /api-docs
+  show-actuator: true

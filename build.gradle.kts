@@ -57,6 +57,9 @@ dependencies {
 
     testImplementation("net.datafaker:datafaker:2.5.2")
     implementation("net.datafaker:datafaker:2.5.2")
+
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+
 }
 
 tasks.withType<Test> {
