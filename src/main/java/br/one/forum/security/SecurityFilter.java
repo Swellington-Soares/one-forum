@@ -1,6 +1,7 @@
 package br.one.forum.security;
 
 import br.one.forum.repositories.UserRepository;
+import br.one.forum.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
