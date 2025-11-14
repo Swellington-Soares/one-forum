@@ -28,7 +28,7 @@ class LocaleTest {
 
     @Test
     void testDefaultBundleLocale(){
-        String message = messageSource.getMessage("exception.user_not_found",  null, Locale.ENGLISH);
+        String message = messageSource.getMessage("exception.user-not-found",  null, Locale.ENGLISH);
         assertThat(message).isEqualTo("User not found");
 
     }
@@ -36,7 +36,7 @@ class LocaleTest {
     @Test
     void testPortugueseBundleLocale(){
         Locale locale = Locale.of("pt", "BR");
-        String message = messageSource.getMessage("exception.user_not_found",  null, locale);
+        String message = messageSource.getMessage("exception.user-not-found",  null, locale);
         assertThat(message).isEqualTo("Usuário não encontrado");
 
     }
