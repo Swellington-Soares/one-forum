@@ -21,7 +21,7 @@ public class TopicService {
     }
 
     @NonNull
-    public Topic findTopicById(Integer topicId) {
-        return  topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
+    public Topic findTopicById(int topicId) {
+        return  topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
     }
 }
