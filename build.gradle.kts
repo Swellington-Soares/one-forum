@@ -61,6 +61,7 @@ dependencies {
     implementation("net.datafaker:datafaker:2.5.2")
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+    implementation ("com.auth0:java-jwt:4.5.0")
 
 }
 
