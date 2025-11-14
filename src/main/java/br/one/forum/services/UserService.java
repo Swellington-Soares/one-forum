@@ -20,18 +20,18 @@ public final class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private User findUserById(Integer id, Boolean includeDeleted) {
+    public User findUserById(Integer id, Boolean includeDeleted) {
         if (includeDeleted) {
-            return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+            return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         }
-        return userRepository.findByIdAndDeletedIsFalse(id).orElseThrow(UserNotFoundException::new);
+        return userRepository.findByIdAndDeletedIsFalse(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    private User findUserByEmail(String email, Boolean includeDeleted) {
+    public User findUserByEmail(String email, Boolean includeDeleted) {
         if (includeDeleted) {
-            return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+            return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
         }
-        return userRepository.findByEmailAndDeletedIsFalse(email).orElseThrow(UserNotFoundException::new);
+        return userRepository.findByEmailAndDeletedIsFalse(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
     public void createUser(UserRegisterRequestDto dto) {
