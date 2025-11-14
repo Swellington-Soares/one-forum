@@ -19,7 +19,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-//@Transactional
 @ActiveProfiles("test")
 @Testcontainers
 public class TopicServiceTest {

@@ -64,19 +64,19 @@ public final class UserService {
         //TODO: DESENVOLVER QUANDO MAIS TARDE
     }
 
-    public void lockUserAccount(Integer userId) {
+    public void lockUserAccount(int userId) {
         var user = findUserById(userId, false);
         user.setLocked(true);
         userRepository.save(user);
     }
 
-    public void unlockUserAccount(Integer userId) {
+    public void unlockUserAccount(int userId) {
         var user = findUserById(userId, false);
         user.setLocked(false);
         userRepository.save(user);
     }
 
-    public void deleteUser(Integer userId, Boolean force) {
+    public void deleteUser(int userId, boolean force) {
         var user = findUserById(userId, false);
         if (force) {
             userRepository.delete(user);

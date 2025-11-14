@@ -2,7 +2,6 @@ package br.one.forum.app;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.test.context.ActiveProfiles;
@@ -27,16 +26,16 @@ class LocaleTest {
 
 
     @Test
-    void testDefaultBundleLocale(){
-        String message = messageSource.getMessage("exception.user-not-found",  null, Locale.ENGLISH);
+    void testDefaultBundleLocale() {
+        String message = messageSource.getMessage("exception.user-not-found", null, Locale.ENGLISH);
         assertThat(message).isEqualTo("User not found");
 
     }
 
     @Test
-    void testPortugueseBundleLocale(){
+    void testPortugueseBundleLocale() {
         Locale locale = Locale.of("pt", "BR");
-        String message = messageSource.getMessage("exception.user-not-found",  null, locale);
+        String message = messageSource.getMessage("exception.user-not-found", null, locale);
         assertThat(message).isEqualTo("Usuário não encontrado");
 
     }

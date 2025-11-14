@@ -6,7 +6,6 @@ import br.one.forum.exception.TopicNotFoundException;
 import br.one.forum.repositories.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +21,6 @@ public class TopicService {
 
     @NonNull
     public Topic findTopicById(int topicId) {
-        return  topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
+        return topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
     }
 }

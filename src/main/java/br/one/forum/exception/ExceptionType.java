@@ -1,7 +1,6 @@
 package br.one.forum.exception;
 
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 public enum ExceptionType {
