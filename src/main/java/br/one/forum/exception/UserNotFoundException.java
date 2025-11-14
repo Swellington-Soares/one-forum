@@ -1,7 +1,23 @@
 package br.one.forum.exception;
 
-public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException() {
-        super("{exception.user_not_found}");
+import org.springframework.http.HttpStatus;
+
+public class UserNotFoundException extends ApiException {
+    public UserNotFoundException(int id) {
+        super(
+                "exception.user-not-found",
+                HttpStatus.NOT_FOUND,
+                ExceptionType.RESOURCE_NOT_FOUND.getValue(),
+                id
+        );
+    }
+
+    public UserNotFoundException(String email) {
+        super(
+                "exception.user-not-found",
+                HttpStatus.NOT_FOUND,
+                ExceptionType.RESOURCE_NOT_FOUND.getValue(),
+                email
+        );
     }
 }

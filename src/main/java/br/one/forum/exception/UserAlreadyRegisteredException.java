@@ -1,7 +1,13 @@
 package br.one.forum.exception;
 
-public class UserAlreadyRegisteredException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class UserAlreadyRegisteredException extends ApiException {
     public UserAlreadyRegisteredException() {
-        super("Já existe um registro com esse email.");
+        super(
+                "exception.topic-not-found",
+                HttpStatus.BAD_REQUEST,
+                ExceptionType.RESOURCE_NOT_FOUND.getValue()
+        );
     }
 }
