@@ -63,8 +63,7 @@ public class RepositoryTest {
         topico.setUser(user);
         topicoRepository.save(topico);
 
-        Category cat = new Category();
-        cat.setName("Java");
+        Category cat = new Category("Java");
         categoryRepository.save(cat);
 
         cat.getTopics().add(topico);

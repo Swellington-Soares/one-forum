@@ -1,11 +1,10 @@
 package br.one.forum.service;
 
 
-import br.one.forum.DataFaker;
 import br.one.forum.TestcontainersConfiguration;
 import br.one.forum.entities.*;
-import br.one.forum.factories.FakeTopicFactory;
-import br.one.forum.factories.FakeUserFactory;
+import br.one.forum.seeders.factories.FakeTopicFactory;
+import br.one.forum.seeders.factories.FakeUserFactory;
 import br.one.forum.repositories.CommentRepository;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;

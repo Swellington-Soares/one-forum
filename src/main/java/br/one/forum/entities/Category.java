@@ -18,7 +18,7 @@ import java.util.Set;
 })
 @NoArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public final class Category {
+public class Category {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -36,8 +36,12 @@ public final class Category {
     @Setter(AccessLevel.NONE)
     private Set<Topic> topics = new HashSet<>();
 
-    public Category(String name) {
-        this.name = name;
+    public Category(@NotNull String name) {
+        setName(name);
+    }
+
+    void setName(@NotNull String name) {
+        this.name = name.toUpperCase();
     }
 
     public void addTopics(List<Topic> topics) {

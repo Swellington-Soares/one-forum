@@ -3,9 +3,13 @@ package br.one.forum.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -18,7 +22,7 @@ import java.util.Set;
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users")
-public final class User {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,18 +34,20 @@ public final class User {
     @ToString.Include
     private String email;
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false, length = 64)
     private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @ToString.Include
     @Setter(AccessLevel.NONE)
-    private Instant createdAt = Instant.now();
+    @CreationTimestamp
+    private Instant createdAt;
 
     @Column(name = "update_at", nullable = false)
     @Setter(AccessLevel.NONE)
-    private Instant updateAt = Instant.now();
+    @UpdateTimestamp
+    private Instant updateAt;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
@@ -57,6 +63,16 @@ public final class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private Set<Topic> createdTopics = new HashSet<>();
+
+    @Column
+    private boolean emailVerified = Boolean.FALSE;
+
+    @Column
+    private boolean locked = Boolean.FALSE;
+
+    @Column
+    @Accessors(chain = true)
+    private boolean deleted = Boolean.FALSE;
 
     public User(@NotNull String email, @NotNull String password, @NotNull Profile profile) {
         this.email = email;
