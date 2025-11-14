@@ -1,16 +1,10 @@
-package br.one.forum.controller;
+package br.one.forum.controllers;
 
 import br.one.forum.dtos.CommentResponseDto;
-import br.one.forum.dtos.CriarCommentDto;
+import br.one.forum.dtos.CreateCommentDto;
 import br.one.forum.dtos.UpdateCommentDto;
-import br.one.forum.entities.Comment;
-import br.one.forum.repositories.CommentRepository;
-import br.one.forum.repositories.TopicRepository;
-import br.one.forum.repositories.UserRepository;
-import br.one.forum.service.CommentService;
+import br.one.forum.services.CommentService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,18 +22,18 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<CommentResponseDto> saveComment(@RequestBody @Valid CriarCommentDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarComentario(dto));
+    public ResponseEntity<CommentResponseDto> saveComment(@RequestBody @Valid CreateCommentDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createComment(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<CommentResponseDto>> listarTodos() {
-        return ResponseEntity.ok(service.listarTodos());
+    public ResponseEntity<List<CommentResponseDto>> listAllComment() {
+        return ResponseEntity.ok(service.listAllComment());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CommentResponseDto> getOneComment(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.buscarPorId(id));
+        return ResponseEntity.ok(service.findByIdComment(id));
     }
 
     @PutMapping("/{id}")
@@ -47,12 +41,12 @@ public class CommentController {
             @PathVariable Integer id,
             @RequestBody @Valid UpdateCommentDto dto) {
 
-        return ResponseEntity.ok(service.atualizar(id, dto));
+        return ResponseEntity.ok(service.updateComment(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Integer id) {
-        service.deletar(id);
+        service.deleteComment(id);
         return ResponseEntity.noContent().build();
     }
 }

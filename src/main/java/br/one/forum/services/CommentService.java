@@ -1,12 +1,13 @@
-package br.one.forum.service;
+package br.one.forum.services;
 
-import br.one.forum.dtos.CriarCommentDto;
+import br.one.forum.dtos.CreateCommentDto;
 import br.one.forum.dtos.UpdateCommentDto;
 import br.one.forum.dtos.CommentResponseDto;
 import br.one.forum.entities.Comment;
 import br.one.forum.repositories.CommentRepository;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,26 +15,23 @@ import java.util.List;
 @Service
 public class CommentService {
 
-    private final CommentRepository commentRepository;
-    private final TopicRepository topicRepository;
-    private final UserRepository userRepository;
-
-    public CommentService(CommentRepository commentRepository,
-                          TopicRepository topicRepository,
-                          UserRepository userRepository) {
-        this.commentRepository = commentRepository;
-        this.topicRepository = topicRepository;
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private TopicRepository topicRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
-    public CommentResponseDto criarComentario(CriarCommentDto dto) {
+
+
+    public CommentResponseDto createComment(CreateCommentDto dto) {
 
         var topic = topicRepository.findById(dto.topicId())
-                .orElseThrow(() -> new RuntimeException("Topic não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Topic not found"));
 
         var user = userRepository.findById(dto.userId())
-                .orElseThrow(() -> new RuntimeException("User não encontrado"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         var comment = new Comment();
         comment.setTopic(topic);
@@ -52,7 +50,7 @@ public class CommentService {
     }
 
 
-    public List<CommentResponseDto> listarTodos() {
+    public List<CommentResponseDto> listAllComment() {
 
         return commentRepository.findAll()
                 .stream()
@@ -67,10 +65,10 @@ public class CommentService {
     }
 
 
-    public CommentResponseDto buscarPorId(Integer id) {
+    public CommentResponseDto findByIdComment(Integer id) {
 
         var c = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comentário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         return new CommentResponseDto(
                 c.getId(),
@@ -82,10 +80,10 @@ public class CommentService {
     }
 
 
-    public CommentResponseDto atualizar(Integer id, UpdateCommentDto dto) {
+    public CommentResponseDto updateComment(Integer id, UpdateCommentDto dto) {
 
         var comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comentário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         comment.setContent(dto.content());
 
@@ -101,10 +99,10 @@ public class CommentService {
     }
 
 
-    public void deletar(Integer id) {
+    public void deleteComment(Integer id) {
 
         var comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comentário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         commentRepository.delete(comment);
     }
