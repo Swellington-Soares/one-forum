@@ -1,6 +1,8 @@
 package br.one.forum.services;
 
+import br.one.forum.entities.User;
 import br.one.forum.repositories.UserRepository;
+import br.one.forum.security.UserSecurityDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,8 +14,12 @@ public class AuthorizationService implements UserDetailsService {
 
     @Autowired
     UserRepository repository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findUserDetailsByEmail(username);
+        User user = repository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        return new UserSecurityDetails(user);
     }
 }
