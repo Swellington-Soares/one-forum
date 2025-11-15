@@ -30,27 +30,20 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationRequestDto data) {
-        try {
-            var token = authenticationService.login(data);
-            return ResponseEntity.ok(new LoginResponseDTO(token, "Authenticated user."));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoginResponseDTO(null,"User not found."));
-        } catch (UserPasswordNotMatchException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponseDTO(null,"Wrong password."));
-        }
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationRequestDto data) {                   
+        return ResponseEntity.ok(new LoginResponseDTO(authenticationService.login(data), "Authenticated user."));    
     }
-
-    @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid UserRegisterRequestDto data) {
-        try {
-            boolean success = authenticationService.register(data);
-            if (success) {
-                return ResponseEntity.status(HttpStatus.CREATED).build();
-            }
-            return ResponseEntity.badRequest().build();
-        } catch (UserAlreadyRegisteredException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already registered with this email.");
-        }
-    }
+    //TODO: MOVER PARA UserController
+    // @PostMapping("/register")
+    // public ResponseEntity register(@RequestBody @Valid UserRegisterRequestDto data) {
+    //     try {
+    //         boolean success = authenticationService.register(data);
+    //         if (success) {
+    //             return ResponseEntity.status(HttpStatus.CREATED).build();
+    //         }
+    //         return ResponseEntity.badRequest().build();
+    //     } catch (UserAlreadyRegisteredException e) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already registered with this email.");
+    //     }
+    // }
 }
