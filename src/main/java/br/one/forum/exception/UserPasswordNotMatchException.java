@@ -1,7 +1,13 @@
 package br.one.forum.exception;
 
-public class UserPasswordNotMatchException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class UserPasswordNotMatchException extends ApiException {
     public UserPasswordNotMatchException() {
-        super("Senha incorreta.");
+        super(
+                "exception.password-not-match",
+                HttpStatus.BAD_REQUEST,
+                ExceptionType.WRONG_CREDENTIAL.getValue()
+        );
     }
 }

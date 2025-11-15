@@ -10,9 +10,14 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -97,6 +102,11 @@ public class User {
     @ToString.Include(name = "password")
     private String maskedPassword() {
         return "[PROTECTED]";
+    }
+
+    public User(String login, String password) {
+        this.email = login;
+        this.password = password;
     }
 
 }

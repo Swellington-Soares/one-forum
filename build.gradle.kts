@@ -1,5 +1,3 @@
-import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
-
 plugins {
     java
     id("org.springframework.boot") version "3.5.7"
@@ -28,10 +26,8 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
-    //implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -61,6 +57,7 @@ dependencies {
     implementation("net.datafaker:datafaker:2.5.2")
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+    implementation ("com.auth0:java-jwt:4.5.0")
 
 }
 

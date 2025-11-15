@@ -34,3 +34,8 @@ springdoc:
     enabled: true
     path: /api-docs
   show-actuator: true
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:my-secret-key}
