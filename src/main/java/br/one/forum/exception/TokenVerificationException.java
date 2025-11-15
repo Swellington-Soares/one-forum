@@ -7,16 +7,7 @@ public class TokenVerificationException  extends ApiException {
         super(
                 "exception.token-invalid",
                 HttpStatus.BAD_REQUEST,
-                ExceptionType.RESOURCE_NOT_FOUND.getValue()
-        );
-    }
-
-    public TokenVerificationException(String message) {
-        super(
-                "exception.token-invalid",
-                HttpStatus.UNAUTHORIZED,
-                ExceptionType.RESOURCE_NOT_FOUND.getValue(),
-                message
+                ExceptionType.LOGIN_REQUEST.getValue()
         );
     }
 }
