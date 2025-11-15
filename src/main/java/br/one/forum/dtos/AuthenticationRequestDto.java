@@ -1,4 +1,4 @@
 package br.one.forum.dtos;
 
-public record AuthenticationRequestDto(String login, String password) {
+public record AuthenticationRequestDto(String email, String password) {
 }
