@@ -7,7 +7,7 @@ public final class AuthenticationTokenGenerationException extends ApiException {
         super(
                 "exception.authentication_token_generator",
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "ERR_TOKEN_GENERATOR"
+                ExceptionType.ERR_TOKEN_GENERATOR.getValue()
         );
     }
 }
