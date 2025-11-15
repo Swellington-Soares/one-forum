@@ -1,6 +1,8 @@
 package br.one.forum.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -81,6 +83,20 @@ public class User {
         this.email = email;
         this.password = password;
         this.profile = profile;
+    }
+
+    public User(@Email @NotBlank String email, @NotBlank @Size(min = 4) String password) {
+    }
+
+    @PrePersist
+    private void onCreate() {
+        if (createdAt == null)
+            createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        updateAt = Instant.now();
     }
 
     @ToString.Include(name = "password")

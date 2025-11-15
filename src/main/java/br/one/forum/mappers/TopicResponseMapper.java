@@ -16,3 +16,4 @@ public interface TopicResponseMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Topic partialUpdate(TopicResponseDto topicResponseDto, @MappingTarget Topic topic);
 }
+
