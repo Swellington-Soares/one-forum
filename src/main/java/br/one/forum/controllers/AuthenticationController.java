@@ -1,22 +1,11 @@
 package br.one.forum.controllers;
 
 import br.one.forum.dtos.AuthenticationRequestDto;
-import br.one.forum.dtos.LoginResponseDTO;
-import br.one.forum.dtos.UserRegisterRequestDto;
-import br.one.forum.entities.User;
-import br.one.forum.exception.UserAlreadyRegisteredException;
-import br.one.forum.exception.UserNotFoundException;
-import br.one.forum.exception.UserPasswordNotMatchException;
+import br.one.forum.dtos.LoginResponseDto;
 import br.one.forum.services.AuthenticationService;
-import br.one.forum.services.TokenService;
-import br.one.forum.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +19,8 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationRequestDto data) {                   
-        return ResponseEntity.ok(new LoginResponseDTO(authenticationService.login(data), "Authenticated user."));    
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid AuthenticationRequestDto data) {
+        return ResponseEntity.ok(new LoginResponseDto(authenticationService.login(data)));
     }
     //TODO: MOVER PARA UserController
     // @PostMapping("/register")
