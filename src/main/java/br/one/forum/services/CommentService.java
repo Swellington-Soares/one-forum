@@ -4,34 +4,36 @@ import br.one.forum.dtos.CreateCommentDto;
 import br.one.forum.dtos.UpdateCommentDto;
 import br.one.forum.dtos.CommentResponseDto;
 import br.one.forum.entities.Comment;
+import br.one.forum.exception.CommentNotFoundException;
+import br.one.forum.mappers.CommentMapper;
 import br.one.forum.repositories.CommentRepository;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private TopicRepository topicRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final TopicService topicService;
+    private final UserService  userService;
+    private final CommentMapper commentMapper;
 
 
 
 
     public CommentResponseDto createComment(CreateCommentDto dto) {
 
-        var topic = topicRepository.findById(dto.topicId())
-                .orElseThrow(() -> new RuntimeException("Topic not found"));
+        var topic = topicService.findTopicById(dto.topicId());
 
-        var user = userRepository.findById(dto.userId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        var user = userService.findUserById(dto.userId(),false);
+
 
         var comment = new Comment();
         comment.setTopic(topic);
@@ -39,14 +41,7 @@ public class CommentService {
         comment.setContent(dto.content());
 
         var saved = commentRepository.save(comment);
-
-        return new CommentResponseDto(
-                saved.getId(),
-                saved.getTopic().getId(),
-                saved.getUser().getId(),
-                saved.getContent(),
-                saved.getCreatedAt()
-        );
+        return  commentMapper.toDto(saved);
     }
 
 
@@ -54,13 +49,8 @@ public class CommentService {
 
         return commentRepository.findAll()
                 .stream()
-                .map(c -> new CommentResponseDto(
-                        c.getId(),
-                        c.getTopic().getId(),
-                        c.getUser().getId(),
-                        c.getContent(),
-                        c.getCreatedAt()
-                ))
+                .map(c ->commentMapper.toDto(c)
+                )
                 .toList();
     }
 
@@ -68,43 +58,34 @@ public class CommentService {
     public CommentResponseDto findByIdComment(Integer id) {
 
         var c = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new CommentNotFoundException(id));
 
-        return new CommentResponseDto(
-                c.getId(),
-                c.getTopic().getId(),
-                c.getUser().getId(),
-                c.getContent(),
-                c.getCreatedAt()
-        );
+        return commentMapper.toDto(c);
     }
 
 
     public CommentResponseDto updateComment(Integer id, UpdateCommentDto dto) {
 
         var comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new CommentNotFoundException(id));
 
         comment.setContent(dto.content());
 
         var updated = commentRepository.save(comment);
 
-        return new CommentResponseDto(
-                updated.getId(),
-                updated.getTopic().getId(),
-                updated.getUser().getId(),
-                updated.getContent(),
-                updated.getCreatedAt()
-        );
+        return commentMapper.toDto(updated);
+
     }
 
 
     public void deleteComment(Integer id) {
 
         var comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new CommentNotFoundException(id));
 
         commentRepository.delete(comment);
     }
+
+
 }
 
