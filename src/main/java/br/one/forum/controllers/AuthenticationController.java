@@ -4,6 +4,10 @@ import br.one.forum.dtos.AuthenticationRequestDto;
 import br.one.forum.dtos.LoginResponseDTO;
 import br.one.forum.dtos.UserRegisterRequestDto;
 import br.one.forum.entities.User;
+import br.one.forum.exception.UserAlreadyRegisteredException;
+import br.one.forum.exception.UserNotFoundException;
+import br.one.forum.exception.UserPasswordNotMatchException;
+import br.one.forum.services.AuthenticationService;
 import br.one.forum.services.TokenService;
 import br.one.forum.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -21,37 +25,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserRepository repository;
-
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationRequestDto data) {
-        var userNamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        var auth = this.authenticationManager.authenticate(userNamePassword);
-
-        var token = tokenService.generateToken((User) auth.getPrincipal());
-
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationRequestDto data) {                   
+        return ResponseEntity.ok(new LoginResponseDTO(authenticationService.login(data), "Authenticated user."));    
     }
-
-    @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid UserRegisterRequestDto data) {
-        if (this.repository.findUserDetailsByEmail(data.email()) != null) return ResponseEntity.badRequest().build();
-
-        String encryptedPassword = passwordEncoder.encode(data.password());
-        User newUser = new User(data.email(), encryptedPassword);
-
-        this.repository.save(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-
-    }
+    //TODO: MOVER PARA UserController
+    // @PostMapping("/register")
+    // public ResponseEntity register(@RequestBody @Valid UserRegisterRequestDto data) {
+    //     try {
+    //         boolean success = authenticationService.register(data);
+    //         if (success) {
+    //             return ResponseEntity.status(HttpStatus.CREATED).build();
+    //         }
+    //         return ResponseEntity.badRequest().build();
+    //     } catch (UserAlreadyRegisteredException e) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already registered with this email.");
+    //     }
+    // }
 }

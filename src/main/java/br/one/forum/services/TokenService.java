@@ -2,6 +2,7 @@ package br.one.forum.services;
 
 import br.one.forum.entities.User;
 import br.one.forum.exception.AuthenticationTokenGenerationException;
+import br.one.forum.exception.TokenVerificationException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -41,7 +42,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTCreationException exception) {
-            return "";
+            throw new TokenVerificationException("Invalid or expired token.");
         }
     }
 
