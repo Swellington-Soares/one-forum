@@ -7,6 +7,7 @@ public enum ExceptionType {
     RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND"),
     ERR_TOKEN_GENERATOR("ERR_TOKEN_GENERATOR"),
     WRONG_CREDENTIAL("WRONG_CREDENTIAL"),
+    LOGIN_REQUEST("LOGIN_REQUEST")
     ;
 
     private final String value;
