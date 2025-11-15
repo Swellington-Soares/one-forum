@@ -44,7 +44,6 @@ public class GlobalExceptionHandlerWebTest {
 
     @Test
     @WithMockUser
-    // Bom uso para garantir autenticação, se for o caso
     @DisplayName("GLOBAL EXCEPTION HANDLE SEM CONFIGURAÇÃO DE IDIOMA")
     void testGlobalExceptionHandlerWithoutLanguage() throws Exception {
 
