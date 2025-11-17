@@ -85,9 +85,6 @@ public class User {
         this.profile = profile;
     }
 
-    public User(@Email @NotBlank String email, @NotBlank @Size(min = 4) String password) {
-    }
-
     @PrePersist
     private void onCreate() {
         if (createdAt == null)
@@ -104,7 +101,7 @@ public class User {
         return "[PROTECTED]";
     }
 
-    public User(String login, String password) {
+    public User(@Email @NotBlank String login, @NotBlank @Size(min = 4) String password) {
         this.email = login;
         this.password = password;
     }

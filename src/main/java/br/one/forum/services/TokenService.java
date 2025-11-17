@@ -34,13 +34,14 @@ public class TokenService {
         }
     }
 
-    public DecodedJWT validateToken(String token) {
+    public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return  JWT.require(algorithm)
                     .withIssuer("auth-api")
                     .build()
-                    .verify(token);
+                    .verify(token)
+                    .getSubject();
         } catch (JWTCreationException exception) {
             throw new TokenVerificationException();
         }
