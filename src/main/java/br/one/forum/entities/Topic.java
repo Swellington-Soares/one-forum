@@ -122,4 +122,12 @@ public class Topic {
             likeUser.getLikedTopics().add(this);
         }
     }
+
+    public Topic(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.createdAt = Instant.now();
+    }
+
 }
