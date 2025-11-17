@@ -1,6 +1,7 @@
 package br.one.forum.services;
 
 import br.one.forum.entities.User;
+import br.one.forum.exception.AuthenticationCredentialException;
 import br.one.forum.repositories.UserRepository;
 import br.one.forum.security.UserSecurityDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,11 @@ public class AuthorizationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-
-        return new UserSecurityDetails(user);
+        try {
+            User user = repository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(username));
+            return new UserSecurityDetails(user);
+        } catch (Exception e) {
+            throw new AuthenticationCredentialException();
+        }
     }
 }

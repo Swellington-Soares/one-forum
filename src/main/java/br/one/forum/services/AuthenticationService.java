@@ -8,7 +8,6 @@ import br.one.forum.exception.UserNotFoundException;
 import br.one.forum.exception.UserPasswordNotMatchException;
 import br.one.forum.repositories.UserRepository;
 import br.one.forum.security.UserSecurityDetails;
-import br.one.forum.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +35,7 @@ public class AuthenticationService {
         Authentication auth = authenticationManager.authenticate(userNamePassword);
 
         UserSecurityDetails userSecurityDetails = (UserSecurityDetails) auth.getPrincipal();
-        User user = userSecurityDetails.getUser();
+        User user = userSecurityDetails.user();
 
         if (user == null) {
             throw new UserNotFoundException(data.email());
