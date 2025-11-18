@@ -16,6 +16,9 @@ public record UserRegisterRequestDto(
         String password,
 
         @NotBlank
+        String matchPassword,
+
+        @NotBlank
         @Size(max = 75)
         String name
 ) {
