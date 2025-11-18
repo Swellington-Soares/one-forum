@@ -70,23 +70,23 @@ public class User {
     private Set<Topic> createdTopics = new HashSet<>();
 
     @Column
-    private boolean emailVerified = Boolean.FALSE;
+    private boolean emailVerified = false;
 
     @Column
-    private boolean locked = Boolean.FALSE;
+    private boolean locked = false;
 
     @Column
     @Accessors(chain = true)
-    private boolean deleted = Boolean.FALSE;
+    private boolean deleted = false;
 
-    public User(@NotNull String email, @NotNull String password, @NotNull Profile profile) {
+    public User(@NotNull String email,
+                @NotNull String password,
+                @NotNull Profile profile) {
         this.email = email;
         this.password = password;
         this.profile = profile;
     }
 
-    public User(@Email @NotBlank String email, @NotBlank @Size(min = 4) String password) {
-    }
 
     @PrePersist
     private void onCreate() {
@@ -104,9 +104,5 @@ public class User {
         return "[PROTECTED]";
     }
 
-    public User(String login, String password) {
-        this.email = login;
-        this.password = password;
-    }
 
 }
