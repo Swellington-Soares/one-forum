@@ -1,8 +1,6 @@
 package br.one.forum.security;
 
 import br.one.forum.entities.User;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,15 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-@RequiredArgsConstructor
-public class UserSecurityDetails implements UserDetails {
-
-    private final User user;
-
-    // public UserSecurityDetails(User user) {
-    //     this.user = user;
-    // }
+public record UserSecurityDetails(User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -36,23 +26,12 @@ public class UserSecurityDetails implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
     public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
+        return !user.isLocked() && user.isEmailVerified();
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !user.isLocked();
     }
-
 }

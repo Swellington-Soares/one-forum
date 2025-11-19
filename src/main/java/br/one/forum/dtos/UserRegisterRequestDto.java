@@ -4,6 +4,7 @@ import br.one.forum.validation.StrongPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.URL;
 
 public record UserRegisterRequestDto(
 
@@ -16,7 +17,14 @@ public record UserRegisterRequestDto(
         String password,
 
         @NotBlank
+        String matchPassword,
+
+        @NotBlank
         @Size(max = 75)
-        String name
+        String name,
+
+        @NotBlank
+        @URL
+        String avatarUrl
 ) {
 }

@@ -38,11 +38,14 @@ public final class UserService {
         if (userRepository.existsByEmailIgnoreCase(dto.email()))
             throw new UserAlreadyRegisteredException();
 
+        if (!dto.password().equals(dto.matchPassword()))
+            throw new UserPasswordNotMatchException();
+
         var encodedPassword = passwordEncoder.encode(dto.password());
         User user = new User();
         user.setEmail(dto.email());
         user.setPassword(encodedPassword);
-        user.setProfile(new Profile(dto.name(), null));
+        user.setProfile(new Profile(dto.name(), dto.avatarUrl()));
         userRepository.save(user);
     }
 
@@ -86,4 +89,7 @@ public final class UserService {
         }
     }
 
+    public User findUserByEmailOrNull(String username) {
+        return userRepository.findByEmail(username).orElse(null);
+    }
 }
