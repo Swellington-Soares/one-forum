@@ -45,7 +45,7 @@ public final class UserService {
         User user = new User();
         user.setEmail(dto.email());
         user.setPassword(encodedPassword);
-        user.setProfile(new Profile(dto.name(), null));
+        user.setProfile(new Profile(dto.name(), dto.avatarUrl()));
         userRepository.save(user);
     }
 
