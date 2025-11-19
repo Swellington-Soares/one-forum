@@ -19,9 +19,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
-
     @GetMapping("/{id}")
     User getUserById(@PathVariable int id) {
         return userService.findUserById(id, false);
@@ -29,7 +26,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid UserRegisterRequestDto data) {
-        authenticationService.register(data);
+        userService.createUser(data);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
