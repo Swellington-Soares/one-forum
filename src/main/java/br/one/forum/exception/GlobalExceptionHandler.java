@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ApiExceptionResponseDto> handleApiNoResourceFoundException(NoResourceFoundException exception, HttpServletRequest request, Locale locale) {
+    public ResponseEntity<ApiExceptionResponseDto> handleApiNoResourceFoundException(NoResourceFoundException exception, HttpServletRequest request) {
         var response = ApiExceptionResponseDto.builder()
                 .type(ExceptionType.RESOURCE_NOT_FOUND.getValue())
                 .message(exception.getMessage())

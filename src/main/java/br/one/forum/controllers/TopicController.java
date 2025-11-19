@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.EntityResponse;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -60,7 +59,7 @@ public class TopicController {
                 .buildAndExpand(created.id())
                 .toUri();
 
-        return ResponseEntity.created(location).body( created );
+        return ResponseEntity.created(location).body(created);
 
     }
 
@@ -70,7 +69,7 @@ public class TopicController {
             @PathVariable("topicId") int topicId,
             @RequestBody @Valid TopicEditRequestDto data) {
         var editedTopic = topicService.editTopic(topicId, data, currentLoggedUser);
-        return ResponseEntity.ok( topicResponseMapper.toDtoExcludeContent(editedTopic,  currentLoggedUser) );
+        return ResponseEntity.ok(topicResponseMapper.toDtoExcludeContent(editedTopic, currentLoggedUser));
     }
 
 

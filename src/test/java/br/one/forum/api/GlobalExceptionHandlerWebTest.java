@@ -1,10 +1,12 @@
 package br.one.forum.api;
 
 
+import br.one.forum.configuration.MessageSourceConfiguration;
 import br.one.forum.controllers.UserController;
 import br.one.forum.exception.GlobalExceptionHandler;
 import br.one.forum.exception.UserNotFoundException;
 import br.one.forum.repositories.UserRepository;
+import br.one.forum.services.AuthorizationService;
 import br.one.forum.services.TokenService;
 import br.one.forum.services.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles("test")
 @WebMvcTest(controllers = UserController.class)
-@Import(GlobalExceptionHandler.class)
+@Import({GlobalExceptionHandler.class, MessageSourceConfiguration.class})
 @AutoConfigureMockMvc(addFilters = false)
 public class GlobalExceptionHandlerWebTest {
 
@@ -40,7 +43,14 @@ public class GlobalExceptionHandlerWebTest {
     TokenService tokenService;
 
     @MockitoBean
+    AuthorizationService authorizationService;
+
+    @MockitoBean
     UserRepository userRepository;
+
+//    @MockitoBean
+//    MessageSource messageSource;
+
 
     @Test
     @WithMockUser

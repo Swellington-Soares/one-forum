@@ -23,12 +23,7 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
-
-
-    private final UserRepository userRepository;
-
     private final TokenService tokenService;
-
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
@@ -49,22 +44,22 @@ public class AuthenticationService {
         return tokenService.generateToken(user);
     }
 
-    public boolean register(UserRegisterRequestDto data) {
-        if (userRepository.findUserDetailsByEmail(data.email()) != null) {
-            throw new UserAlreadyRegisteredException();
-        }
-
-        String encryptedPassword = passwordEncoder.encode(data.password());
-        User newUser = new User(
-                data.email(),
-                encryptedPassword,
-                new Profile(
-                        data.name(),
-                        data.avatarUrl()
-                ));
-        userRepository.save(newUser);
-        return true;
-    }
+//    public boolean register(UserRegisterRequestDto data) {
+//        if (userRepository.findUserDetailsByEmail(data.email()) != null) {
+//            throw new UserAlreadyRegisteredException();
+//        }
+//
+//        String encryptedPassword = passwordEncoder.encode(data.password());
+//        User newUser = new User(
+//                data.email(),
+//                encryptedPassword,
+//                new Profile(
+//                        data.name(),
+//                        data.avatarUrl()
+//                ));
+//        userRepository.save(newUser);
+//        return true;
+//    }
 
     public User getLoggedUserByUserDetails(UserDetails userDetails) {
         if (userDetails == null) return null;
