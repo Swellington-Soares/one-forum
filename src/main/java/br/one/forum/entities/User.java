@@ -87,7 +87,6 @@ public class User {
         this.profile = profile;
     }
 
-
     @PrePersist
     private void onCreate() {
         if (createdAt == null)
