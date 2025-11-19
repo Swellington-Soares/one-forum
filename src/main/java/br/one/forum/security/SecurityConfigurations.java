@@ -28,8 +28,6 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers(HttpMethod.GET, "/topics/**").permitAll()
                                 .requestMatchers("/topics/**").authenticated()
-//                        //.requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
-//                        .anyRequest().authenticated()
                                 .anyRequest().permitAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
