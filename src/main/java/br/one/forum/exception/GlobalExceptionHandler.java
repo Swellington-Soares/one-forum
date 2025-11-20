@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -43,5 +45,36 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ApiExceptionResponseDto> handleLockedException(LockedException exception, HttpServletRequest request) {
+        var response =  ApiExceptionResponseDto.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .path(request.getRequestURI())
+                .message(exception.getMessage())
+                .type(ExceptionType.ACCOUNT_LOCKED.getValue())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiExceptionResponseDto> handleBadCredentialsException(BadCredentialsException exception, HttpServletRequest request) {
+        var response =  ApiExceptionResponseDto.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .path(request.getRequestURI())
+                .message(exception.getMessage())
+                .type(ExceptionType.BAD_CREDENTIALS.getValue())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ApiExceptionResponseDto> handleGenericException(Exception exception, HttpServletRequest request) {
+//        IO.println(exception.getMessage());
+//        return null;
+//    }
 }
 
