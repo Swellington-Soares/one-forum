@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.context.annotation.RequestScope;
 
 @Configuration
-public class AuthBean {
+public class CurrentLoggedUserConfiguration {
 
     @Bean
     @RequestScope

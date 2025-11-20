@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StrongPassword {
 
-    String message() default "Senha fraca: deve conter letras maiúsculas, minúsculas, números e símbolos";
+    String message() default "{validation.strong-password}";
     int min() default 6;
     int max() default 8;
     Class<?>[] groups() default {};
