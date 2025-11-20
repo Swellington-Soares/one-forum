@@ -3,12 +3,11 @@ package br.one.forum.services;
 import br.one.forum.dtos.TopicCreateRequestDto;
 import br.one.forum.dtos.TopicEditMapper;
 import br.one.forum.dtos.TopicEditRequestDto;
-import br.one.forum.dtos.UpdateTopicRequestDto;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
+import br.one.forum.exception.ActionNotPermittedException;
 import br.one.forum.exception.InvalidTopicOwnerException;
 import br.one.forum.exception.TopicNotFoundException;
-import br.one.forum.mappers.TopicResponseMapper;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.specification.TopicSpecification;
 import jakarta.validation.constraints.NotNull;
@@ -24,9 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TopicService {
 
     private final TopicRepository topicRepository;
-    private final UserService userService;
     private final CategoryService categoryService;
-    private final TopicResponseMapper topicResponseMapper;
     private final TopicEditMapper topicEditMapper;
 
     public void toggleLike(Topic topic, User user) {
@@ -40,15 +37,8 @@ public class TopicService {
     }
 
     public void deleteTopic(int topicId, User owner) {
-        if (owner == null) return;
+        if (owner == null) throw new ActionNotPermittedException();
         topicRepository.deleteTopicByIdAndUserId(topicId, owner.getId());
-    }
-
-    public void updateTopic(int topicId, UpdateTopicRequestDto dto) {
-        var topic = topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
-        topic.setTitle(dto.title() != null ? dto.title() : topic.getTitle());
-        topic.setContent(dto.content() != null ? dto.content() : topic.getContent());
-        topicRepository.save(topic);
     }
 
 
@@ -96,6 +86,6 @@ public class TopicService {
         if (!topic.getUser().getId().equals(currentLoggedUser.getId()))
             throw new InvalidTopicOwnerException();
 
-        return topicRepository.save( topicEditMapper.partialUpdate(data, topic) );
+        return topicRepository.save(topicEditMapper.partialUpdate(data, topic));
     }
 }

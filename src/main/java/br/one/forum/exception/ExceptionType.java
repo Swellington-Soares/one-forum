@@ -8,7 +8,9 @@ public enum ExceptionType {
     ERR_TOKEN_GENERATOR("ERR_TOKEN_GENERATOR"),
     WRONG_CREDENTIAL("WRONG_CREDENTIAL"),
     LOGIN_REQUEST("LOGIN_REQUEST"),
-    TOPIC_EDIT("TOPIC_EDIT")
+    TOPIC_EDIT("TOPIC_EDIT"),
+    NOT_PERMITTED("NOT_PERMITTED")
+
     ;
 
     private final String value;

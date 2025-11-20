@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Integer>, JpaSpecificationExecutor<Topic> {
@@ -15,4 +16,5 @@ public interface TopicRepository extends JpaRepository<Topic, Integer>, JpaSpeci
     List<Topic> findByTitleContainingIgnoreCase(String title);
     Slice<Topic> findByUserIdOrderByCreatedAtDesc(int userId, Pageable pageable);
     void deleteTopicByIdAndUserId(Integer id, Integer userId);
+    Optional<Topic> findByIdAndUserId(Integer id, Integer user_id);
 }
