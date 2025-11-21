@@ -4,8 +4,8 @@ package br.one.forum.controllers;
 import br.one.forum.dtos.TopicCreateRequestDto;
 import br.one.forum.dtos.TopicEditRequestDto;
 import br.one.forum.dtos.TopicResponseDto;
-import br.one.forum.entities.User;
 import br.one.forum.mappers.TopicResponseMapper;
+import br.one.forum.services.CurrentUser;
 import br.one.forum.services.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,8 @@ public class TopicController {
 
     private final TopicService topicService;
     private final TopicResponseMapper topicResponseMapper;
-    private final User currentLoggedUser;
+    private final CurrentUser auth;
+
 
     @Operation(
             summary = "Lista de tópicos",
@@ -83,21 +85,27 @@ public class TopicController {
             Pageable pageable
     ) {
 
+        var user = auth.getUser();
+
         return topicService.getAll(authorId, moreLiked, pageable)
-                .map(t -> topicResponseMapper.toDtoExcludeContent(t, currentLoggedUser));
+                .map(t -> topicResponseMapper.toDtoExcludeContent(t, user));
     }
+
 
     @GetMapping("/{topicId}")
     public EntityModel<TopicResponseDto> getTopic(@PathVariable("topicId") int topicId) {
-        return EntityModel.of(topicResponseMapper.toDto(topicService.findTopicById(topicId), currentLoggedUser));
+        return EntityModel.of(topicResponseMapper.toDto(topicService.findTopicById(topicId), auth.getUser()));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<TopicResponseDto> createTopic(@RequestBody @Valid TopicCreateRequestDto data) {
 
+        var user = auth.getUser();
+
         TopicResponseDto created = topicResponseMapper
                 .toDtoExcludeContent(
-                        topicService.createTopic(currentLoggedUser, data),
+                        topicService.createTopic(user, data),
                         null
                 );
 
@@ -115,14 +123,15 @@ public class TopicController {
     public ResponseEntity<TopicResponseDto> createTopic(
             @PathVariable("topicId") int topicId,
             @RequestBody @Valid TopicEditRequestDto data) {
-        var editedTopic = topicService.editTopic(topicId, data, currentLoggedUser);
-        return ResponseEntity.ok(topicResponseMapper.toDtoExcludeContent(editedTopic, currentLoggedUser));
+        var user = auth.getUser();
+        var editedTopic = topicService.editTopic(topicId, data, user);
+        return ResponseEntity.ok(topicResponseMapper.toDtoExcludeContent(editedTopic, user));
     }
 
 
     @DeleteMapping("/{topicId}")
     public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") int topicId) {
-        topicService.deleteTopic(topicId, currentLoggedUser);
+        topicService.deleteTopic(topicId, auth.getUser());
         return ResponseEntity.notFound().build();
     }
 

@@ -1,6 +1,7 @@
 package br.one.forum.exception;
 
 import br.one.forum.dtos.ApiExceptionResponseDto;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 @RestControllerAdvice
@@ -41,7 +43,7 @@ public class GlobalExceptionHandler {
                 .message(exception.getMessage())
                 .path(request.getRequestURI())
                 .status(404)
-                .timestamp(Instant.now())
+                .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
@@ -49,7 +51,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LockedException.class)
     public ResponseEntity<ApiExceptionResponseDto> handleLockedException(LockedException exception, HttpServletRequest request) {
         var response =  ApiExceptionResponseDto.builder()
-                .timestamp(Instant.now())
+                .timestamp(LocalDateTime.now())
                 .status(HttpStatus.FORBIDDEN.value())
                 .path(request.getRequestURI())
                 .message(exception.getMessage())
@@ -61,13 +63,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiExceptionResponseDto> handleBadCredentialsException(BadCredentialsException exception, HttpServletRequest request) {
         var response =  ApiExceptionResponseDto.builder()
-                .timestamp(Instant.now())
+                .timestamp(LocalDateTime.now())
                 .status(HttpStatus.FORBIDDEN.value())
                 .path(request.getRequestURI())
                 .message(exception.getMessage())
                 .type(ExceptionType.BAD_CREDENTIALS.getValue())
                 .build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity<ApiExceptionResponseDto> handleTokenExpiredException(JWTVerificationException exception, HttpServletRequest request) {
+        var response = ApiExceptionResponseDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .path(request.getRequestURI())
+                .message(exception.getMessage())
+                .type(ExceptionType.TOKEN_VALIDATION.getValue())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
 

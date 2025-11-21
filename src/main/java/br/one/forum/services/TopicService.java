@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,10 +77,9 @@ public class TopicService {
         }
 
         return topicRepository.findAll(spec, pageable);
-
     }
 
-    public Topic editTopic(int topicId, TopicEditRequestDto data, User currentLoggedUser) {
+    public Topic editTopic(int topicId, TopicEditRequestDto data, @Nullable User currentLoggedUser) {
         var topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TopicNotFoundException(topicId));
 

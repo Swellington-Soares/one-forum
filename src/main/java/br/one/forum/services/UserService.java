@@ -1,5 +1,6 @@
 package br.one.forum.services;
 
+import br.one.forum.dtos.TokenDto;
 import br.one.forum.dtos.UserPasswordUpdateRequestDto;
 import br.one.forum.dtos.UserProfileUpdateRequestDto;
 import br.one.forum.dtos.UserRegisterRequestDto;
@@ -91,5 +92,11 @@ public final class UserService {
 
     public User findUserByEmailOrNull(String username) {
         return userRepository.findByEmail(username).orElse(null);
+    }
+
+    public void updateRefreshToken(User user, TokenDto newRefreshToken) {
+        user.setRefreshToken(newRefreshToken.token());
+        user.setRefreshTokenExpiration(newRefreshToken.expirationDate());
+        userRepository.save(user);
     }
 }

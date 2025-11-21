@@ -1,4 +1,6 @@
 package br.one.forum.dtos;
 
-public record LoginResponseDto(String token) {
+public record LoginResponseDto(
+        String accessToken,
+        String refreshToken) {
 }

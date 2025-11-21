@@ -1,7 +1,7 @@
 package br.one.forum.services;
 
 import br.one.forum.exception.AuthenticationCredentialException;
-import br.one.forum.security.UserSecurityDetails;
+import br.one.forum.security.AppUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +17,7 @@ public class AuthorizationService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
-            return new UserSecurityDetails(userService.findUserByEmail(username, false));
+            return new AppUserDetails(userService.findUserByEmail(username, false));
         } catch (Exception e) {
             throw new AuthenticationCredentialException();
         }

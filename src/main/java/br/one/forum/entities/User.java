@@ -79,6 +79,12 @@ public class User {
     @Accessors(chain = true)
     private boolean deleted = false;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
+    @Column(name = "refresh_token_expiration")
+    private Instant refreshTokenExpiration;
+
     public User(@NotNull String email,
                 @NotNull String password,
                 @NotNull Profile profile) {
