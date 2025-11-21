@@ -1,6 +1,5 @@
 package br.one.forum.configuration;
 
-import br.one.forum.entities.User;
 import br.one.forum.security.AppUserDetails;
 import br.one.forum.services.AuthenticationService;
 import br.one.forum.services.CurrentUser;
@@ -8,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.context.annotation.RequestScope;
 
 @Configuration
