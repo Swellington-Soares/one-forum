@@ -12,9 +12,13 @@ import java.lang.annotation.*;
 public @interface StrongPassword {
 
     String message() default "validation.strong-password";
+
     int min() default 6;
+
     int max() default 8;
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 
 }

@@ -1,8 +1,8 @@
 package br.one.forum.seeders.factories;
 
-import br.one.forum.utils.DataFaker;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
+import br.one.forum.utils.DataFaker;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -12,9 +12,7 @@ public enum ExceptionType {
     NOT_PERMITTED("NOT_PERMITTED"),
     ACCOUNT_LOCKED("ACCOUNT_LOCKED"),
     BAD_CREDENTIALS("BAD_CREDENTIALS"),
-    TOKEN_VALIDATION("TOKEN_VALIDATION")
-
-    ;
+    TOKEN_VALIDATION("TOKEN_VALIDATION");
 
     private final String value;
 

@@ -35,7 +35,7 @@ public class Profile {
         this.name = name;
     }
 
-    public Profile(String name, String photo){
+    public Profile(String name, String photo) {
         this.name = name;
         this.photo = photo;
     }

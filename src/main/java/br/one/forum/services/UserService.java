@@ -20,6 +20,8 @@ public final class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
+    private final EmailService emailService;
 
     public User findUserById(Integer id, Boolean includeDeleted) {
         if (includeDeleted) {
@@ -46,6 +48,8 @@ public final class UserService {
         User user = new User();
         user.setEmail(dto.email());
         user.setPassword(encodedPassword);
+        user.setLocked(false);
+        user.setEmailVerified(true);
         user.setProfile(new Profile(dto.name(), dto.avatarUrl()));
         userRepository.save(user);
     }
@@ -98,5 +102,11 @@ public final class UserService {
         user.setRefreshToken(newRefreshToken.token());
         user.setRefreshTokenExpiration(newRefreshToken.expirationDate());
         userRepository.save(user);
+    }
+
+    public void registerUser(UserRegisterRequestDto data) {
+        createUser(data);
+        //String emailToken = tokenService.generateEmailToken(data.email());
+        //emailService.SendConfirmAccountEmail(data.email(), emailToken);
     }
 }
