@@ -1,8 +1,6 @@
 package br.one.forum.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,14 +8,9 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -90,7 +83,13 @@ public class User {
                 @NotNull Profile profile) {
         this.email = email;
         this.password = password;
+        setProfile(profile);
+
+    }
+
+    public void setProfile(@NotNull Profile profile) {
         this.profile = profile;
+        this.profile.setUser(this);
     }
 
     @PrePersist
