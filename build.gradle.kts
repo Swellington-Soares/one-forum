@@ -58,6 +58,8 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
     implementation ("com.auth0:java-jwt:4.5.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
 
 }
 
