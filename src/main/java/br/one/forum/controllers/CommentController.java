@@ -1,52 +1,106 @@
 package br.one.forum.controllers;
 
+import br.one.forum.dtos.CommentCreateRequestDto;
 import br.one.forum.dtos.CommentResponseDto;
-import br.one.forum.dtos.CreateCommentDto;
 import br.one.forum.dtos.UpdateCommentDto;
+import br.one.forum.entities.CurrentUser;
 import br.one.forum.services.CommentService;
+import br.one.forum.services.TopicService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/topics/{topicId}/comments")
+@RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentService service;
-
-    public CommentController(CommentService service) {
-        this.service = service;
-    }
+    private final CommentService commentService;
+    private final TopicService topicService;
+    private final CurrentUser auth;
 
     @PostMapping
-    public ResponseEntity<CommentResponseDto> saveComment(@RequestBody @Valid CreateCommentDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createComment(dto));
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<CommentResponseDto> createComment(
+            @PathVariable int topicId,
+            @RequestBody @Valid CommentCreateRequestDto dto) {
+        var comment = commentService.createComment(topicId, auth.user(), dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
 
+
+    @Operation(
+            summary = "Lista de comentários do tópico",
+            description = "Retorna uma lista paginada de comentários do tópico, com opção de filtrar por autor e ordenar por curtidas."
+    )
+    @Parameter(
+            name = "sort",
+            description = "Ordenação no formato: campo,asc ou campo,desc",
+            example = "createdAt,desc"
+    )
+    @Parameter(
+            name = "page",
+            description = "Número da página (0..N)",
+            example = "0"
+    )
+    @Parameter(
+            name = "size",
+            description = "Quantidade de itens por página",
+            example = "10"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de comentários do tópico retornada com sucesso",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CommentResponseDto.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Parâmetros inválidos"),
+            @ApiResponse(responseCode = "500", description = "Erro interno inesperado")
+    })
     @GetMapping
-    public ResponseEntity<List<CommentResponseDto>> listAllComment() {
-        return ResponseEntity.ok(service.listAllComment());
+    public Page<CommentResponseDto> getComments(@PathVariable int topicId,
+                                                Pageable pageable) {
+        return commentService.findAllByTopicId(topicId, pageable);
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> getOneComment(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.findByIdComment(id));
+    public ResponseEntity<CommentResponseDto> getOneComment(
+            @PathVariable int topicId,
+            @PathVariable int id) {
+        return ResponseEntity.ok(commentService.findByTopicIdAndCommentId(topicId, id));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CommentResponseDto> updateComment(
+            @PathVariable int topicId,
             @PathVariable Integer id,
             @RequestBody @Valid UpdateCommentDto dto) {
-
-        return ResponseEntity.ok(service.updateComment(id, dto));
+        return ResponseEntity.ok(commentService.updateComment(auth.user().getId(), topicId, id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Integer id) {
-        service.deleteComment(id);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable int topicId,
+            @PathVariable Integer id) {
+        commentService.deleteComment(auth.user().getId(), topicId, id);
         return ResponseEntity.noContent().build();
     }
 }

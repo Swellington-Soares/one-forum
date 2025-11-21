@@ -84,6 +84,13 @@ public class Topic {
         this(title, content, user, new Category(category));
     }
 
+    public Topic(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.createdAt = Instant.now();
+    }
+
     public int getLikeCount() {
         return likedBy.size();
     }
@@ -109,7 +116,6 @@ public class Topic {
         }
     }
 
-
     public void toggleLike(User likeUser) {
         if (likeUser == null) return;
         if (likeUser.equals(user)) return;
@@ -121,13 +127,6 @@ public class Topic {
             likedBy.add(likeUser);
             likeUser.getLikedTopics().add(this);
         }
-    }
-
-    public Topic(String title, String content, User user) {
-        this.title = title;
-        this.content = content;
-        this.user = user;
-        this.createdAt = Instant.now();
     }
 
 }

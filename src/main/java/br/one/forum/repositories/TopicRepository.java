@@ -13,8 +13,12 @@ import java.util.Optional;
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Integer>, JpaSpecificationExecutor<Topic> {
     List<Topic> findByUserId(Integer userId);
+
     List<Topic> findByTitleContainingIgnoreCase(String title);
+
     Slice<Topic> findByUserIdOrderByCreatedAtDesc(int userId, Pageable pageable);
+
     void deleteTopicByIdAndUserId(Integer id, Integer userId);
+
     Optional<Topic> findByIdAndUserId(Integer id, Integer user_id);
 }

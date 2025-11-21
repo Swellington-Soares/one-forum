@@ -27,6 +27,7 @@ public class Comment {
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

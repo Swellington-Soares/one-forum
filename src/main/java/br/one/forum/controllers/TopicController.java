@@ -4,8 +4,8 @@ package br.one.forum.controllers;
 import br.one.forum.dtos.TopicCreateRequestDto;
 import br.one.forum.dtos.TopicEditRequestDto;
 import br.one.forum.dtos.TopicResponseDto;
+import br.one.forum.entities.CurrentUser;
 import br.one.forum.mappers.TopicResponseMapper;
-import br.one.forum.services.CurrentUser;
 import br.one.forum.services.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -85,7 +85,7 @@ public class TopicController {
             Pageable pageable
     ) {
 
-        var user = auth.getUser();
+        var user = auth.user();
 
         return topicService.getAll(authorId, moreLiked, pageable)
                 .map(t -> topicResponseMapper.toDtoExcludeContent(t, user));
@@ -94,14 +94,14 @@ public class TopicController {
 
     @GetMapping("/{topicId}")
     public EntityModel<TopicResponseDto> getTopic(@PathVariable("topicId") int topicId) {
-        return EntityModel.of(topicResponseMapper.toDto(topicService.findTopicById(topicId), auth.getUser()));
+        return EntityModel.of(topicResponseMapper.toDto(topicService.findTopicById(topicId), auth.user()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<TopicResponseDto> createTopic(@RequestBody @Valid TopicCreateRequestDto data) {
 
-        var user = auth.getUser();
+        var user = auth.user();
 
         TopicResponseDto created = topicResponseMapper
                 .toDtoExcludeContent(
@@ -123,7 +123,7 @@ public class TopicController {
     public ResponseEntity<TopicResponseDto> createTopic(
             @PathVariable("topicId") int topicId,
             @RequestBody @Valid TopicEditRequestDto data) {
-        var user = auth.getUser();
+        var user = auth.user();
         var editedTopic = topicService.editTopic(topicId, data, user);
         return ResponseEntity.ok(topicResponseMapper.toDtoExcludeContent(editedTopic, user));
     }
@@ -131,7 +131,7 @@ public class TopicController {
 
     @DeleteMapping("/{topicId}")
     public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") int topicId) {
-        topicService.deleteTopic(topicId, auth.getUser());
+        topicService.deleteTopic(topicId, auth.user());
         return ResponseEntity.notFound().build();
     }
 

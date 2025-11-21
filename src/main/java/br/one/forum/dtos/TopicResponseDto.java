@@ -17,11 +17,12 @@ public record TopicResponseDto(Integer id,
                                Boolean likedByCurrentUser,
                                TopicResponseDto.UserTopicDto user, Instant createdAt, Instant updatedAt,
                                Set<TopicCategoryDto> categories) implements Serializable {
-    public record UserTopicDto(Integer id,Instant createdAt,
+    public record UserTopicDto(Integer id, Instant createdAt,
                                UserTopicProfileDto profile) implements Serializable {
         public record UserTopicProfileDto(@NotNull String name, String photo) implements Serializable {
         }
     }
+
     public record TopicCategoryDto(@NotNull @Size(max = 50) String name) implements Serializable {
     }
 }

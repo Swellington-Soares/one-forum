@@ -1,16 +1,17 @@
 package br.one.forum.services;
 
-import br.one.forum.dtos.CreateCommentDto;
-import br.one.forum.dtos.UpdateCommentDto;
+import br.one.forum.dtos.CommentCreateRequestDto;
 import br.one.forum.dtos.CommentResponseDto;
+import br.one.forum.dtos.UpdateCommentDto;
 import br.one.forum.entities.Comment;
+import br.one.forum.entities.User;
+import br.one.forum.exception.CommentCannotBeEditableByCurrentUserException;
 import br.one.forum.exception.CommentNotFoundException;
 import br.one.forum.mappers.CommentMapper;
 import br.one.forum.repositories.CommentRepository;
-import br.one.forum.repositories.TopicRepository;
-import br.one.forum.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,27 +22,18 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final TopicService topicService;
-    private final UserService  userService;
+    private final UserService userService;
     private final CommentMapper commentMapper;
 
 
-
-
-    public CommentResponseDto createComment(CreateCommentDto dto) {
-
-        var topic = topicService.findTopicById(dto.topicId());
-
-
-        var user = userService.findUserById(dto.userId(),false);
-
-
+    public CommentResponseDto createComment(int topicId, User user, CommentCreateRequestDto dto) {
+        var topic = topicService.findTopicById(topicId);
         var comment = new Comment();
+        comment.setContent(dto.content());
         comment.setTopic(topic);
         comment.setUser(user);
-        comment.setContent(dto.content());
-
-        var saved = commentRepository.save(comment);
-        return  commentMapper.toDto(saved);
+        commentRepository.save(comment);
+        return commentMapper.toDto(comment);
     }
 
 
@@ -49,7 +41,7 @@ public class CommentService {
 
         return commentRepository.findAll()
                 .stream()
-                .map(c ->commentMapper.toDto(c)
+                .map(c -> commentMapper.toDto(c)
                 )
                 .toList();
     }
@@ -63,29 +55,32 @@ public class CommentService {
         return commentMapper.toDto(c);
     }
 
-
-    public CommentResponseDto updateComment(Integer id, UpdateCommentDto dto) {
-
-        var comment = commentRepository.findById(id)
+    public CommentResponseDto updateComment(int userId, int topicId, int id, UpdateCommentDto dto) {
+        var comment = commentRepository.findCommentByIdAndTopicId(id, topicId)
                 .orElseThrow(() -> new CommentNotFoundException(id));
-
-        comment.setContent(dto.content());
-
-        var updated = commentRepository.save(comment);
-
-        return commentMapper.toDto(updated);
-
+        if (comment.getUser().getId() != userId)
+            throw new CommentCannotBeEditableByCurrentUserException();
+        commentRepository.save(comment);
+        return commentMapper.toDto(comment);
     }
 
-
-    public void deleteComment(Integer id) {
-
-        var comment = commentRepository.findById(id)
+    public void deleteComment(int userId, int topicId, int id) {
+        var comment = commentRepository.findCommentByIdAndTopicId(id, topicId)
                 .orElseThrow(() -> new CommentNotFoundException(id));
-
+        if (comment.getUser().getId() != userId)
+            throw new CommentCannotBeEditableByCurrentUserException();
         commentRepository.delete(comment);
     }
 
 
+    public Page<CommentResponseDto> findAllByTopicId(int topicId, Pageable pageable) {
+        return commentRepository.findAllByTopicId(topicId, pageable).map(commentMapper::toDto);
+    }
+
+    public CommentResponseDto findByTopicIdAndCommentId(int topicId, int id) {
+        return commentRepository.findCommentByIdAndTopicId(id, topicId)
+                .map(commentMapper::toDto)
+                .orElseThrow(() -> new CommentNotFoundException(id));
+    }
 }
 

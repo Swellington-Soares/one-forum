@@ -5,15 +5,14 @@ import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 
-
 public class TopicSpecification {
 
-    public static Specification<Topic> byAuthor(Long authorId){
+    public static Specification<Topic> byAuthor(Long authorId) {
         return (root, query, cb) ->
                 cb.equal(root.get("user").get("id"), authorId);
     }
 
-    public static Specification<Topic> orderByMoreLiked(){
+    public static Specification<Topic> orderByMoreLiked() {
         return (root, query, cb) -> {
             assert query != null;
             query.distinct(true);
