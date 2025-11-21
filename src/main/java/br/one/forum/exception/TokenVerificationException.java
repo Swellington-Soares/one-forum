@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 public class TokenVerificationException  extends ApiException {
     public TokenVerificationException () {
         super(
-                "exception.token-invalid",
+                "exception.accessToken-invalid",
                 HttpStatus.BAD_REQUEST,
                 ExceptionType.LOGIN_REQUEST.getValue()
         );

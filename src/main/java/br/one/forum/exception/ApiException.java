@@ -1,8 +1,10 @@
 package br.one.forum.exception;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 public abstract class ApiException extends RuntimeException {
@@ -11,7 +13,9 @@ public abstract class ApiException extends RuntimeException {
     private final Object[] messageArgs;
     private final HttpStatus httpStatus;
     private final String type;
-    private final Instant timestamp;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private final LocalDateTime timestamp;
 
     protected ApiException(
             String messageKey,
@@ -24,7 +28,7 @@ public abstract class ApiException extends RuntimeException {
         this.httpStatus = httpStatus;
         this.type = type;
         this.messageArgs = args;
-        this.timestamp = Instant.now();
+        this.timestamp = LocalDateTime.now();
     }
 
 }
