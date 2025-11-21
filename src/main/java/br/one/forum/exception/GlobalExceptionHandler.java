@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
@@ -50,7 +49,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(LockedException.class)
     public ResponseEntity<ApiExceptionResponseDto> handleLockedException(LockedException exception, HttpServletRequest request) {
-        var response =  ApiExceptionResponseDto.builder()
+        var response = ApiExceptionResponseDto.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.FORBIDDEN.value())
                 .path(request.getRequestURI())
@@ -62,7 +61,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiExceptionResponseDto> handleBadCredentialsException(BadCredentialsException exception, HttpServletRequest request) {
-        var response =  ApiExceptionResponseDto.builder()
+        var response = ApiExceptionResponseDto.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.FORBIDDEN.value())
                 .path(request.getRequestURI())

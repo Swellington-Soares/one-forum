@@ -1,29 +1,32 @@
 package br.one.forum.services;
 
 import br.one.forum.dtos.TokenDto;
+import br.one.forum.entities.EmailToken;
 import br.one.forum.entities.User;
+import br.one.forum.repositories.EmailTokenRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class TokenService {
 
+    private final EmailTokenRepository emailTokenRepository;
     @Value("${api.security.access-token.key}")
     private String tokenSecretKey;
-
     @Value("${api.security.access-token.expiration}")
     private int tokenExpirationInMinutes;
-
     @Value("${api.security.refresh-token.key}")
     private String refreshTokenSecretKey;
-
     @Value("${api.security.refresh-token.expiration}")
     private int refreshTokenExpirationInMinutes;
 
@@ -65,6 +68,34 @@ public class TokenService {
 
     private Instant getTokenExpirationDate(int minutes) {
         return LocalDateTime.now().plusMinutes(minutes).toInstant(ZoneOffset.of("-03:00"));
+    }
+
+    public String generateEmailToken(String email) {
+        var token = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase();
+        var expirationDate = getTokenExpirationDate(120);
+        var tokenType = EmailToken.TokenType.EMAIL_TOKEN;
+        var tokenEntity = emailTokenRepository.findByEmailAndType(email, tokenType).orElse(null);
+
+        if (tokenEntity != null && (!tokenEntity.isExpired())) {
+            return tokenEntity.getToken();
+        }
+
+        if (tokenEntity == null || tokenEntity.isExpired()) {
+
+            if (tokenEntity != null) {
+                emailTokenRepository.delete(tokenEntity);
+            }
+
+            emailTokenRepository.save(EmailToken.builder()
+                    .email(email)
+                    .expiration(expirationDate)
+                    .token(token)
+                    .type(tokenType)
+                    .build());
+        }
+
+
+        return token;
     }
 
 }

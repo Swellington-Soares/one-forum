@@ -1,8 +1,8 @@
 package br.one.forum.configuration;
 
+import br.one.forum.entities.CurrentUser;
 import br.one.forum.security.AppUserDetails;
 import br.one.forum.services.AuthenticationService;
-import br.one.forum.services.CurrentUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.Nullable;
@@ -17,8 +17,8 @@ public class CurrentLoggedUserConfiguration {
     @Nullable
     public CurrentUser currentLoggedUser(AuthenticationService authenticationService) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !(auth.getPrincipal() instanceof AppUserDetails userDetails))
+        if (auth == null || !(auth.getPrincipal() instanceof AppUserDetails(br.one.forum.entities.User user)))
             return new CurrentUser(null);
-        return new CurrentUser(userDetails.getUser());
+        return new CurrentUser(user);
     }
 }

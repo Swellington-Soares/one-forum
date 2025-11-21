@@ -3,8 +3,8 @@ package br.one.forum.services;
 import br.one.forum.dtos.AuthenticationRequestDto;
 import br.one.forum.dtos.LoginResponseDto;
 import br.one.forum.entities.User;
-import br.one.forum.exception.RefreshTokenInvalidException;
 import br.one.forum.exception.ApiTokenExpiredException;
+import br.one.forum.exception.RefreshTokenInvalidException;
 import br.one.forum.exception.UserNotFoundException;
 import br.one.forum.exception.UserPasswordNotMatchException;
 import br.one.forum.security.AppUserDetails;
@@ -33,7 +33,7 @@ public class AuthenticationService {
         Authentication auth = authenticationManager.authenticate(userNamePassword);
 
         AppUserDetails appUserDetails = (AppUserDetails) auth.getPrincipal();
-        User user = appUserDetails.getUser();
+        User user = appUserDetails.user();
 
         if (user == null) {
             throw new UserNotFoundException(data.email());

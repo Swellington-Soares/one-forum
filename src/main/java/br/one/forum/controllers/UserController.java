@@ -3,11 +3,9 @@ package br.one.forum.controllers;
 
 import br.one.forum.dtos.UserRegisterRequestDto;
 import br.one.forum.entities.User;
-import br.one.forum.services.AuthenticationService;
 import br.one.forum.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +24,9 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid UserRegisterRequestDto data) {
-        userService.createUser(data);
+        userService.registerUser(data);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
 }
 

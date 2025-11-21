@@ -4,7 +4,6 @@ package br.one.forum.security;
 import br.one.forum.dtos.ApiExceptionResponseDto;
 import br.one.forum.exception.ExceptionType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
