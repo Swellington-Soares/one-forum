@@ -1,4 +1,4 @@
-package br.one.forum.repositoy;
+package br.one.forum.repository;
 
 import br.one.forum.TestcontainersConfiguration;
 import br.one.forum.entities.*;

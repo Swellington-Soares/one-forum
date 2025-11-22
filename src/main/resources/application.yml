@@ -7,6 +7,12 @@ app:
       allowed-types: image/jpeg,image/png
 
 spring:
+  mail:
+    host: localhost
+    port: 1025
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
   application:
     name: forum
 
@@ -37,5 +43,9 @@ springdoc:
 
 api:
   security:
-    token:
-      secret: ${JWT_SECRET:my-secret-key}
+    access-token:
+      key: ${JWT_KEY_SECRET:my-secret-key}
+      expiration: 15
+    refresh-token:
+      key: ${JWT_REFRESH_KEY_SECRET:my-refresh-key}
+      expiration: 10080
