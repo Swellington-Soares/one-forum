@@ -85,7 +85,7 @@ public class TopicController {
             Pageable pageable
     ) {
 
-        var user = auth.user();
+        var user = auth.getUser();
 
         return topicService.getAll(authorId, moreLiked, pageable)
                 .map(t -> topicResponseMapper.toDtoExcludeContent(t, user));
@@ -94,14 +94,14 @@ public class TopicController {
 
     @GetMapping("/{topicId}")
     public EntityModel<TopicResponseDto> getTopic(@PathVariable("topicId") int topicId) {
-        return EntityModel.of(topicResponseMapper.toDto(topicService.findTopicById(topicId), auth.user()));
+        return EntityModel.of(topicResponseMapper.toDto(topicService.findTopicById(topicId), auth.getUser()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<TopicResponseDto> createTopic(@RequestBody @Valid TopicCreateRequestDto data) {
 
-        var user = auth.user();
+        var user = auth.getUser();
 
         TopicResponseDto created = topicResponseMapper
                 .toDtoExcludeContent(
@@ -123,7 +123,7 @@ public class TopicController {
     public ResponseEntity<TopicResponseDto> createTopic(
             @PathVariable("topicId") int topicId,
             @RequestBody @Valid TopicEditRequestDto data) {
-        var user = auth.user();
+        var user = auth.getUser();
         var editedTopic = topicService.editTopic(topicId, data, user);
         return ResponseEntity.ok(topicResponseMapper.toDtoExcludeContent(editedTopic, user));
     }
@@ -131,7 +131,7 @@ public class TopicController {
 
     @DeleteMapping("/{topicId}")
     public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") int topicId) {
-        topicService.deleteTopic(topicId, auth.user());
+        topicService.deleteTopic(topicId, auth.getUser());
         return ResponseEntity.notFound().build();
     }
 

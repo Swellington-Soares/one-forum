@@ -15,7 +15,7 @@ public class CurrentLoggedUserConfiguration {
     @Bean
     @RequestScope
     @Nullable
-    public CurrentUser currentLoggedUser(AuthenticationService authenticationService) {
+    public CurrentUser currentLoggedUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !(auth.getPrincipal() instanceof AppUserDetails(br.one.forum.entities.User user)))
             return new CurrentUser(null);

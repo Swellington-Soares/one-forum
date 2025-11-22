@@ -36,7 +36,7 @@ public class CommentController {
     public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable int topicId,
             @RequestBody @Valid CommentCreateRequestDto dto) {
-        var comment = commentService.createComment(topicId, auth.user(), dto);
+        var comment = commentService.createComment(topicId, auth.getUser(), dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
 
@@ -92,7 +92,7 @@ public class CommentController {
             @PathVariable int topicId,
             @PathVariable Integer id,
             @RequestBody @Valid UpdateCommentDto dto) {
-        return ResponseEntity.ok(commentService.updateComment(auth.user().getId(), topicId, id, dto));
+        return ResponseEntity.ok(commentService.updateComment(auth.getUser().getId(), topicId, id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -100,7 +100,7 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(
             @PathVariable int topicId,
             @PathVariable Integer id) {
-        commentService.deleteComment(auth.user().getId(), topicId, id);
+        commentService.deleteComment(auth.getUser().getId(), topicId, id);
         return ResponseEntity.noContent().build();
     }
 }

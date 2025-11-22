@@ -1,4 +1,13 @@
 package br.one.forum.entities;
 
-public record CurrentUser(User user) {
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
+public class CurrentUser {
+
+    private final User user;
+
+
 }
