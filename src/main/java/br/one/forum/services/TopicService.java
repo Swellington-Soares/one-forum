@@ -64,12 +64,18 @@ public class TopicService {
     public Page<Topic> getAll(
             Long authorId,
             Boolean moreLiked,
+            Long categoryId,
+            String title,
             Pageable pageable
     ) {
         Specification<Topic> spec = Specification.unrestricted();
 
-        if (authorId != null) {
-            spec = spec.and(TopicSpecification.byAuthor(authorId));
+        if (categoryId != null) {
+            spec = spec.and(TopicSpecification.byCategoryId(categoryId));
+        } else if (title != null) {
+            spec = spec.and(TopicSpecification.byTitleOrAuthorName(title));
+        } else if (authorId != null) {
+            spec = spec.and(TopicSpecification.byAuthorId(authorId));
         }
 
         if (Boolean.TRUE.equals(moreLiked)) {
