@@ -12,7 +12,7 @@ public class UserTest {
 
     @Test
     void testUserToStringMethodWithPasswordProtectedDefinition() {
-        var user = new User("david@forum.com", "12345678", new Profile("David", null));
+        var user = new User("david@forum.com", "12345678", Profile.builder().name("David").build());
         assertThat(user.getPassword()).isEqualTo("12345678");
         assertThat(user.toString()).contains("password=[PROTECTED]");
     }

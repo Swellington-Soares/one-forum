@@ -23,14 +23,14 @@ public final class UserService {
     private final PasswordEncoder passwordEncoder;
     private final Validator validator;
 
-    public User findUserById(Integer id, Boolean includeDeleted) {
+    public User findUserById(Integer id, boolean includeDeleted) {
         if (includeDeleted) {
             return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         }
         return userRepository.findByIdAndDeletedIsFalse(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User findUserByEmail(String email, Boolean includeDeleted) {
+    public User findUserByEmail(String email, boolean includeDeleted) {
         if (includeDeleted) {
             return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
         }
@@ -50,11 +50,15 @@ public final class UserService {
         user.setPassword(encodedPassword);
         user.setLocked(false);
         user.setEmailVerified(true);
-        user.setProfile(new Profile(dto.name(), dto.avatarUrl()));
+        user.setProfile(
+                Profile.builder()
+                        .name(dto.name())
+                        .photo(dto.avatarUrl())
+                        .build());
         userRepository.save(user);
     }
 
-    public void updateUserProfilePhoto(Integer userId, UserProfileUpdateRequestDto dto) {
+    public void updateUserProfilePhoto(int userId, UserProfileUpdateRequestDto dto) {
         var user = findUserById(userId, false);
         var oldPhoto = user.getProfile().getPhoto();
         var photo = dto.photo();
@@ -65,7 +69,7 @@ public final class UserService {
         userRepository.save(user);
     }
 
-    public void updateUserPassword(Integer userId, UserPasswordUpdateRequestDto dto) {
+    public void updateUserPassword(int userId, UserPasswordUpdateRequestDto dto) {
         var user = findUserById(userId, false);
         if (!passwordEncoder.matches(dto.password(), user.getPassword()))
             throw new UserPasswordNotMatchException();
@@ -73,7 +77,7 @@ public final class UserService {
         userRepository.save(user);
     }
 
-    public void updateUserEmailVerified(Integer userId, String token) {
+    public void updateUserEmailVerified(int userId, String token) {
         //TODO: DESENVOLVER QUANDO MAIS TARDE
     }
 
@@ -115,7 +119,7 @@ public final class UserService {
         //emailService.SendConfirmAccountEmail(data.email(), emailToken);
     }
 
-    public void updateUserProfile(Integer id, UserProfileUpdateRequestDto data) {
+    public void updateUserProfile(int id, UserProfileUpdateRequestDto data) {
         if (data.photo() != null || data.name() != null){
             User user = findUserById(id, false);
 
