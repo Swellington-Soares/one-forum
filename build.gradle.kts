@@ -61,6 +61,9 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
 
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.20.1")
+
+
 }
 
 tasks.register<JavaExec>("runSeed") {

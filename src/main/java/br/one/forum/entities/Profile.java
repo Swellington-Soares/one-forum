@@ -28,7 +28,7 @@ public class Profile {
     private String name;
 
     @Column(name = "photo")
-    private String photo;
+    private String photo = "";
 
     public Profile(User user, String name) {
         this.user = user;

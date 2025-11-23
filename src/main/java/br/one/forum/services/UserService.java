@@ -10,6 +10,7 @@ import br.one.forum.exception.UserAlreadyRegisteredException;
 import br.one.forum.exception.UserNotFoundException;
 import br.one.forum.exception.UserPasswordNotMatchException;
 import br.one.forum.repositories.UserRepository;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,7 @@ public final class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
-    private final EmailService emailService;
+    private final Validator validator;
 
     public User findUserById(Integer id, Boolean includeDeleted) {
         if (includeDeleted) {
@@ -56,7 +56,12 @@ public final class UserService {
 
     public void updateUserProfilePhoto(Integer userId, UserProfileUpdateRequestDto dto) {
         var user = findUserById(userId, false);
-        user.getProfile().setPhoto(dto.photo());
+        var oldPhoto = user.getProfile().getPhoto();
+        var photo = dto.photo();
+
+        if (oldPhoto.equals(photo)) return;
+
+        user.getProfile().setPhoto(photo);
         userRepository.save(user);
     }
 
@@ -108,5 +113,21 @@ public final class UserService {
         createUser(data);
         //String emailToken = tokenService.generateEmailToken(data.email());
         //emailService.SendConfirmAccountEmail(data.email(), emailToken);
+    }
+
+    public void updateUserProfile(Integer id, UserProfileUpdateRequestDto data) {
+        if (data.photo() != null || data.name() != null){
+            User user = findUserById(id, false);
+
+            if (data.photo() != null && (user.getProfile().getPhoto() == null || !user.getProfile().getPhoto().equals(data.photo()))) {
+                user.getProfile().setPhoto(data.photo());
+            }
+
+            if (data.name() != null && !user.getProfile().getName().equals(data.name())) {
+                user.getProfile().setName(data.name());
+            }
+
+            userRepository.save(user);
+        }
     }
 }
