@@ -12,7 +12,7 @@ import org.springframework.web.context.annotation.RequestScope;
 @Configuration
 public class CurrentLoggedUserConfiguration {
 
-    @Bean
+    @Bean(name = "auth")
     @RequestScope
     @Nullable
     public CurrentUser currentLoggedUser() {

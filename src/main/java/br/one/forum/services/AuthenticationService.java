@@ -45,6 +45,8 @@ public class AuthenticationService {
         var accessToken = tokenService.generateToken(user);
         var refreshToken = tokenService.generateRefreshToken(user);
 
+        userService.updateRefreshToken(user, refreshToken);
+
         return new LoginResponseDto(accessToken.token(), refreshToken.token());
     }
 

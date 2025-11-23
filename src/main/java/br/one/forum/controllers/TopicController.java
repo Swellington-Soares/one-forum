@@ -78,6 +78,18 @@ public class TopicController {
             @RequestParam(required = false) Long authorId,
 
             @Parameter(
+                    description = "Id da categoria",
+                    example = "1"
+            )
+            @RequestParam(required = false) Long categoryId,
+
+            @Parameter(
+                    description = "Título do tópico",
+                    example = "Dev"
+            )
+            @RequestParam(required = false) String title,
+
+            @Parameter(
                     description = "Se true, ordena os tópicos pelos mais curtidos.",
                     example = "true"
             )
@@ -87,7 +99,7 @@ public class TopicController {
 
         var user = auth.getUser();
 
-        return topicService.getAll(authorId, moreLiked, pageable)
+        return topicService.getAll(authorId, moreLiked, categoryId, title, pageable)
                 .map(t -> topicResponseMapper.toDtoExcludeContent(t, user));
     }
 
