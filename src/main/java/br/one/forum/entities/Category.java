@@ -48,8 +48,7 @@ public class Category {
         this.topics.addAll(topics);
     }
 
-    public Category addTopic(Topic topic) {
+    public void addTopic(Topic topic) {
         this.topics.add(topic);
-        return this;
     }
 }

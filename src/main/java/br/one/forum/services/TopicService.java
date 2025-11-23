@@ -1,13 +1,13 @@
 package br.one.forum.services;
 
 import br.one.forum.dtos.TopicCreateRequestDto;
-import br.one.forum.dtos.TopicEditMapper;
 import br.one.forum.dtos.TopicEditRequestDto;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
 import br.one.forum.exception.ActionNotPermittedException;
 import br.one.forum.exception.InvalidTopicOwnerException;
 import br.one.forum.exception.TopicNotFoundException;
+import br.one.forum.mappers.TopicEditMapper;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.specification.TopicSpecification;
 import jakarta.validation.constraints.NotNull;
@@ -39,14 +39,14 @@ public class TopicService {
 
     public void deleteTopic(int topicId, User owner) {
         if (owner == null) throw new ActionNotPermittedException();
-        topicRepository.deleteTopicByIdAndUserId(topicId, owner.getId());
+        topicRepository.deleteTopicByIdAndAuthorId(topicId, owner.getId());
     }
 
 
     @Transactional(readOnly = true)
     public Slice<Topic> findAllTopicByUserId(int userId, int page, int size) {
         var pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return topicRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
+        return topicRepository.findByAuthorIdOrderByCreatedAtDesc(userId, pageable);
     }
 
     @Transactional
@@ -54,7 +54,7 @@ public class TopicService {
         var topic = new Topic();
         topic.setTitle(dto.title());
         topic.setContent(dto.content());
-        topic.setUser(user);
+        topic.setAuthor(user);
         dto.categories().forEach(category -> {
             topic.addCategory(category, c -> categoryService.createOrGetCategory(category));
         });
@@ -86,10 +86,13 @@ public class TopicService {
     }
 
     public Topic editTopic(int topicId, TopicEditRequestDto data, @Nullable User currentLoggedUser) {
+
+        if (currentLoggedUser == null) throw new ActionNotPermittedException();
+
         var topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TopicNotFoundException(topicId));
 
-        if (!topic.getUser().getId().equals(currentLoggedUser.getId()))
+        if (!topic.getAuthor().getId().equals(currentLoggedUser.getId()))
             throw new InvalidTopicOwnerException();
 
         return topicRepository.save(topicEditMapper.partialUpdate(data, topic));

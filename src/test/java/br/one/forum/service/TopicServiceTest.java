@@ -1,10 +1,10 @@
 package br.one.forum.service;
 
 import br.one.forum.TestcontainersConfiguration;
-import br.one.forum.seeders.factories.FakeTopicFactory;
-import br.one.forum.seeders.factories.FakeUserFactory;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
+import br.one.forum.seeders.factories.FakeTopicFactory;
+import br.one.forum.seeders.factories.FakeUserFactory;
 import br.one.forum.services.TopicService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

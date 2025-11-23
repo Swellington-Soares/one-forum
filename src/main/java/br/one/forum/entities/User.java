@@ -47,18 +47,18 @@ public class User {
     @UpdateTimestamp
     private Instant updateAt;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Embedded
     private Profile profile;
 
     @ManyToMany(mappedBy = "likedBy", fetch = FetchType.LAZY)
     @Setter(AccessLevel.NONE)
     private Set<Topic> likedTopics = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private Set<Comment> comments = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private Set<Topic> createdTopics = new HashSet<>();
 
@@ -89,18 +89,6 @@ public class User {
 
     public void setProfile(@NotNull Profile profile) {
         this.profile = profile;
-        this.profile.setUser(this);
-    }
-
-    @PrePersist
-    private void onCreate() {
-        if (createdAt == null)
-            createdAt = Instant.now();
-    }
-
-    @PreUpdate
-    private void onUpdate() {
-        updateAt = Instant.now();
     }
 
     @ToString.Include(name = "password")

@@ -31,7 +31,7 @@ public class CommentService {
         var comment = new Comment();
         comment.setContent(dto.content());
         comment.setTopic(topic);
-        comment.setUser(user);
+        comment.setAuthor(user);
         commentRepository.save(comment);
         return commentMapper.toDto(comment);
     }
@@ -41,24 +41,16 @@ public class CommentService {
 
         return commentRepository.findAll()
                 .stream()
-                .map(c -> commentMapper.toDto(c)
+                .map(commentMapper::toDto
                 )
                 .toList();
     }
 
 
-    public CommentResponseDto findByIdComment(Integer id) {
-
-        var c = commentRepository.findById(id)
-                .orElseThrow(() -> new CommentNotFoundException(id));
-
-        return commentMapper.toDto(c);
-    }
-
     public CommentResponseDto updateComment(int userId, int topicId, int id, UpdateCommentDto dto) {
         var comment = commentRepository.findCommentByIdAndTopicId(id, topicId)
                 .orElseThrow(() -> new CommentNotFoundException(id));
-        if (comment.getUser().getId() != userId)
+        if (comment.getAuthor().getId() != userId)
             throw new CommentCannotBeEditableByCurrentUserException();
         commentRepository.save(comment);
         return commentMapper.toDto(comment);
@@ -67,7 +59,7 @@ public class CommentService {
     public void deleteComment(int userId, int topicId, int id) {
         var comment = commentRepository.findCommentByIdAndTopicId(id, topicId)
                 .orElseThrow(() -> new CommentNotFoundException(id));
-        if (comment.getUser().getId() != userId)
+        if (comment.getAuthor().getId() != userId)
             throw new CommentCannotBeEditableByCurrentUserException();
         commentRepository.delete(comment);
     }

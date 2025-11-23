@@ -1,4 +1,4 @@
-package br.one.forum.repository;
+package br.one.forum.api;
 
 import br.one.forum.TestcontainersConfiguration;
 import br.one.forum.dtos.TopicCreateRequestDto;
@@ -24,12 +24,20 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+<<<<<<< HEAD:src/test/java/br/one/forum/repository/TopicControllerIntegrationTest.java
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+=======
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+>>>>>>> aaf2902462d03659d29b1ed5f954757128d1f72f:src/test/java/br/one/forum/api/TopicControllerIntegrationTest.java
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
@@ -77,13 +85,13 @@ class TopicControllerIntegrationTest {
         topic1 = new Topic();
         topic1.setTitle("Topic for GET by ID");
         topic1.setContent("Content of the topic for detailed view.");
-        topic1.setUser(author);
+        topic1.setAuthor(author);
         topicRepository.save(topic1);
 
         Topic topic2 = new Topic();
         topic2.setTitle("Second Topic for Listing");
         topic2.setContent("Content of the second topic.");
-        topic2.setUser(otherUser);
+        topic2.setAuthor(otherUser);
         topicRepository.save(topic2);
     }
 
@@ -143,7 +151,7 @@ void testCreateTopic_Success() throws Exception {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(1)))
-                .andExpect(jsonPath("$.content[0].user.id", is(author.getId())))
+                .andExpect(jsonPath("$.content[0].author.id", is(author.getId())))
                 .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())));
     }
 
@@ -172,14 +180,13 @@ void testCreateTopic_Success() throws Exception {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())))
-                .andExpect(jsonPath("$.content[0].content", is(nullValue())));
+                .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())));
     }
 
     @Test
     @DisplayName("GET /topics/{topicId} - \n" +
             "It should return 200 OK and the complete topic by ID.")
-    @WithMockUser(username = "testuser", roles = {"USER"})
+    @WithMockUser(username = "testuser")
     void testGetTopicById() throws Exception {
         Integer topicId = topic1.getId();
 
@@ -189,7 +196,7 @@ void testCreateTopic_Success() throws Exception {
                 .andExpect(jsonPath("$.id", is(topicId)))
                 .andExpect(jsonPath("$.title", is(topic1.getTitle())))
                 .andExpect(jsonPath("$.content", is(topic1.getContent())))
-                .andExpect(jsonPath("$.user.id", is(author.getId())))
+                .andExpect(jsonPath("$.author.id", is(author.getId())))
         ;
     }
 

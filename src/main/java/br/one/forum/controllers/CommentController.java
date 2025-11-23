@@ -5,7 +5,6 @@ import br.one.forum.dtos.CommentResponseDto;
 import br.one.forum.dtos.UpdateCommentDto;
 import br.one.forum.entities.CurrentUser;
 import br.one.forum.services.CommentService;
-import br.one.forum.services.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
-    private final TopicService topicService;
     private final CurrentUser auth;
 
     @PostMapping
@@ -39,7 +37,6 @@ public class CommentController {
         var comment = commentService.createComment(topicId, auth.getUser(), dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
-
 
     @Operation(
             summary = "Lista de comentários do tópico",
@@ -90,7 +87,7 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CommentResponseDto> updateComment(
             @PathVariable int topicId,
-            @PathVariable Integer id,
+            @PathVariable int id,
             @RequestBody @Valid UpdateCommentDto dto) {
         return ResponseEntity.ok(commentService.updateComment(auth.getUser().getId(), topicId, id, dto));
     }
@@ -99,7 +96,7 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteComment(
             @PathVariable int topicId,
-            @PathVariable Integer id) {
+            @PathVariable int id) {
         commentService.deleteComment(auth.getUser().getId(), topicId, id);
         return ResponseEntity.noContent().build();
     }

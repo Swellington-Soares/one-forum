@@ -13,7 +13,7 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"topic", "user"})
+@ToString(exclude = {"topic", "author"})
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -30,8 +30,8 @@ public class Comment {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
 
     @NotBlank
     @Column(nullable = false)
@@ -45,9 +45,9 @@ public class Comment {
     @UpdateTimestamp
     private Instant updateAt;
 
-    public Comment(Topic topic, User user, String content) {
+    public Comment(Topic topic, User author, String content) {
         this.topic = topic;
-        this.user = user;
+        this.author = author;
         this.content = content;
     }
 }

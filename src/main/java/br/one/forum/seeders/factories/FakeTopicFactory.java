@@ -14,7 +14,7 @@ public class FakeTopicFactory {
             throw new IllegalArgumentException("Owner list is null or empty");
         }
         var topic = new Topic();
-        topic.setUser(owners.get(DataFaker.faker().number().numberBetween(0, owners.size() - 1)));
+        topic.setAuthor(owners.get(DataFaker.faker().number().numberBetween(0, owners.size() - 1)));
         topic.setContent(DataFaker.faker().lorem().paragraph(1));
         topic.setTitle(DataFaker.faker().book().title());
         return topic;
