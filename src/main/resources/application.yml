@@ -49,3 +49,7 @@ api:
     refresh-token:
       key: ${JWT_REFRESH_KEY_SECRET:my-refresh-key}
       expiration: 10080
+
+server:
+  error:
+    include-stacktrace: on_param
