@@ -1,6 +1,8 @@
 package br.one.forum.repository;
 
 import br.one.forum.TestcontainersConfiguration;
+import br.one.forum.dtos.TopicCreateRequestDto;
+import br.one.forum.entities.CurrentUser;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
 import br.one.forum.repositories.TopicRepository;
@@ -13,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -20,8 +24,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Import(TestcontainersConfiguration.class)
@@ -30,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @ActiveProfiles("test")
 @Testcontainers
+
 class TopicControllerIntegrationTest {
 
     @Autowired
@@ -47,6 +55,9 @@ class TopicControllerIntegrationTest {
     private User author;
     private User otherUser;
     private Topic topic1;
+
+
+
 
     @BeforeEach
     void setup() {
@@ -74,6 +85,53 @@ class TopicControllerIntegrationTest {
         topic2.setContent("Content of the second topic.");
         topic2.setUser(otherUser);
         topicRepository.save(topic2);
+    }
+
+@Test
+@WithMockUser(username = "teste.autor@email.com", roles = {"USER"})
+@DisplayName("POST /topics should successfully create a new topic and return 201 CREATED.")
+void testCreateTopic_Success() throws Exception {
+
+    var newTopic = new TopicCreateRequestDto(
+            "Title of the New Test Topic",
+            "Detailed content of the new topic for creation testing.",
+            List.of("PROGRAMAÇÃO", "TESTES")
+    );
+
+
+    String topicJson = mapper.writeValueAsString(newTopic);
+
+
+    mockMvc.perform(post("/topics")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(topicJson))
+
+            .andExpect(status().isCreated())
+            .andExpect(header().exists("Location"))
+            .andExpect(jsonPath("$.id").exists())
+            .andExpect(jsonPath("$.title").value("Title of the New Test Topic"))
+            .andExpect(jsonPath("$.likes").value(0))
+            .andExpect(jsonPath("$.content").doesNotExist())
+            .andExpect(jsonPath("$.categories", hasSize(2)))
+            .andExpect(jsonPath("$.user.id").exists());
+}
+
+    @Test
+    @WithMockUser(username = "teste.autor@email.com", roles = {"USER"})
+    @DisplayName("POST /topics should return a 400 BAD REQUEST with an invalid DTO.")
+    void testCreateTopic_InvalidDto() throws Exception {
+        var invalidTopic = new TopicCreateRequestDto(
+                "",
+                "Valid content.",
+                List.of("CATEGORY")
+        );
+
+        String topicJson = mapper.writeValueAsString(invalidTopic);
+
+        mockMvc.perform(post("/topics")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(topicJson))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
