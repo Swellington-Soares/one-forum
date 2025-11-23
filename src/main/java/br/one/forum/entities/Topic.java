@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"likedBy", "comments", "user", "categories"})
+@ToString(exclude = {"likedBy", "comments", "author", "categories"})
 @Entity
 @Table(name = "topics")
 public class Topic {
@@ -37,8 +37,8 @@ public class Topic {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Setter(AccessLevel.NONE)
@@ -72,22 +72,22 @@ public class Topic {
     @Setter(AccessLevel.NONE)
     private Set<Comment> comments = new HashSet<>();
 
-    public Topic(String title, String content, User user, Category category) {
+    public Topic(String title, String content, User author, Category category) {
         this.title = title;
         this.content = content;
-        this.user = user;
+        this.author = author;
         category.addTopic(this);
         this.categories.add(category);
     }
 
-    public Topic(String title, String content, User user, String category) {
-        this(title, content, user, new Category(category));
+    public Topic(String title, String content, User author, String category) {
+        this(title, content, author, new Category(category));
     }
 
-    public Topic(String title, String content, User user) {
+    public Topic(String title, String content, User author) {
         this.title = title;
         this.content = content;
-        this.user = user;
+        this.author = author;
         this.createdAt = Instant.now();
     }
 
@@ -118,7 +118,7 @@ public class Topic {
 
     public void toggleLike(User likeUser) {
         if (likeUser == null) return;
-        if (likeUser.equals(user)) return;
+        if (likeUser.equals(author)) return;
 
         if (likedBy.contains(likeUser)) {
             likedBy.remove(likeUser);

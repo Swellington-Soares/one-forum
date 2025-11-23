@@ -2,12 +2,14 @@ package br.one.forum.service;
 
 
 import br.one.forum.TestcontainersConfiguration;
-import br.one.forum.entities.*;
-import br.one.forum.seeders.factories.FakeTopicFactory;
-import br.one.forum.seeders.factories.FakeUserFactory;
+import br.one.forum.entities.Comment;
+import br.one.forum.entities.Topic;
+import br.one.forum.entities.User;
 import br.one.forum.repositories.CommentRepository;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
+import br.one.forum.seeders.factories.FakeTopicFactory;
+import br.one.forum.seeders.factories.FakeUserFactory;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,7 +59,7 @@ public class ServiceTest {
     void shouldListAllTopicosOfAUser() {
         List<Topic> topicosDoUser1 = topicRepository.findAll()
                 .stream()
-                .filter(t -> t.getUser().equals(users.getFirst()))
+                .filter(t -> t.getAuthor().equals(users.getFirst()))
                 .collect(Collectors.toList());
 
         assertThat(topicosDoUser1).hasSize(3);

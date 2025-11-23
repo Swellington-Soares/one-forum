@@ -20,9 +20,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
@@ -66,13 +68,13 @@ class TopicControllerIntegrationTest {
         topic1 = new Topic();
         topic1.setTitle("Topic for GET by ID");
         topic1.setContent("Content of the topic for detailed view.");
-        topic1.setUser(author);
+        topic1.setAuthor(author);
         topicRepository.save(topic1);
 
         Topic topic2 = new Topic();
         topic2.setTitle("Second Topic for Listing");
         topic2.setContent("Content of the second topic.");
-        topic2.setUser(otherUser);
+        topic2.setAuthor(otherUser);
         topicRepository.save(topic2);
     }
 
@@ -85,7 +87,7 @@ class TopicControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(1)))
-                .andExpect(jsonPath("$.content[0].user.id", is(author.getId())))
+                .andExpect(jsonPath("$.content[0].author.id", is(author.getId())))
                 .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())));
     }
 
@@ -130,7 +132,7 @@ class TopicControllerIntegrationTest {
                 .andExpect(jsonPath("$.id", is(topicId)))
                 .andExpect(jsonPath("$.title", is(topic1.getTitle())))
                 .andExpect(jsonPath("$.content", is(topic1.getContent())))
-                .andExpect(jsonPath("$.user.id", is(author.getId())))
+                .andExpect(jsonPath("$.author.id", is(author.getId())))
         ;
     }
 

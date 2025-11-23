@@ -2,7 +2,10 @@ package br.one.forum.repository;
 
 import br.one.forum.TestcontainersConfiguration;
 import br.one.forum.entities.*;
-import br.one.forum.repositories.*;
+import br.one.forum.repositories.CategoryRepository;
+import br.one.forum.repositories.CommentRepository;
+import br.one.forum.repositories.TopicRepository;
+import br.one.forum.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +28,13 @@ public class RepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private ProfileRepository profileRepository;
+
     @Autowired
     private TopicRepository topicoRepository;
+
     @Autowired
     private CategoryRepository categoryRepository;
+
     @Autowired
     private CommentRepository commentRepository;
 
@@ -42,12 +46,10 @@ public class RepositoryTest {
         userRepository.save(user);
 
         Profile profile = new Profile();
-        profile.setUser(user);
         profile.setName("Tester");
-        profileRepository.save(profile);
 
         assertThat(userRepository.count()).isEqualTo(1);
-        assertThat(profileRepository.findById(user.getId())).isPresent();
+        assertThat(userRepository.findById(user.getId())).isPresent();
     }
 
     @Test
@@ -60,7 +62,7 @@ public class RepositoryTest {
         Topic topico = new Topic();
         topico.setTitle("Primeiro tópico");
         topico.setContent("Conteúdo de teste");
-        topico.setUser(user);
+        topico.setAuthor(user);
         topicoRepository.save(topico);
 
         Category cat = new Category("Java");
@@ -84,11 +86,11 @@ public class RepositoryTest {
         Topic topico = new Topic();
         topico.setTitle("Titulo");
         topico.setContent("Texto");
-        topico.setUser(user);
+        topico.setAuthor(user);
         topicoRepository.save(topico);
 
         Comment comment = new Comment();
-        comment.setUser(user);
+        comment.setAuthor(user);
         comment.setTopic(topico);
         comment.setContent("Comentário de teste");
         commentRepository.save(comment);

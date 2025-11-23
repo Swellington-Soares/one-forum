@@ -15,9 +15,12 @@ public record TopicResponseDto(Integer id,
                                Integer likes,
                                String content,
                                Boolean likedByCurrentUser,
-                               TopicResponseDto.UserTopicDto user, Instant createdAt, Instant updatedAt,
+                               TopicResponseDto.UserTopicDto author,
+                               Instant createdAt,
+                               Instant updatedAt,
                                Set<TopicCategoryDto> categories) implements Serializable {
-    public record UserTopicDto(Integer id, Instant createdAt,
+    public record UserTopicDto(Integer id,
+                               Instant createdAt,
                                UserTopicProfileDto profile) implements Serializable {
         public record UserTopicProfileDto(@NotNull String name, String photo) implements Serializable {
         }

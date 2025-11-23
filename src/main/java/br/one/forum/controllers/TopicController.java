@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -111,6 +112,7 @@ public class TopicController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TopicResponseDto> createTopic(@RequestBody @Valid TopicCreateRequestDto data) {
 
         var user = auth.getUser();
@@ -132,6 +134,7 @@ public class TopicController {
     }
 
     @PutMapping("/{topicId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TopicResponseDto> createTopic(
             @PathVariable("topicId") int topicId,
             @RequestBody @Valid TopicEditRequestDto data) {
@@ -142,6 +145,7 @@ public class TopicController {
 
 
     @DeleteMapping("/{topicId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") int topicId) {
         topicService.deleteTopic(topicId, auth.getUser());
         return ResponseEntity.notFound().build();

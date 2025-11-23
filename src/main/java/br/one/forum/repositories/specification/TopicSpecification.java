@@ -11,7 +11,7 @@ public class TopicSpecification {
 
     public static Specification<Topic> byAuthorId(Long authorId) {
         return (root, query, cb) ->
-                cb.equal(root.get("user").get("id"), authorId);
+                cb.equal(root.get("author").get("id"), authorId);
     }
 
     public static Specification<Topic> orderByMoreLiked() {
@@ -57,7 +57,7 @@ public class TopicSpecification {
 
 
             var authorPredicate = cb.like(
-                    cb.lower(root.join("user").get("profile").get("name")),
+                    cb.lower(root.join("author").get("profile").get("name")),
                     pattern
             );
 

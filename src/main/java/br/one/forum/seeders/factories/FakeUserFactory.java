@@ -13,10 +13,15 @@ public class FakeUserFactory {
 
     public static User getOne() {
         var user = new User();
-        var password = new PasswordCrypt().passwordEncoder().encode("12345678");
+        var password = new PasswordCrypt().passwordEncoder().encode("123456");
         user.setEmail(DataFaker.faker().internet().emailAddress());
         user.setPassword(password);
-        user.setProfile(new Profile(user, DataFaker.faker().name().firstName()));
+        user.setProfile(
+                Profile.builder()
+                        .photo(DataFaker.faker().internet().image(200, 200))
+                        .name(DataFaker.faker().name().firstName())
+                        .build()
+        );
         return user;
     }
 

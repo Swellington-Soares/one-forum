@@ -3,7 +3,6 @@ package br.one.forum.controllers;
 
 import br.one.forum.dtos.UserProfileUpdateRequestDto;
 import br.one.forum.dtos.UserRegisterRequestDto;
-import br.one.forum.entities.CurrentUser;
 import br.one.forum.entities.User;
 import br.one.forum.services.UserService;
 import jakarta.validation.Valid;
@@ -20,7 +19,6 @@ public class UserController {
 
     private final UserService userService;
 
-    //private final CurrentUser auth;
 
     @GetMapping("/{id}")
     User getUserById(@PathVariable int id) {
@@ -37,7 +35,7 @@ public class UserController {
    @ResponseStatus(HttpStatus.NO_CONTENT)
    @PreAuthorize("isAuthenticated() && @auth.isOwner(#id) ")
     public ResponseEntity<Void> updateProfile(
-            @PathVariable Integer id,
+            @PathVariable int id,
             @RequestBody(required = false) @Valid UserProfileUpdateRequestDto data) {
         userService.updateUserProfile(id, data);
         return ResponseEntity.status(HttpStatus.OK).build();

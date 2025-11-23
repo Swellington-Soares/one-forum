@@ -1,5 +1,6 @@
-package br.one.forum.dtos;
+package br.one.forum.mappers;
 
+import br.one.forum.dtos.TopicEditRequestDto;
 import br.one.forum.entities.Topic;
 import org.mapstruct.*;
 
