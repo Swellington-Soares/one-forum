@@ -1,213 +1,126 @@
 package br.one.forum.api;
 
-import br.one.forum.TestcontainersConfiguration;
+import br.one.forum.TestUtils;
+import br.one.forum.controllers.TopicController;
 import br.one.forum.dtos.TopicCreateRequestDto;
+import br.one.forum.dtos.TopicResponseDto;
+import br.one.forum.entities.Category;
 import br.one.forum.entities.CurrentUser;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
-import br.one.forum.repositories.TopicRepository;
-import br.one.forum.repositories.UserRepository;
+import br.one.forum.mappers.TopicResponseMapper;
+import br.one.forum.seeders.factories.FakeTopicFactory;
+import br.one.forum.services.AuthorizationService;
+import br.one.forum.services.TokenService;
+import br.one.forum.services.TopicService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-<<<<<<< HEAD:src/test/java/br/one/forum/repository/TopicControllerIntegrationTest.java
+import java.time.Instant;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-=======
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
->>>>>>> aaf2902462d03659d29b1ed5f954757128d1f72f:src/test/java/br/one/forum/api/TopicControllerIntegrationTest.java
 
-@Import(TestcontainersConfiguration.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
+
+@WebMvcTest(controllers = TopicController.class)
 @ActiveProfiles("test")
-@Testcontainers
-
+@AutoConfigureMockMvc(addFilters = false)
 class TopicControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private TopicRepository topicRepository;
+    @MockitoBean
+    private CurrentUser auth;
 
-    @Autowired
-    private UserRepository userRepository;
+    @MockitoBean
+    private TopicService topicService;
+
+    @MockitoBean
+    private TopicResponseMapper topicResponseMapper;
 
     @Autowired
     private ObjectMapper mapper;
 
-    private User author;
-    private User otherUser;
-    private Topic topic1;
+    @MockitoBean
+    private TokenService tokenService;
 
+    @MockitoBean
+    private AuthorizationService authorizationService;
 
-
-
-    @BeforeEach
-    void setup() {
-        topicRepository.deleteAll();
-        userRepository.deleteAll();
-
-        author = new User();
-        author.setEmail("author@test.com");
-        author.setPassword("test_pw");
-        userRepository.save(author);
-
-        otherUser = new User();
-        otherUser.setEmail("other@test.com");
-        otherUser.setPassword("test_pw");
-        userRepository.save(otherUser);
-
-        topic1 = new Topic();
-        topic1.setTitle("Topic for GET by ID");
-        topic1.setContent("Content of the topic for detailed view.");
-        topic1.setAuthor(author);
-        topicRepository.save(topic1);
-
-        Topic topic2 = new Topic();
-        topic2.setTitle("Second Topic for Listing");
-        topic2.setContent("Content of the second topic.");
-        topic2.setAuthor(otherUser);
-        topicRepository.save(topic2);
+    private TopicResponseDto topicToResponse(Topic topic) {
+        return new TopicResponseDto(
+                topic.getId(),
+                topic.getTitle(),
+                0,
+                topic.getContent(),
+                false,
+                new TopicResponseDto.UserTopicDto(
+                        topic.getAuthor().getId(),
+                        Instant.now(),
+                        new TopicResponseDto.UserTopicDto.UserTopicProfileDto(
+                                topic.getAuthor().getProfile().getName(),
+                                topic.getAuthor().getProfile().getPhoto()
+                        )
+                ),
+                Instant.now(),
+                Instant.now(),
+                topic.getCategories()
+                        .stream()
+                        .map(c -> new TopicResponseDto.TopicCategoryDto(c.getName()))
+                        .toList()
+        );
     }
 
-@Test
-@WithMockUser(username = "teste.autor@email.com", roles = {"USER"})
-@DisplayName("POST /topics should successfully create a new topic and return 201 CREATED.")
-void testCreateTopic_Success() throws Exception {
-
-    var newTopic = new TopicCreateRequestDto(
-            "Title of the New Test Topic",
-            "Detailed content of the new topic for creation testing.",
-            List.of("PROGRAMAÇÃO", "TESTES")
-    );
-
-
-    String topicJson = mapper.writeValueAsString(newTopic);
-
-
-    mockMvc.perform(post("/topics")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(topicJson))
-
-            .andExpect(status().isCreated())
-            .andExpect(header().exists("Location"))
-            .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.title").value("Title of the New Test Topic"))
-            .andExpect(jsonPath("$.likes").value(0))
-            .andExpect(jsonPath("$.content").doesNotExist())
-            .andExpect(jsonPath("$.categories", hasSize(2)))
-            .andExpect(jsonPath("$.user.id").exists());
-}
-
     @Test
-    @WithMockUser(username = "teste.autor@email.com", roles = {"USER"})
-    @DisplayName("POST /topics should return a 400 BAD REQUEST with an invalid DTO.")
-    void testCreateTopic_InvalidDto() throws Exception {
-        var invalidTopic = new TopicCreateRequestDto(
-                "",
-                "Valid content.",
-                List.of("CATEGORY")
+    @DisplayName("POST /topics should successfully create a new topic and return 201 CREATED.")
+    void testCreateTopic_Success() throws Exception {
+
+        User mockUser = TestUtils.mockAuthenticatedUser(50, "SecMOckUser");
+        when(auth.getUser()).thenReturn(mockUser);
+
+        Topic mockTopic = FakeTopicFactory.getOne(List.of(mockUser));
+        mockTopic.setId(1);
+        mockTopic.getCategories().addAll(List.of(
+                        new Category("DEV"),
+                        new Category("PROGRAMAÇÃO")
+                )
         );
 
-        String topicJson = mapper.writeValueAsString(invalidTopic);
+        var topicRequestDto = new TopicCreateRequestDto(
+                mockTopic.getTitle(),
+                mockTopic.getContent(),
+                mockTopic.getCategories().stream().map(Category::getName).toList()
+        );
+
+        var topicResponseDto = topicToResponse(mockTopic);
+
+        when(topicService.createTopic(mockUser, topicRequestDto))
+                .thenReturn(mockTopic);
+
+        when(topicResponseMapper.toDtoExcludeContent(mockTopic, null)).thenReturn(topicResponseDto);
+
+
+        var requestBody = mapper.writeValueAsString(topicRequestDto);
 
         mockMvc.perform(post("/topics")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(topicJson))
-                .andExpect(status().isBadRequest());
-    }
+                        .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andExpect(jsonPath("$.id").value(mockTopic.getId()));
 
-    @Test
-    @DisplayName("It should return 200 OK and filter topics by the provided authorId.")
-    void testFilterByAuthor() throws Exception {
-        String url = String.format("/topics?authorId=%d", author.getId());
-
-        mockMvc.perform(get(url)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(1)))
-                .andExpect(jsonPath("$.content[0].author.id", is(author.getId())))
-                .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())));
-    }
-
-    @Test
-    @DisplayName("It should return 200 OK and an empty list when the author has no topics.")
-    void testFilterByAuthor_NoTopics() throws Exception {
-        User emptyUser = new User();
-        emptyUser.setEmail("empty@test.com");
-        emptyUser.setPassword("test_pw");
-        userRepository.save(emptyUser);
-
-        String url = String.format("/topics?authorId=%d", emptyUser.getId());
-
-        mockMvc.perform(get(url)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(0)));
-    }
-
-
-    @Test
-    @DisplayName("GET /topics - It should return 200 OK and a paginated list of all topics.")
-    @WithMockUser(username = "testuser", roles = {"USER"})
-    void testGetTopicsSuccess() throws Exception {
-        mockMvc.perform(get("/topics")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())));
-    }
-
-    @Test
-    @DisplayName("GET /topics/{topicId} - \n" +
-            "It should return 200 OK and the complete topic by ID.")
-    @WithMockUser(username = "testuser")
-    void testGetTopicById() throws Exception {
-        Integer topicId = topic1.getId();
-
-        mockMvc.perform(get("/topics/{topicId}", topicId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(topicId)))
-                .andExpect(jsonPath("$.title", is(topic1.getTitle())))
-                .andExpect(jsonPath("$.content", is(topic1.getContent())))
-                .andExpect(jsonPath("$.author.id", is(author.getId())))
-        ;
-    }
-
-    @Test
-    @DisplayName("GET /topics/{topicId} - It should return a 404 NOT FOUND error if the topic does not exist.")
-    @WithMockUser(username = "testuser", roles = {"USER"})
-    void testGetTopicById_NotFound() throws Exception {
-        int nonExistentId = 9999;
-
-        mockMvc.perform(get("/topics/{topicId}", nonExistentId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+        verify(topicService).createTopic(mockUser, topicRequestDto);
     }
 }
