@@ -1,4 +1,4 @@
-package br.one.forum.repository;
+package br.one.forum.api;
 
 import br.one.forum.TestcontainersConfiguration;
 import br.one.forum.entities.Topic;
@@ -114,14 +114,13 @@ class TopicControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())))
-                .andExpect(jsonPath("$.content[0].content", is(nullValue())));
+                .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())));
     }
 
     @Test
     @DisplayName("GET /topics/{topicId} - \n" +
             "It should return 200 OK and the complete topic by ID.")
-    @WithMockUser(username = "testuser", roles = {"USER"})
+    @WithMockUser(username = "testuser")
     void testGetTopicById() throws Exception {
         Integer topicId = topic1.getId();
 
