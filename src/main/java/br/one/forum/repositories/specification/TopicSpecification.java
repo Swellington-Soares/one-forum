@@ -49,12 +49,10 @@ public class TopicSpecification {
 
             String pattern = "%" + titleOrAuthorName.toLowerCase() + "%";
 
-
             var titlePredicate = cb.like(
                     cb.lower(root.get("title")),
                     pattern
             );
-
 
             var authorPredicate = cb.like(
                     cb.lower(root.join("author").get("profile").get("name")),

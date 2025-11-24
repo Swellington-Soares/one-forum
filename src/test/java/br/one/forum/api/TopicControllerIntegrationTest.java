@@ -111,7 +111,6 @@ class TopicControllerIntegrationTest {
 
         when(topicResponseMapper.toDtoExcludeContent(mockTopic, null)).thenReturn(topicResponseDto);
 
-
         var requestBody = mapper.writeValueAsString(topicRequestDto);
 
         mockMvc.perform(post("/topics")

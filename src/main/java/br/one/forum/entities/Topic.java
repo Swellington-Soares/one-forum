@@ -24,6 +24,7 @@ public class Topic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @NotNull
@@ -41,13 +42,15 @@ public class Topic {
     private User author;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Setter(AccessLevel.NONE)
-    @CreationTimestamp
+    //@Setter(AccessLevel.NONE)
+    //@CreationTimestamp
+    //todo: refazer na produção, apenas teste.
     private Instant createdAt;
 
     @Column(name = "updated_at")
-    @Setter(AccessLevel.NONE)
-    @UpdateTimestamp
+    //@Setter(AccessLevel.NONE)
+    //@UpdateTimestamp
+    //todo: refazer na produção, apenas teste.
     private Instant updatedAt;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)

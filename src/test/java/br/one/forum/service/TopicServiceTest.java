@@ -25,8 +25,10 @@ public class TopicServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private TopicRepository topicRepository;
+
     @Autowired
     private TopicService topicService;
 
