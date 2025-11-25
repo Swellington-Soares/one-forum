@@ -33,14 +33,22 @@ public final class DatabaseSeeder {
             if (Arrays.stream(args).noneMatch("--add-seed"::equals)) return;
             var faker = DataFaker.faker();
             IO.println("ATUALIZAÇÃO DOS SEEDERS NO BANCO DE DADOS");
-            List<User> users = userRepository.saveAll(FakeUserFactory.getMore(50));
+            List<User> users = userRepository.saveAll(FakeUserFactory.getMore(5));
             List<Category> categories = categoryRepository.saveAll(FakeCategoryFactory.getAll());
-            List<Topic> topics = FakeTopicFactory.getMore(50, users);
+            List<Topic> topics = FakeTopicFactory.getMore(150, users);
             topics.forEach(topic -> {
                 topic.setCreatedAt(LocalDateTime.now().plusDays(faker.random().nextLong(-10, 10)).toInstant(ZoneOffset.UTC) );
-                topic.toggleLike( users.get( faker.random().nextInt(users.size()) ) );
                 topic.addCategory(categories.get(new Random().nextInt(0, categories.size() - 1)));
             });
+
+            for (int i = 0; i < 5; i ++) {
+                topics.forEach(topic -> {
+                    var rUser = users.get(faker.random().nextInt(users.size()));
+                    if (!topic.getLikedBy().contains(rUser)) {
+                        topic.toggleLike(rUser);
+                    }
+                });
+            }
 
             topicRepository.saveAll(topics);
             IO.println("SEEDS ATUALIZADOS COM SUCESSO.");

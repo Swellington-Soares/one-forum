@@ -16,11 +16,17 @@ public class TopicSpecification {
 
     public static Specification<Topic> orderByMoreLiked() {
         return (root, query, cb) -> {
-            assert query != null;
-            query.distinct(true);
-            var join = root.join("likedBy", JoinType.LEFT);
-            query.groupBy(root.get("id"));
-            query.orderBy(cb.desc(cb.count(join)));
+            // Corrige o “count query bug” do Spring + groupBy
+            if (!Topic.class.equals(query.getResultType())) {
+                return null;
+            }
+
+            var likesJoin = root.join("likedBy", JoinType.LEFT);
+
+            query.groupBy(root.get("id")); // sempre agrupe pelo tópico
+
+            query.orderBy(cb.desc(cb.count(likesJoin.get("id"))));
+
             return cb.conjunction();
         };
     }
