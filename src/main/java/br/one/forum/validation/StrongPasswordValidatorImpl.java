@@ -3,7 +3,7 @@ package br.one.forum.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class StrongPasswordValidator implements ConstraintValidator<StrongPassword, String> {
+public class StrongPasswordValidatorImpl implements ConstraintValidator<StrongPassword, String> {
 
     private int min = 6;
     private int max = 8;

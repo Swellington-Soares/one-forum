@@ -3,6 +3,7 @@ package br.one.forum.controllers;
 import br.one.forum.dtos.CommentCreateRequestDto;
 import br.one.forum.dtos.CommentResponseDto;
 import br.one.forum.dtos.UpdateCommentDto;
+import br.one.forum.dtos.UserCommentResponseDto;
 import br.one.forum.entities.CurrentUser;
 import br.one.forum.services.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -100,4 +101,8 @@ public class CommentController {
         commentService.deleteComment(auth.getUser().getId(), topicId, id);
         return ResponseEntity.noContent().build();
     }
+
+
+
+
 }

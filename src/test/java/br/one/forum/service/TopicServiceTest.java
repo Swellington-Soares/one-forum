@@ -1,56 +1,58 @@
 package br.one.forum.service;
 
-import br.one.forum.TestcontainersConfiguration;
+import br.one.forum.dtos.TopicCreateRequestDto;
+import br.one.forum.entities.Category;
+import br.one.forum.entities.Topic;
 import br.one.forum.repositories.TopicRepository;
-import br.one.forum.repositories.UserRepository;
-import br.one.forum.seeders.factories.FakeTopicFactory;
 import br.one.forum.seeders.factories.FakeUserFactory;
 import br.one.forum.services.TopicService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.when;
 
-@Import(TestcontainersConfiguration.class)
+
 @SpringBootTest
 @ActiveProfiles("test")
-@Testcontainers
 public class TopicServiceTest {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
+    @MockitoBean
     private TopicRepository topicRepository;
 
-    @Autowired
+    @MockitoBean
     private TopicService topicService;
 
 
     @Test
-    void testIfSaveLike() {
-        var user1 = FakeUserFactory.getOne();
-        userRepository.save(user1);
+    void testIfTopicIsCreatedSuccessfully() {
+        var authorMock = FakeUserFactory.getOne();
+        authorMock.setId(1);
 
-        var topico1 = FakeTopicFactory.getOne(List.of(user1));
+        var topicData = new TopicCreateRequestDto(
+                "Hello World 1",
+                "Meu primeiro tópico",
+                List.of("DEV", "PROGRAMAÇÃO")
+        );
 
-        var user2 = FakeUserFactory.getOne();
-        userRepository.save(user2);
+        var topic = new Topic(topicData.title(), topicData.content(), authorMock);
+        topic.setId(1);
+        topicData.categories().forEach(c ->
+                topic.addCategory(new Category(c))
+        );
 
+        when(topicService.createTopic(authorMock, topicData)).thenReturn(
+                topic
+        );
 
-        topicRepository.save(topico1);
-        topicService.toggleLike(topico1, user2);
+        var topicCreated = topicService.createTopic(authorMock, topicData);
 
-
-        assertThat(topico1.getLikeCount()).isEqualTo(1);
+        assertThat(topicCreated.getId()).isEqualTo(1);
 
     }
-
 
 }
