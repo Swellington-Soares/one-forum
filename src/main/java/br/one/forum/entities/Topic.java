@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -45,13 +46,13 @@ public class Topic {
     //@Setter(AccessLevel.NONE)
     //@CreationTimestamp
     //todo: refazer na produção, apenas teste.
-    private Instant createdAt;
+    private Instant createdAt = Instant.now();
 
     @Column(name = "updated_at")
     //@Setter(AccessLevel.NONE)
     //@UpdateTimestamp
     //todo: refazer na produção, apenas teste.
-    private Instant updatedAt;
+    private Instant updatedAt = Instant.now();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinTable(
@@ -86,6 +87,7 @@ public class Topic {
     public Topic(String title, String content, User author, String category) {
         this(title, content, author, new Category(category));
     }
+
 
     public Topic(String title, String content, User author) {
         this.title = title;
