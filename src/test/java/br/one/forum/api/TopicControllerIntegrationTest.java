@@ -1,5 +1,6 @@
 package br.one.forum.api;
 
+import br.one.forum.TestMessageSourceConfig;
 import br.one.forum.TestUtils;
 import br.one.forum.controllers.TopicController;
 import br.one.forum.dtos.TopicCreateRequestDto;
@@ -22,8 +23,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -39,14 +39,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @WebMvcTest(controllers = TopicController.class)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc(addFilters = false)
+@Import(TestMessageSourceConfig.class)
 class TopicControllerIntegrationTest {
 
     @Autowired
@@ -206,20 +207,6 @@ class TopicControllerIntegrationTest {
 
         mockMvc.perform(get("/topics/999"))
                 .andExpect(status().isNotFound());
-    }
-
-
-    @TestConfiguration
-    static class TestMessageSourceConfig {
-
-        @Bean
-        public MessageSource messageSource() {
-            ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-            ms.setBasename("classpath:i18n");
-            ms.setDefaultEncoding("UTF-8");
-            ms.setFallbackToSystemLocale(false);
-            return ms;
-        }
     }
 
 }
