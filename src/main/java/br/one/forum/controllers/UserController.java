@@ -3,7 +3,9 @@ package br.one.forum.controllers;
 
 import br.one.forum.dtos.UserProfileUpdateRequestDto;
 import br.one.forum.dtos.UserRegisterRequestDto;
+import br.one.forum.dtos.UserResponseDto;
 import br.one.forum.entities.User;
+import br.one.forum.mappers.UserMapper;
 import br.one.forum.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +20,17 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
 
     @GetMapping("/{id}")
-    User getUserById(@PathVariable int id) {
-        return userService.findUserById(id, false);
+    ResponseEntity<UserResponseDto> getUserById(@PathVariable int id) {
+        return ResponseEntity.ok(
+               userMapper.toDto(userService.findUserById(id, false))
+        );
     }
+
+
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid UserRegisterRequestDto data) {
