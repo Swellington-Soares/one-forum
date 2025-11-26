@@ -54,7 +54,7 @@ public class Topic {
     //todo: refazer na produção, apenas teste.
     private Instant updatedAt = Instant.now();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "category_has_topic",
             joinColumns = @JoinColumn(name = "topic_id"),
@@ -72,9 +72,10 @@ public class Topic {
     @Setter(AccessLevel.NONE)
     private Set<User> likedBy = new HashSet<>();
 
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "topic", orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private Set<Comment> comments = new HashSet<>();
+
 
     public Topic(String title, String content, User author, Category category) {
         this.title = title;
@@ -95,6 +96,7 @@ public class Topic {
         this.author = author;
         this.createdAt = Instant.now();
     }
+
 
     public int getLikeCount() {
         return likedBy.size();
