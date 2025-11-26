@@ -1,18 +1,23 @@
 package br.one.forum.repository;
 
+// Running tests against real MariaDB via Testcontainers
+import br.one.forum.TestcontainersConfiguration;
 import br.one.forum.entities.Comment;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
 import br.one.forum.repositories.CommentRepository;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +28,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Testes CRUD completos para CommentRepository
  * 
  * Esta classe testa todas as operações CRUD (Create, Read, Update, Delete)
- * do repositório de comentários, incluindo queries customizadas.
+ * do repositório de comentários, incluindo queries customizadas e validação
+ * de comportamento de cascata ao deletar tópicos.
  */
+@Import(TestcontainersConfiguration.class)
 @DataJpaTest
+@Transactional
 @ActiveProfiles("test")
+@Testcontainers
 @DisplayName("Comment Repository CRUD Tests")
 class CommentRepositoryTest {
 
@@ -391,5 +400,100 @@ class CommentRepositoryTest {
 
         assertThat(user1Comments).hasSize(2);
         assertThat(user2Comments).hasSize(2);
+    }
+
+    // ==================== CASCADE DELETE TESTS ====================
+
+    @Test
+    @DisplayName("CASCADE DELETE - Deletar tópico sem comentários")
+    void testDeleteTopicWithoutComments() {
+        Topic emptyTopic = new Topic();
+        emptyTopic.setTitle("Empty Topic");
+        emptyTopic.setContent("No comments");
+        emptyTopic.setAuthor(author);
+        emptyTopic = topicRepository.save(emptyTopic);
+
+        assertThat(topicRepository.count()).isEqualTo(2);
+        topicRepository.deleteById(emptyTopic.getId());
+        assertThat(topicRepository.count()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("CASCADE DELETE - Deletar tópico com comentários (deve deletar comentários em cascata)")
+    void testDeleteTopicWithCommentsCascades() {
+        // Criar comentários usando o constructor sincronizado
+        Comment comment1 = new Comment(topic, author, "Comment 1");
+        Comment comment2 = new Comment(topic, author, "Comment 2");
+
+        // Salvar comentários PRIMEIRO
+        Comment savedComment1 = commentRepository.save(comment1);
+        Comment savedComment2 = commentRepository.save(comment2);
+        
+        // Após salvar, adicionar manualmente à coleção do tópico
+        topic.getComments().add(savedComment1);
+        topic.getComments().add(savedComment2);
+        topicRepository.save(topic);
+
+        assertThat(commentRepository.count()).isEqualTo(2);
+        assertThat(topicRepository.count()).isEqualTo(1);
+
+        // Deletar o tópico deve deletar todos os comentários em cascata
+        topicRepository.deleteById(topic.getId());
+
+        assertThat(topicRepository.count()).isEqualTo(0);
+        assertThat(commentRepository.count()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("CASCADE DELETE - Deletar tópico com múltiplos comentários")
+    void testMultipleCommentsDeletedWithTopic() {
+        Comment comment1 = new Comment(topic, author, "Comment 1");
+        Comment comment2 = new Comment(topic, author, "Comment 2");
+        Comment comment3 = new Comment(topic, author, "Comment 3");
+
+        Comment savedComment1 = commentRepository.save(comment1);
+        Comment savedComment2 = commentRepository.save(comment2);
+        Comment savedComment3 = commentRepository.save(comment3);
+        
+        // Adicionar manualmente à coleção do tópico
+        topic.getComments().add(savedComment1);
+        topic.getComments().add(savedComment2);
+        topic.getComments().add(savedComment3);
+        topicRepository.save(topic);
+
+        assertThat(commentRepository.count()).isEqualTo(3);
+
+        topicRepository.deleteById(topic.getId());
+
+        assertThat(commentRepository.count()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("CASCADE DELETE - Deletar apenas comentários do tópico alvo (não afeta outros tópicos)")
+    void testDeleteOnlyTargetTopicComments() {
+        Topic topic2 = new Topic();
+        topic2.setTitle("Topic 2");
+        topic2.setContent("Content 2");
+        topic2.setAuthor(author);
+        topic2 = topicRepository.save(topic2);
+
+        Comment comment1 = new Comment(topic, author, "Comment on Topic 1");
+        Comment comment2 = new Comment(topic2, author, "Comment on Topic 2");
+
+        Comment savedComment1 = commentRepository.save(comment1);
+        Comment savedComment2 = commentRepository.save(comment2);
+        
+        // Adicionar manualmente às coleções dos tópicos
+        topic.getComments().add(savedComment1);
+        topic2.getComments().add(savedComment2);
+        topicRepository.save(topic);
+        topicRepository.save(topic2);
+
+        assertThat(commentRepository.count()).isEqualTo(2);
+
+        topicRepository.deleteById(topic.getId());
+
+        assertThat(commentRepository.count()).isEqualTo(1);
+        assertThat(commentRepository.findAll().get(0).getTopic().getId()).isEqualTo(topic2.getId());
     }
 }
