@@ -36,6 +36,7 @@ public class TopicController {
 
     private final TopicService topicService;
     private final TopicResponseMapper topicResponseMapper;
+
     private final CurrentUser auth;
 
 
