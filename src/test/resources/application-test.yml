@@ -19,3 +19,9 @@ spring:
 
   flyway:
     enabled: false
+    locations: classpath:db/migration_test
+
+  sql:
+    init:
+      mode: always
+      continue-on-error: false
