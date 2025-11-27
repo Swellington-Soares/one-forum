@@ -5,7 +5,7 @@ import br.one.forum.dtos.UserPasswordUpdateRequestDto;
 import br.one.forum.dtos.UserProfileUpdateRequestDto;
 import br.one.forum.dtos.UserRegisterRequestDto;
 import br.one.forum.entities.Profile;
-import br.one.forum.entities.User;
+
 import br.one.forum.exception.UserAlreadyRegisteredException;
 import br.one.forum.exception.UserNotFoundException;
 import br.one.forum.exception.UserPasswordNotMatchException;
@@ -20,7 +20,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
