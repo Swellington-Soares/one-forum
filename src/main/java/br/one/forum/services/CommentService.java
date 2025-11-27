@@ -3,7 +3,6 @@ package br.one.forum.services;
 import br.one.forum.dtos.CommentCreateRequestDto;
 import br.one.forum.dtos.CommentResponseDto;
 import br.one.forum.dtos.UpdateCommentDto;
-import br.one.forum.dtos.UserCommentResponseDto;
 import br.one.forum.entities.Comment;
 import br.one.forum.entities.User;
 import br.one.forum.exception.CommentCannotBeEditableByCurrentUserException;
@@ -74,10 +73,6 @@ public class CommentService {
         return commentRepository.findCommentByIdAndTopicId(id, topicId)
                 .map(commentMapper::toDto)
                 .orElseThrow(() -> new CommentNotFoundException(id));
-    }
-
-    public Page<UserCommentResponseDto> findAllByAuthorId(int authorId, Pageable pageable) {
-        return commentRepository.findAllByAuthorId(authorId, pageable);
     }
 }
 

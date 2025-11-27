@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,7 +18,7 @@ public record TopicResponseDto(Integer id,
                                TopicResponseDto.UserTopicDto author,
                                Instant createdAt,
                                Instant updatedAt,
-                               List<TopicCategoryDto> categories) implements Serializable {
+                               Set<TopicCategoryDto> categories) implements Serializable {
     public record UserTopicDto(Integer id,
                                Instant createdAt,
                                UserTopicProfileDto profile) implements Serializable {
