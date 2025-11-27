@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +23,15 @@ public interface TopicRepository extends JpaRepository<Topic, Integer>, JpaSpeci
     void deleteTopicByIdAndAuthorId(int id, int userId);
 
     Optional<Topic> findByIdAndAuthorId(int id, int user_id);
+
+
+    @Query("""
+       SELECT t
+       FROM Topic t
+       LEFT JOIN t.likedBy l
+       GROUP BY t.id
+       ORDER BY COUNT(l.id) DESC
+       """)
+    List<Topic> findAllOrderByLikesDesc();
+
 }

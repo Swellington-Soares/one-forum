@@ -1,5 +1,6 @@
 package br.one.forum.repositories;
 
+import br.one.forum.dtos.UserCommentResponseDto;
 import br.one.forum.entities.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,8 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findByAuthorId(Integer userId);
-
     Page<Comment> findAllByTopicId(int topicId, Pageable pageable);
-
     Optional<Comment> findCommentByIdAndTopicId(int id, int topicId);
+    Page<UserCommentResponseDto> findAllByAuthorId(int authorId, Pageable pageable);
 }
