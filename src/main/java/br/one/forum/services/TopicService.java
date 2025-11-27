@@ -72,13 +72,9 @@ public class TopicService {
 
         if (categoryId != null) {
             spec = spec.and(TopicSpecification.byCategoryId(categoryId));
-        }
-
-        if (title != null) {
+        } else if (title != null) {
             spec = spec.and(TopicSpecification.byTitleOrAuthorName(title));
-        }
-
-        if (authorId != null) {
+        } else if (authorId != null) {
             spec = spec.and(TopicSpecification.byAuthorId(authorId));
         }
 
@@ -101,6 +97,4 @@ public class TopicService {
 
         return topicRepository.save(topicEditMapper.partialUpdate(data, topic));
     }
-
-
 }
