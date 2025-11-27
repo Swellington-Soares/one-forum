@@ -50,14 +50,4 @@ public class Comment {
         this.author = author;
         this.content = content;
     }
-
-    public void setAuthor(User author) {
-        this.author = author;
-        author.getComments().add(this);
-    }
-
-    public void setTopic(Topic topic) {
-        this.topic = topic;
-        topic.getComments().add(this);
-    }
 }

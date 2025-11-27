@@ -9,7 +9,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -25,7 +24,6 @@ public class Topic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     private Integer id;
 
     @NotNull
@@ -43,18 +41,16 @@ public class Topic {
     private User author;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    //@Setter(AccessLevel.NONE)
-    //@CreationTimestamp
-    //todo: refazer na produção, apenas teste.
-    private Instant createdAt = Instant.now();
+    @Setter(AccessLevel.NONE)
+    @CreationTimestamp
+    private Instant createdAt;
 
     @Column(name = "updated_at")
-    //@Setter(AccessLevel.NONE)
-    //@UpdateTimestamp
-    //todo: refazer na produção, apenas teste.
-    private Instant updatedAt = Instant.now();
+    @Setter(AccessLevel.NONE)
+    @UpdateTimestamp
+    private Instant updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinTable(
             name = "category_has_topic",
             joinColumns = @JoinColumn(name = "topic_id"),
@@ -72,10 +68,9 @@ public class Topic {
     @Setter(AccessLevel.NONE)
     private Set<User> likedBy = new HashSet<>();
 
-    @OneToMany(mappedBy = "topic", orphanRemoval = true)
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private Set<Comment> comments = new HashSet<>();
-
 
     public Topic(String title, String content, User author, Category category) {
         this.title = title;
@@ -89,14 +84,12 @@ public class Topic {
         this(title, content, author, new Category(category));
     }
 
-
     public Topic(String title, String content, User author) {
         this.title = title;
         this.content = content;
         this.author = author;
         this.createdAt = Instant.now();
     }
-
 
     public int getLikeCount() {
         return likedBy.size();

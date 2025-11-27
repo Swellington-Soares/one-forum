@@ -54,7 +54,7 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Set<Topic> likedTopics = new HashSet<>();
 
-    @OneToMany(mappedBy = "author", orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private Set<Comment> comments = new HashSet<>();
 
@@ -95,5 +95,6 @@ public class User {
     private String maskedPassword() {
         return "[PROTECTED]";
     }
+
 
 }

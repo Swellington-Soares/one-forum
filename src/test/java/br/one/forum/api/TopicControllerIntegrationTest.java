@@ -1,212 +1,149 @@
 package br.one.forum.api;
 
-import br.one.forum.TestMessageSourceConfig;
-import br.one.forum.TestUtils;
-import br.one.forum.controllers.TopicController;
-import br.one.forum.dtos.TopicCreateRequestDto;
-import br.one.forum.dtos.TopicResponseDto;
-import br.one.forum.entities.Category;
-import br.one.forum.entities.CurrentUser;
+import br.one.forum.TestcontainersConfiguration;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
-import br.one.forum.exception.TopicNotFoundException;
-import br.one.forum.mappers.TopicResponseMapper;
-import br.one.forum.seeders.factories.FakeTopicFactory;
-import br.one.forum.services.AuthorizationService;
-import br.one.forum.services.TokenService;
-import br.one.forum.services.TopicService;
+import br.one.forum.repositories.TopicRepository;
+import br.one.forum.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.Instant;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@WebMvcTest(controllers = TopicController.class)
+@Import(TestcontainersConfiguration.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
 @ActiveProfiles("test")
-@AutoConfigureMockMvc(addFilters = false)
-@Import(TestMessageSourceConfig.class)
+@Testcontainers
 class TopicControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
-    private CurrentUser auth;
+    @Autowired
+    private TopicRepository topicRepository;
 
-    @MockitoBean
-    private TopicService topicService;
-
-    @MockitoBean
-    private TopicResponseMapper topicResponseMapper;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private ObjectMapper mapper;
 
-    @MockitoBean
-    private TokenService tokenService;
+    private User author;
+    private User otherUser;
+    private Topic topic1;
 
-    @MockitoBean
-    private AuthorizationService authorizationService;
+    @BeforeEach
+    void setup() {
+        topicRepository.deleteAll();
+        userRepository.deleteAll();
 
-    private TopicResponseDto topicToResponse(Topic topic) {
-        return new TopicResponseDto(
-                topic.getId(),
-                topic.getTitle(),
-                0,
-                topic.getContent(),
-                false,
-                new TopicResponseDto.UserTopicDto(
-                        topic.getAuthor().getId(),
-                        Instant.now(),
-                        new TopicResponseDto.UserTopicDto.UserTopicProfileDto(
-                                topic.getAuthor().getProfile().getName(),
-                                topic.getAuthor().getProfile().getPhoto()
-                        )
-                ),
-                Instant.now(),
-                Instant.now(),
-                topic.getCategories()
-                        .stream()
-                        .map(c -> new TopicResponseDto.TopicCategoryDto(c.getName()))
-                        .toList()
-        );
+        author = new User();
+        author.setEmail("author@test.com");
+        author.setPassword("test_pw");
+        userRepository.save(author);
+
+        otherUser = new User();
+        otherUser.setEmail("other@test.com");
+        otherUser.setPassword("test_pw");
+        userRepository.save(otherUser);
+
+        topic1 = new Topic();
+        topic1.setTitle("Topic for GET by ID");
+        topic1.setContent("Content of the topic for detailed view.");
+        topic1.setAuthor(author);
+        topicRepository.save(topic1);
+
+        Topic topic2 = new Topic();
+        topic2.setTitle("Second Topic for Listing");
+        topic2.setContent("Content of the second topic.");
+        topic2.setAuthor(otherUser);
+        topicRepository.save(topic2);
     }
 
     @Test
-    @DisplayName("POST /topics should successfully create a new topic and return 201 CREATED.")
-    void testCreateTopic_Success() throws Exception {
+    @DisplayName("It should return 200 OK and filter topics by the provided authorId.")
+    void testFilterByAuthor() throws Exception {
+        String url = String.format("/topics?authorId=%d", author.getId());
 
-        User mockUser = TestUtils.mockAuthenticatedUser(50, "SecMOckUser");
-        when(auth.getUser()).thenReturn(mockUser);
-
-        Topic mockTopic = FakeTopicFactory.getOne(List.of(mockUser));
-        mockTopic.setId(1);
-        mockTopic.getCategories().addAll(List.of(
-                        new Category("DEV"),
-                        new Category("PROGRAMAÇÃO")
-                )
-        );
-
-        var topicRequestDto = new TopicCreateRequestDto(
-                mockTopic.getTitle(),
-                mockTopic.getContent(),
-                mockTopic.getCategories().stream().map(Category::getName).toList()
-        );
-
-        var topicResponseDto = topicToResponse(mockTopic);
-
-        when(topicService.createTopic(mockUser, topicRequestDto))
-                .thenReturn(mockTopic);
-
-        when(topicResponseMapper.toDtoExcludeContent(mockTopic, null)).thenReturn(topicResponseDto);
-
-
-        var requestBody = mapper.writeValueAsString(topicRequestDto);
-
-        mockMvc.perform(post("/topics")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.id").value(mockTopic.getId()));
-
-        verify(topicService).createTopic(mockUser, topicRequestDto);
+        mockMvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].author.id", is(author.getId())))
+                .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())));
     }
 
     @Test
-    @DisplayName("GET /topics should return paginated list of topics successfully")
+    @DisplayName("It should return 200 OK and an empty list when the author has no topics.")
+    void testFilterByAuthor_NoTopics() throws Exception {
+        User emptyUser = new User();
+        emptyUser.setEmail("empty@test.com");
+        emptyUser.setPassword("test_pw");
+        userRepository.save(emptyUser);
+
+        String url = String.format("/topics?authorId=%d", emptyUser.getId());
+
+        mockMvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)));
+    }
+
+
+    @Test
+    @DisplayName("GET /topics - It should return 200 OK and a paginated list of all topics.")
+    @WithMockUser(username = "testuser", roles = {"USER"})
     void testGetTopicsSuccess() throws Exception {
-
-        User mockUser = TestUtils.mockAuthenticatedUser(10, "ListUser");
-        when(auth.getUser()).thenReturn(mockUser);
-
-        Topic topic1 = FakeTopicFactory.getOne(List.of(mockUser));
-        Topic topic2 = FakeTopicFactory.getOne(List.of(mockUser));
-        topic1.setId(1);
-        topic2.setId(2);
-
-        TopicResponseDto dto1 = topicToResponse(topic1);
-        TopicResponseDto dto2 = topicToResponse(topic2);
-
-        Page<Topic> page = new PageImpl<>(List.of(topic1, topic2));
-
-        when(topicService.getAll(
-                eq(null),
-                eq(null),
-                eq(null),
-                eq(null),
-                any(Pageable.class)
-        )).thenReturn(page);
-
-        when(topicResponseMapper.toDtoExcludeContent(topic1, mockUser))
-                .thenReturn(dto1);
-
-        when(topicResponseMapper.toDtoExcludeContent(topic2, mockUser))
-                .thenReturn(dto2);
-
-        mockMvc.perform(
-                        get("/topics")
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
+        mockMvc.perform(get("/topics")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.length()").value(2))
-                .andExpect(jsonPath("$.content[0].id").value(1))
-                .andExpect(jsonPath("$.content[1].id").value(2));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].title", is(topic1.getTitle())));
     }
 
     @Test
-    @DisplayName("GET /topics/{id} should return topic successfully")
+    @DisplayName("GET /topics/{topicId} - \n" +
+            "It should return 200 OK and the complete topic by ID.")
+    @WithMockUser(username = "testuser")
     void testGetTopicById() throws Exception {
+        Integer topicId = topic1.getId();
 
-        User mockUser = TestUtils.mockAuthenticatedUser(20, "UserGET");
-        when(auth.getUser()).thenReturn(mockUser);
-
-        Topic topic = FakeTopicFactory.getOne(List.of(mockUser));
-        topic.setId(100);
-
-        TopicResponseDto response = topicToResponse(topic);
-
-        when(topicService.findTopicById(100)).thenReturn(topic);
-        when(topicResponseMapper.toDto(topic, mockUser)).thenReturn(response);
-
-        mockMvc.perform(get("/topics/100"))
+        mockMvc.perform(get("/topics/{topicId}", topicId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(100))
-                .andExpect(jsonPath("$.title").value(topic.getTitle()));
+                .andExpect(jsonPath("$.id", is(topicId)))
+                .andExpect(jsonPath("$.title", is(topic1.getTitle())))
+                .andExpect(jsonPath("$.content", is(topic1.getContent())))
+                .andExpect(jsonPath("$.author.id", is(author.getId())))
+        ;
     }
 
     @Test
-    @DisplayName("GET /topics/{id} should return 404 when topic is not found")
+    @DisplayName("GET /topics/{topicId} - It should return a 404 NOT FOUND error if the topic does not exist.")
+    @WithMockUser(username = "testuser", roles = {"USER"})
     void testGetTopicById_NotFound() throws Exception {
+        int nonExistentId = 9999;
 
-        when(topicService.findTopicById(999))
-                .thenThrow(new TopicNotFoundException(999));
-
-        mockMvc.perform(get("/topics/999"))
+        mockMvc.perform(get("/topics/{topicId}", nonExistentId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
 }

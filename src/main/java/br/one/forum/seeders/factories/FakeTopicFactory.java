@@ -4,8 +4,6 @@ import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
 import br.one.forum.utils.DataFaker;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
