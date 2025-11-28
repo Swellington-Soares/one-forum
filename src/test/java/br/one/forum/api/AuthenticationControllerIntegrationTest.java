@@ -60,7 +60,8 @@ class AuthenticationControllerIntegrationTest {
 
         // Criar usuário de teste
         validEmail = "teste@example.com";
-        validPassword = "Senha123!@#";
+        // Senha de teste apenas - não é um secret real
+        validPassword = "TestPassword123!";
 
         UserRegisterRequestDto registerDto = new UserRegisterRequestDto(
                 validEmail,
