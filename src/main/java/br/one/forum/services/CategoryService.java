@@ -14,7 +14,6 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-
     public Category createOrGetCategory(String name) {
         return categoryRepository.findByNameIgnoreCase(name)
                 .orElseGet(() -> categoryRepository.save(new Category(name)));

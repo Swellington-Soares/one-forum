@@ -25,7 +25,6 @@ public class CommentService {
     private final UserService userService;
     private final CommentMapper commentMapper;
 
-
     public CommentResponseDto createComment(int topicId, User user, CommentCreateRequestDto dto) {
         var topic = topicService.findTopicById(topicId);
         var comment = new Comment();

@@ -24,12 +24,16 @@ import java.util.UUID;
 public class TokenService {
 
     private final TokenRepository tokenRepository;
+
     @Value("${api.security.access-token.key}")
     private String tokenSecretKey;
+
     @Value("${api.security.access-token.expiration}")
     private int tokenExpirationInMinutes;
+
     @Value("${api.security.refresh-token.key}")
     private String refreshTokenSecretKey;
+
     @Value("${api.security.refresh-token.expiration}")
     private int refreshTokenExpirationInMinutes;
 
