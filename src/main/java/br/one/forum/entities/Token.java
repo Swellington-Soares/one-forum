@@ -1,6 +1,7 @@
 package br.one.forum.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Builder
-public class EmailToken {
+public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +34,14 @@ public class EmailToken {
     private TokenType type = TokenType.EMAIL_TOKEN;
 
     @NotNull
+    @Future
     private Instant expiration;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     public boolean isExpired() {
-        return expiration != null && expiration.isBefore(Instant.now());
+        return expiration == null || expiration.isBefore(Instant.now());
     }
 
 

@@ -1,11 +1,14 @@
 package br.one.forum.services;
 
 import br.one.forum.dtos.TokenDto;
-import br.one.forum.entities.EmailToken;
+import br.one.forum.entities.Token;
 import br.one.forum.entities.User;
-import br.one.forum.repositories.EmailTokenRepository;
+import br.one.forum.exception.TokenNotFoundException;
+import br.one.forum.exception.TokenVerificationException;
+import br.one.forum.repositories.TokenRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private final EmailTokenRepository emailTokenRepository;
+    private final TokenRepository tokenRepository;
     @Value("${api.security.access-token.key}")
     private String tokenSecretKey;
     @Value("${api.security.access-token.expiration}")
@@ -70,31 +73,30 @@ public class TokenService {
         return LocalDateTime.now().plusMinutes(minutes).toInstant(ZoneOffset.of("-03:00"));
     }
 
-    public String generateEmailToken(String email) {
-        var token = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase();
-        var expirationDate = getTokenExpirationDate(120);
-        var tokenType = EmailToken.TokenType.EMAIL_TOKEN;
-        var tokenEntity = emailTokenRepository.findByEmailAndType(email, tokenType).orElse(null);
-
-        if (tokenEntity != null && (!tokenEntity.isExpired())) {
-            return tokenEntity.getToken();
+    public Token generateEmailToken(String email, Token.TokenType type) {
+        var tokenStr = UUID.randomUUID().toString();
+        var currentToken = tokenRepository.findByEmailAndType(email, type)
+                .orElse(null);
+        if (currentToken != null && currentToken.isExpired()) {
+            tokenRepository.delete(currentToken);
         }
 
-        if (tokenEntity == null || tokenEntity.isExpired()) {
-
-            if (tokenEntity != null) {
-                emailTokenRepository.delete(tokenEntity);
-            }
-
-            emailTokenRepository.save(EmailToken.builder()
-                    .email(email)
-                    .expiration(expirationDate)
-                    .token(token)
-                    .type(tokenType)
-                    .build());
+        if (currentToken != null && !currentToken.isExpired()) {
+            return currentToken;
         }
 
+        currentToken = Token.builder()
+                .email(email)
+                .expiration(getTokenExpirationDate(60))
+                .type(type)
+                .token(tokenStr).build();
 
+        return tokenRepository.save(currentToken);
+    }
+
+    public Token validateEmailToken(String tokenStr) {
+        var token = tokenRepository.findByToken(tokenStr).orElseThrow(TokenNotFoundException::new);
+        if (token.isExpired()) throw new TokenVerificationException();
         return token;
     }
 

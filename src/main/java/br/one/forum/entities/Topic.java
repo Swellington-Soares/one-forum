@@ -120,13 +120,17 @@ public class Topic {
         if (likeUser == null) return;
         if (likeUser.equals(author)) return;
 
-        if (likedBy.contains(likeUser)) {
-            likedBy.remove(likeUser);
-            likeUser.getLikedTopics().remove(this);
+        if (likedBy.stream().anyMatch(u -> u.getId().equals(likeUser.getId()))){
+            likedBy.removeIf(l -> l.getId().equals(likeUser.getId()));
+            likeUser.getLikedTopics().removeIf(t -> t.getId().equals(this.id));
         } else {
             likedBy.add(likeUser);
             likeUser.getLikedTopics().add(this);
         }
+    }
+
+    public int getCommentCount() {
+        return comments.size();
     }
 
 }

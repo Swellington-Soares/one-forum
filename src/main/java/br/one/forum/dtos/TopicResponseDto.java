@@ -10,22 +10,23 @@ import java.util.Set;
 /**
  * DTO for {@link br.one.forum.entities.Topic}
  */
-public record TopicResponseDto(Integer id,
+public record TopicResponseDto(int id,
                                String title,
-                               Integer likes,
+                               int likes,
+                               int commentCount,
                                String content,
-                               Boolean likedByCurrentUser,
+                               boolean likedByCurrentUser,
                                TopicResponseDto.UserTopicDto author,
                                Instant createdAt,
                                Instant updatedAt,
                                Set<TopicCategoryDto> categories) implements Serializable {
-    public record UserTopicDto(Integer id,
+    public record UserTopicDto(int id,
                                Instant createdAt,
                                UserTopicProfileDto profile) implements Serializable {
-        public record UserTopicProfileDto(@NotNull String name, String photo) implements Serializable {
+        public record UserTopicProfileDto(String name, String photo) implements Serializable {
         }
     }
 
-    public record TopicCategoryDto(@NotNull @Size(max = 50) String name) implements Serializable {
+    public record TopicCategoryDto(String name) implements Serializable {
     }
 }

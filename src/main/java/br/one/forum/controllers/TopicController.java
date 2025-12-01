@@ -3,6 +3,7 @@ package br.one.forum.controllers;
 
 import br.one.forum.dtos.TopicCreateRequestDto;
 import br.one.forum.dtos.TopicEditRequestDto;
+import br.one.forum.dtos.TopicLikeResponseDto;
 import br.one.forum.dtos.TopicResponseDto;
 import br.one.forum.entities.CurrentUser;
 import br.one.forum.mappers.TopicResponseMapper;
@@ -133,6 +134,7 @@ public class TopicController {
 
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{topicId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TopicResponseDto> createTopic(
@@ -143,12 +145,19 @@ public class TopicController {
         return ResponseEntity.ok(topicResponseMapper.toDtoExcludeContent(editedTopic, user));
     }
 
-
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{topicId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") int topicId) {
         topicService.deleteTopic(topicId, auth.getUser());
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{topicId}/like")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<TopicLikeResponseDto> likeTopic(@PathVariable int topicId) {
+        var totalLikes = topicService.toggleLike(topicId, auth.getUser());
+        return ResponseEntity.ok(new TopicLikeResponseDto(topicId, totalLikes));
     }
 
 

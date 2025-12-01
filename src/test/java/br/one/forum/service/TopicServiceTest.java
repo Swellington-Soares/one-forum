@@ -33,19 +33,10 @@ public class TopicServiceTest {
 
     @Test
     void testIfSaveLike() {
-        var user1 = FakeUserFactory.getOne();
-        userRepository.save(user1);
-
-        var topico1 = FakeTopicFactory.getOne(List.of(user1));
-
-        var user2 = FakeUserFactory.getOne();
-        userRepository.save(user2);
-
-
-        topicRepository.save(topico1);
-        topicService.toggleLike(topico1, user2);
-
-
+        var user1 = userRepository.save(FakeUserFactory.getOne());
+        var topico1 =  topicRepository.save(FakeTopicFactory.getOne(List.of(user1)));
+        var user2 = userRepository.save(FakeUserFactory.getOne());
+        topicService.toggleLike(topico1.getId(), user2);
         assertThat(topico1.getLikeCount()).isEqualTo(1);
 
     }

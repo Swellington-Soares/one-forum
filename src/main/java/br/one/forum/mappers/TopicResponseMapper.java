@@ -11,12 +11,14 @@ import org.mapstruct.*;
 public interface TopicResponseMapper {
 
     @Mapping(target = "likes", expression = "java(topic.getLikeCount())")
+    @Mapping(target = "commentCount", expression = "java(topic.getCommentCount())")
     @Mapping(target = "likedByCurrentUser", expression = "java(topic.isLikedByUser(user))")
     TopicResponseDto toDto(Topic topic, @Context User user);
 
     @Mapping(target = "likes", expression = "java(topic.getLikeCount())")
     @Mapping(target = "likedByCurrentUser", expression = "java(topic.isLikedByUser(user))")
     @Mapping(target = "content", ignore = true)
+    @Mapping(target = "commentCount", expression = "java(topic.getCommentCount())")
     TopicResponseDto toDtoExcludeContent(Topic topic, @Context User user);
 }
 

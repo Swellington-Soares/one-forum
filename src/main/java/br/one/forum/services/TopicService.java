@@ -27,9 +27,13 @@ public class TopicService {
     private final CategoryService categoryService;
     private final TopicEditMapper topicEditMapper;
 
-    public void toggleLike(Topic topic, User user) {
-        topic.toggleLike(user);
-        topicRepository.save(topic);
+    public int toggleLike(int topicId, User user) {
+        var topic = topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
+        if (!topic.getAuthor().getId().equals(user.getId())) {
+            topic.toggleLike( user );
+            topicRepository.save(topic);
+        }
+        return topic.getLikeCount();
     }
 
     @NonNull
