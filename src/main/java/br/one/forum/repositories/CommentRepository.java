@@ -12,8 +12,7 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findByAuthorId(Integer userId);
-
     Page<Comment> findAllByTopicId(int topicId, Pageable pageable);
-
     Optional<Comment> findCommentByIdAndTopicId(int id, int topicId);
+    Page<Comment> findAllByAuthorId(Integer authorId, Pageable pageable);
 }

@@ -96,5 +96,12 @@ public class User {
         return "[PROTECTED]";
     }
 
+    public int getCommentsCount() {
+        return comments.size();
+    }
+
+    public int getTopicCreatedCount() {
+        return createdTopics.size();
+    }
 
 }
