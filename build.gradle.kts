@@ -65,6 +65,9 @@ dependencies {
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.20.1")
 
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
 }
 
