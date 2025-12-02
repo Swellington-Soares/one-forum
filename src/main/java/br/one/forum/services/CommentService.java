@@ -41,8 +41,8 @@ public class CommentService {
                 .orElseThrow(() -> new CommentNotFoundException(id));
         if (comment.getAuthor().getId() != userId)
             throw new CommentCannotBeEditableByCurrentUserException();
-        commentRepository.save(comment);
-        return commentMapper.toDto(comment);
+       comment.setContent(dto.content());
+        return commentMapper.toDto( commentRepository.save(comment));
     }
 
     public void deleteComment(int userId, int topicId, int id) {
