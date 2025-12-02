@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
@@ -66,10 +68,12 @@ public class Topic {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     @Setter(AccessLevel.NONE)
+    @JsonIgnore
     private Set<User> likedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
+    @JsonIgnore
     private Set<Comment> comments = new HashSet<>();
 
     public Topic(String title, String content, User author, Category category) {

@@ -2,6 +2,7 @@ package br.one.forum.repositories;
 
 import br.one.forum.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmailAndDeletedIsFalse(String id);
 
     boolean existsByEmailIgnoreCase(@NonNull String email);
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.likedTopics WHERE u.id = :id")
+    Optional<User> findByIdWithLikedTopics(Integer id);
+
 }
