@@ -76,9 +76,13 @@ public class TopicService {
 
         if (categoryId != null) {
             spec = spec.and(TopicSpecification.byCategoryId(categoryId));
-        } else if (title != null) {
+        }
+
+        if (title != null) {
             spec = spec.and(TopicSpecification.byTitleOrAuthorName(title));
-        } else if (authorId != null) {
+        }
+
+        if (authorId != null) {
             spec = spec.and(TopicSpecification.byAuthorId(authorId));
         }
 

@@ -1,4 +1,4 @@
-package br.one.forum.dtos;
+package br.one.forum.dtos.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

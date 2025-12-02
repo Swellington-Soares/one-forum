@@ -1,6 +1,6 @@
 package br.one.forum.exception;
 
-import br.one.forum.dtos.ApiExceptionResponseDto;
+import br.one.forum.dtos.response.ApiExceptionResponseDto;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
