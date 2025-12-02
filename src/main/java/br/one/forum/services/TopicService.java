@@ -46,13 +46,6 @@ public class TopicService {
         topicRepository.deleteTopicByIdAndAuthorId(topicId, owner.getId());
     }
 
-
-    @Transactional(readOnly = true)
-    public Slice<Topic> findAllTopicByUserId(int userId, int page, int size) {
-        var pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return topicRepository.findByAuthorIdOrderByCreatedAtDesc(userId, pageable);
-    }
-
     @Transactional
     public Topic createTopic(@NotNull User user, TopicCreateRequestDto dto) {
         var topic = new Topic();
@@ -65,6 +58,8 @@ public class TopicService {
         return topicRepository.save(topic);
     }
 
+
+    @Transactional(readOnly = true)
     public Page<Topic> getAll(
             Long authorId,
             Boolean moreLiked,
