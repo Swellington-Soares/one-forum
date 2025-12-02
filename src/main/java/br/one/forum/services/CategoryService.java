@@ -1,6 +1,6 @@
 package br.one.forum.services;
 
-import br.one.forum.dtos.CategoryResponseDto;
+import br.one.forum.dtos.response.CategoryResponseDto;
 import br.one.forum.entities.Category;
 import br.one.forum.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;

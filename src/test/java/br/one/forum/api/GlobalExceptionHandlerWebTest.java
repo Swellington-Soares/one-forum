@@ -3,10 +3,13 @@ package br.one.forum.api;
 
 import br.one.forum.configuration.MessageSourceConfiguration;
 import br.one.forum.controllers.UserController;
+import br.one.forum.entities.CurrentUser;
 import br.one.forum.exception.GlobalExceptionHandler;
-import br.one.forum.exception.UserNotFoundException;
+import br.one.forum.exception.api.UserNotFoundException;
+import br.one.forum.mappers.UserMapper;
 import br.one.forum.repositories.UserRepository;
 import br.one.forum.services.AuthorizationService;
+import br.one.forum.services.CommentService;
 import br.one.forum.services.TokenService;
 import br.one.forum.services.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -47,8 +50,15 @@ public class GlobalExceptionHandlerWebTest {
     @MockitoBean
     UserRepository userRepository;
 
-//    @MockitoBean
-//    MessageSource messageSource;
+    @MockitoBean
+    private  UserMapper userMapper;
+
+    @MockitoBean
+    private CommentService commentService;
+
+    @MockitoBean
+    private CurrentUser auth;
+
 
 
     @Test

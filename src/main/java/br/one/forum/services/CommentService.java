@@ -1,18 +1,20 @@
 package br.one.forum.services;
 
-import br.one.forum.dtos.*;
+import br.one.forum.dtos.request.CommentCreateRequestDto;
+import br.one.forum.dtos.request.UpdateCommentRequestDto;
+import br.one.forum.dtos.response.CommentResponseDto;
+import br.one.forum.dtos.response.UserCommentResponseDto;
 import br.one.forum.entities.Comment;
 import br.one.forum.entities.User;
-import br.one.forum.exception.CommentCannotBeEditableByCurrentUserException;
-import br.one.forum.exception.CommentNotFoundException;
+import br.one.forum.exception.api.CommentCannotBeEditableByCurrentUserException;
+import br.one.forum.exception.api.CommentNotFoundException;
 import br.one.forum.mappers.CommentMapper;
+import br.one.forum.mappers.UserCommentMapper;
 import br.one.forum.repositories.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class CommentService {
 
 
 
-    public CommentResponseDto updateComment(int userId, int topicId, int id, UpdateCommentDto dto) {
+    public CommentResponseDto updateComment(int userId, int topicId, int id, UpdateCommentRequestDto dto) {
         var comment = commentRepository.findCommentByIdAndTopicId(id, topicId)
                 .orElseThrow(() -> new CommentNotFoundException(id));
         if (comment.getAuthor().getId() != userId)

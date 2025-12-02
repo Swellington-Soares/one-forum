@@ -1,10 +1,10 @@
 package br.one.forum.api;
 
 import br.one.forum.TestcontainersConfiguration;
-import br.one.forum.dtos.AuthenticationRequestDto;
-import br.one.forum.dtos.LoginResponseDto;
-import br.one.forum.dtos.RefreshTokenRequestDto;
-import br.one.forum.dtos.UserRegisterRequestDto;
+import br.one.forum.dtos.request.AuthenticationRequestDto;
+import br.one.forum.dtos.response.LoginResponseDto;
+import br.one.forum.dtos.request.RefreshTokenRequestDto;
+import br.one.forum.dtos.request.UserRegisterRequestDto;
 import br.one.forum.entities.User;
 import br.one.forum.repositories.UserRepository;
 import br.one.forum.services.UserService;

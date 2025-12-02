@@ -1,6 +1,6 @@
 package br.one.forum.controllers;
 
-import br.one.forum.dtos.CategoryResponseDto;
+import br.one.forum.dtos.response.CategoryResponseDto;
 import br.one.forum.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

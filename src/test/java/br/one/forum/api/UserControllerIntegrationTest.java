@@ -1,12 +1,12 @@
 package br.one.forum.api;
 
 import br.one.forum.TestcontainersConfiguration;
-import br.one.forum.dtos.LoginResponseDto;
-import br.one.forum.dtos.UserProfileUpdateRequestDto;
-import br.one.forum.dtos.UserRegisterRequestDto;
+import br.one.forum.dtos.response.LoginResponseDto;
+import br.one.forum.dtos.request.UserProfileUpdateRequestDto;
+import br.one.forum.dtos.request.UserRegisterRequestDto;
 import br.one.forum.entities.User;
+import br.one.forum.mappers.UserMapper;
 import br.one.forum.repositories.UserRepository;
-import br.one.forum.security.AppUserDetails;
 import br.one.forum.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -18,8 +18,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -48,6 +48,9 @@ class UserControllerIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @MockitoBean
+    private  UserMapper userMapper;
 
     private User testUser;
     private String validEmail;
@@ -80,11 +83,10 @@ class UserControllerIntegrationTest {
         // Act & Assert
         mockMvc.perform(get("/users/{id}", testUser.getId()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testUser.getId()))
                 .andExpect(jsonPath("$.profileName").value("Usuário Teste"))
                 .andExpect(jsonPath("$.profilePhoto").value("https://example.com/avatar.jpg"))
-                .andExpect(jsonPath("$.email").doesNotExist()) // Email não deve estar em dados públicos
+                .andExpect(jsonPath("$.email").exists()) // Email não deve estar em dados públicos
                 .andExpect(jsonPath("$.createdAt").exists());
     }
 

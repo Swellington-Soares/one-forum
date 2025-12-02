@@ -1,7 +1,7 @@
 package br.one.forum.services;
 
 import br.one.forum.configuration.UploadProperties;
-import br.one.forum.exception.FileUploadException;
+import br.one.forum.exception.api.FileUploadException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;

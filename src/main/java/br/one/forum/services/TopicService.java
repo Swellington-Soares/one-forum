@@ -1,12 +1,12 @@
 package br.one.forum.services;
 
-import br.one.forum.dtos.TopicCreateRequestDto;
-import br.one.forum.dtos.TopicEditRequestDto;
+import br.one.forum.dtos.request.TopicCreateRequestDto;
+import br.one.forum.dtos.request.TopicEditRequestDto;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
-import br.one.forum.exception.ActionNotPermittedException;
-import br.one.forum.exception.InvalidTopicOwnerException;
-import br.one.forum.exception.TopicNotFoundException;
+import br.one.forum.exception.api.ActionNotPermittedException;
+import br.one.forum.exception.api.InvalidTopicOwnerException;
+import br.one.forum.exception.api.TopicNotFoundException;
 import br.one.forum.mappers.TopicEditMapper;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
@@ -64,7 +64,6 @@ public class TopicService {
         var pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return topicRepository.findByAuthorIdOrderByCreatedAtDesc(userId, pageable);
     }
-
     @Transactional
     public Topic createTopic(@NotNull User user, TopicCreateRequestDto dto) {
         var topic = new Topic();
@@ -77,6 +76,8 @@ public class TopicService {
         return topicRepository.save(topic);
     }
 
+
+    @Transactional(readOnly = true)
     public Page<Topic> getAll(
             Long authorId,
             Boolean moreLiked,
@@ -87,9 +88,13 @@ public class TopicService {
 
         if (categoryId != null) {
             spec = spec.and(TopicSpecification.byCategoryId(categoryId));
-        } else if (title != null) {
+        }
+
+        if (title != null) {
             spec = spec.and(TopicSpecification.byTitleOrAuthorName(title));
-        } else if (authorId != null) {
+        }
+
+        if (authorId != null) {
             spec = spec.and(TopicSpecification.byAuthorId(authorId));
         }
 

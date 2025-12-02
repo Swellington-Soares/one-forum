@@ -1,6 +1,6 @@
 package br.one.forum.mappers;
 
-import br.one.forum.dtos.UserProfileResponseDto;
+import br.one.forum.dtos.response.UserProfileResponseDto;
 import br.one.forum.entities.User;
 import org.mapstruct.*;
 

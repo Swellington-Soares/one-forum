@@ -1,6 +1,6 @@
 package br.one.forum.mappers;
 
-import br.one.forum.dtos.TopicResponseDto;
+import br.one.forum.dtos.response.TopicResponseDto;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
 import org.mapstruct.*;
