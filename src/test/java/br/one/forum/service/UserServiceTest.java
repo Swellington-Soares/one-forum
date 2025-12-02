@@ -1,14 +1,14 @@
 package br.one.forum.service;
 
 import br.one.forum.dtos.TokenDto;
-import br.one.forum.dtos.UserPasswordUpdateRequestDto;
-import br.one.forum.dtos.UserProfileUpdateRequestDto;
-import br.one.forum.dtos.UserRegisterRequestDto;
+import br.one.forum.dtos.request.UserPasswordUpdateRequestDto;
+import br.one.forum.dtos.request.UserProfileUpdateRequestDto;
+import br.one.forum.dtos.request.UserRegisterRequestDto;
 import br.one.forum.entities.Profile;
 
-import br.one.forum.exception.UserAlreadyRegisteredException;
-import br.one.forum.exception.UserNotFoundException;
-import br.one.forum.exception.UserPasswordNotMatchException;
+import br.one.forum.exception.api.UserAlreadyRegisteredException;
+import br.one.forum.exception.api.UserNotFoundException;
+import br.one.forum.exception.api.UserPasswordNotMatchException;
 import br.one.forum.repositories.UserRepository;
 import br.one.forum.seeders.factories.FakeUserFactory;
 import br.one.forum.services.UserService;

@@ -1,12 +1,12 @@
 package br.one.forum.services;
 
-import br.one.forum.dtos.TopicCreateRequestDto;
-import br.one.forum.dtos.TopicEditRequestDto;
+import br.one.forum.dtos.request.TopicCreateRequestDto;
+import br.one.forum.dtos.request.TopicEditRequestDto;
 import br.one.forum.entities.Topic;
 import br.one.forum.entities.User;
-import br.one.forum.exception.ActionNotPermittedException;
-import br.one.forum.exception.InvalidTopicOwnerException;
-import br.one.forum.exception.TopicNotFoundException;
+import br.one.forum.exception.api.ActionNotPermittedException;
+import br.one.forum.exception.api.InvalidTopicOwnerException;
+import br.one.forum.exception.api.TopicNotFoundException;
 import br.one.forum.mappers.TopicEditMapper;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.specification.TopicSpecification;

@@ -1,10 +1,10 @@
 package br.one.forum.controllers;
 
 
-import br.one.forum.dtos.TopicCreateRequestDto;
-import br.one.forum.dtos.TopicEditRequestDto;
-import br.one.forum.dtos.TopicLikeResponseDto;
-import br.one.forum.dtos.TopicResponseDto;
+import br.one.forum.dtos.request.TopicCreateRequestDto;
+import br.one.forum.dtos.request.TopicEditRequestDto;
+import br.one.forum.dtos.response.TopicLikeResponseDto;
+import br.one.forum.dtos.response.TopicResponseDto;
 import br.one.forum.entities.CurrentUser;
 import br.one.forum.mappers.TopicResponseMapper;
 import br.one.forum.services.TopicService;

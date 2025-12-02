@@ -1,6 +1,6 @@
 package br.one.forum.services;
 
-import br.one.forum.exception.AuthenticationCredentialException;
+import br.one.forum.exception.api.AuthenticationCredentialException;
 import br.one.forum.security.AppUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

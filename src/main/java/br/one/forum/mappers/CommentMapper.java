@@ -1,6 +1,6 @@
 package br.one.forum.mappers;
 
-import br.one.forum.dtos.CommentResponseDto;
+import br.one.forum.dtos.response.CommentResponseDto;
 import br.one.forum.entities.Comment;
 import org.mapstruct.*;
 

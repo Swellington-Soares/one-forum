@@ -1,8 +1,8 @@
 package br.one.forum.controllers;
 
-import br.one.forum.dtos.AuthenticationRequestDto;
-import br.one.forum.dtos.LoginResponseDto;
-import br.one.forum.dtos.RefreshTokenRequestDto;
+import br.one.forum.dtos.request.AuthenticationRequestDto;
+import br.one.forum.dtos.response.LoginResponseDto;
+import br.one.forum.dtos.request.RefreshTokenRequestDto;
 import br.one.forum.services.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

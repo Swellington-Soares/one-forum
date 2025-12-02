@@ -1,14 +1,14 @@
 package br.one.forum.service;
 
-import br.one.forum.dtos.AuthenticationRequestDto;
-import br.one.forum.dtos.LoginResponseDto;
+import br.one.forum.dtos.request.AuthenticationRequestDto;
+import br.one.forum.dtos.response.LoginResponseDto;
 import br.one.forum.dtos.TokenDto;
 import br.one.forum.entities.Profile;
 import br.one.forum.entities.User;
-import br.one.forum.exception.ApiTokenExpiredException;
-import br.one.forum.exception.RefreshTokenInvalidException;
-import br.one.forum.exception.UserNotFoundException;
-import br.one.forum.exception.UserPasswordNotMatchException;
+import br.one.forum.exception.api.ApiTokenExpiredException;
+import br.one.forum.exception.api.RefreshTokenInvalidException;
+import br.one.forum.exception.api.UserNotFoundException;
+import br.one.forum.exception.api.UserPasswordNotMatchException;
 import br.one.forum.security.AppUserDetails;
 import br.one.forum.services.AuthenticationService;
 import br.one.forum.services.TokenService;

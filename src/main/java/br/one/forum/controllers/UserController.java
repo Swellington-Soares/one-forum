@@ -1,11 +1,11 @@
 package br.one.forum.controllers;
 
 
-import br.one.forum.dtos.UserCommentResponseDto;
-import br.one.forum.dtos.UserProfileResponseDto;
-import br.one.forum.dtos.UserProfileUpdateRequestDto;
-import br.one.forum.dtos.UserRegisterRequestDto;
-import br.one.forum.entities.User;
+import br.one.forum.dtos.response.UserCommentResponseDto;
+import br.one.forum.dtos.response.UserProfileResponseDto;
+import br.one.forum.dtos.request.UserProfileUpdateRequestDto;
+import br.one.forum.dtos.request.UserRegisterRequestDto;
+import br.one.forum.entities.CurrentUser;
 import br.one.forum.mappers.UserMapper;
 import br.one.forum.services.CommentService;
 import br.one.forum.services.UserService;
@@ -16,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,9 +26,16 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final CommentService commentService;
+    private final CurrentUser auth;
+
+    @GetMapping("/profile")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<UserProfileResponseDto> getUserAuthProfile() {
+        return  ResponseEntity.ok( userMapper.toDto( auth.getUser()) );
+    }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserProfileResponseDto> getUserById(@PathVariable int id) {
+    ResponseEntity<UserProfileResponseDto> getUserById(@PathVariable("id") int id) {
         var user = userService.findUserById(id, false);
         return  ResponseEntity.ok( userMapper.toDto(user) );
     }
