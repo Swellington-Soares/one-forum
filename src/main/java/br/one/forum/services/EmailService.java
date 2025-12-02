@@ -1,13 +1,10 @@
 package br.one.forum.services;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import org.springframework.stereotype.Service;
+import org.springframework.lang.Nullable;
 
-@Service
-class EmailService {
+import java.util.Map;
 
-    public void SendConfirmAccountEmail(@NotBlank @Email String email, String emailToken) {
-
-    }
+public interface EmailService {
+    void sendSimpleMessage(String dest, String subject, String message);
+    void sendHtmlMessage(String dest, String subject, String htmlTemplateResource, @Nullable Map<String, Object> params) throws InterruptedException;
 }
