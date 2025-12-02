@@ -137,12 +137,12 @@ public class TopicController {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{topicId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<TopicResponseDto> createTopic(
+    public ResponseEntity<TopicResponseDto> updateTopic(
             @PathVariable("topicId") int topicId,
             @RequestBody @Valid TopicEditRequestDto data) {
         var user = auth.getUser();
         var editedTopic = topicService.editTopic(topicId, data, user);
-        return ResponseEntity.ok(topicResponseMapper.toDtoExcludeContent(editedTopic, user));
+        return ResponseEntity.ok(topicResponseMapper.toDto(editedTopic, user));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -150,7 +150,7 @@ public class TopicController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") int topicId) {
         topicService.deleteTopic(topicId, auth.getUser());
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{topicId}/like")
