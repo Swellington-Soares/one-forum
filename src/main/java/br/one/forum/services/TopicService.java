@@ -9,6 +9,7 @@ import br.one.forum.exception.api.InvalidTopicOwnerException;
 import br.one.forum.exception.api.TopicNotFoundException;
 import br.one.forum.mappers.TopicEditMapper;
 import br.one.forum.repositories.TopicRepository;
+import br.one.forum.repositories.UserRepository;
 import br.one.forum.repositories.specification.TopicSpecification;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +27,23 @@ public class TopicService {
     private final TopicRepository topicRepository;
     private final CategoryService categoryService;
     private final TopicEditMapper topicEditMapper;
+    private final UserRepository userRepository;
 
+    @Transactional
     public int toggleLike(int topicId, User user) {
-        var topic = topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
-        if (!topic.getAuthor().getId().equals(user.getId())) {
-            topic.toggleLike( user );
-            topicRepository.save(topic);
-        }
+
+        var managedUser = userRepository.findByIdWithLikedTopics(user.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        var topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new TopicNotFoundException(topicId));
+
+        if (topic.getAuthor().getId().equals(user.getId()))
+            throw new IllegalArgumentException("Usuários não podem curtir seus próprios tópicos");
+
+        topic.toggleLike(managedUser);
+        topicRepository.save(topic);
+
         return topic.getLikeCount();
     }
 
@@ -41,11 +52,18 @@ public class TopicService {
         return topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
     }
 
+    @Transactional
     public void deleteTopic(int topicId, User owner) {
-        if (owner == null) throw new ActionNotPermittedException();
+        if (owner == null)
+            throw new ActionNotPermittedException();
         topicRepository.deleteTopicByIdAndAuthorId(topicId, owner.getId());
     }
 
+    @Transactional(readOnly = true)
+    public Slice<Topic> findAllTopicByUserId(int userId, int page, int size) {
+        var pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return topicRepository.findByAuthorIdOrderByCreatedAtDesc(userId, pageable);
+    }
     @Transactional
     public Topic createTopic(@NotNull User user, TopicCreateRequestDto dto) {
         var topic = new Topic();
@@ -65,8 +83,7 @@ public class TopicService {
             Boolean moreLiked,
             Long categoryId,
             String title,
-            Pageable pageable
-    ) {
+            Pageable pageable) {
         Specification<Topic> spec = Specification.unrestricted();
 
         if (categoryId != null) {
@@ -90,7 +107,8 @@ public class TopicService {
 
     public Topic editTopic(int topicId, TopicEditRequestDto data, @Nullable User currentLoggedUser) {
 
-        if (currentLoggedUser == null) throw new ActionNotPermittedException();
+        if (currentLoggedUser == null)
+            throw new ActionNotPermittedException();
 
         var topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TopicNotFoundException(topicId));
