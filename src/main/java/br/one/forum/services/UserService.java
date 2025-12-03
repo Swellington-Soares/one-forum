@@ -21,7 +21,6 @@ public final class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final Validator validator;
 
     public User findUserById(Integer id, boolean includeDeleted) {
         if (includeDeleted) {

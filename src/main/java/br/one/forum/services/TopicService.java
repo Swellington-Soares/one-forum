@@ -7,6 +7,7 @@ import br.one.forum.entities.User;
 import br.one.forum.exception.api.ActionNotPermittedException;
 import br.one.forum.exception.api.InvalidTopicOwnerException;
 import br.one.forum.exception.api.TopicNotFoundException;
+import br.one.forum.exception.api.UserNotFoundException;
 import br.one.forum.mappers.TopicEditMapper;
 import br.one.forum.repositories.TopicRepository;
 import br.one.forum.repositories.UserRepository;
@@ -31,19 +32,12 @@ public class TopicService {
 
     @Transactional
     public int toggleLike(int topicId, User user) {
-
-        var managedUser = userRepository.findByIdWithLikedTopics(user.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        var topic = topicRepository.findById(topicId)
-                .orElseThrow(() -> new TopicNotFoundException(topicId));
-
-        if (topic.getAuthor().getId().equals(user.getId()))
-            throw new IllegalArgumentException("Usuários não podem curtir seus próprios tópicos");
-
-        topic.toggleLike(managedUser);
-        topicRepository.save(topic);
-
+        var managedUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserNotFoundException(user.getId()));
+        var topic = topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
+        if (!topic.getAuthor().getId().equals(user.getId())) {
+            topic.toggleLike( managedUser );
+            topicRepository.save(topic);
+        }
         return topic.getLikeCount();
     }
 
@@ -64,6 +58,7 @@ public class TopicService {
         var pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return topicRepository.findByAuthorIdOrderByCreatedAtDesc(userId, pageable);
     }
+
     @Transactional
     public Topic createTopic(@NotNull User user, TopicCreateRequestDto dto) {
         var topic = new Topic();
