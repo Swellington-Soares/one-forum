@@ -14,4 +14,5 @@ public record UserProfileUpdateRequestDto(
 
         @URL
         String photo) implements Serializable {
+
 }

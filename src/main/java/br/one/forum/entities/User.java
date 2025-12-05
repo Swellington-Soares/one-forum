@@ -17,6 +17,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users")
@@ -52,24 +53,30 @@ public class User {
 
     @ManyToMany(mappedBy = "likedBy", fetch = FetchType.LAZY)
     @Setter(AccessLevel.NONE)
+    @Builder.Default
     private Set<Topic> likedTopics = new HashSet<>();
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
+    @Builder.Default
     private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
+    @Builder.Default
     private Set<Topic> createdTopics = new HashSet<>();
 
     @Column
+    @Builder.Default
     private boolean emailVerified = false;
 
     @Column
+    @Builder.Default
     private boolean locked = false;
 
     @Column
     @Accessors(chain = true)
+    @Builder.Default
     private boolean deleted = false;
 
     @Column(name = "refresh_token")
@@ -84,7 +91,6 @@ public class User {
         this.email = email;
         this.password = password;
         setProfile(profile);
-
     }
 
     public void setProfile(@NotNull Profile profile) {
@@ -96,5 +102,14 @@ public class User {
         return "[PROTECTED]";
     }
 
+    // Exemplo em um Service ou Controller
+    public void exemploDeUso() {
+        User user = User.builder()
+                .email("teste@email.com")
+                .password("senha123")
+                .profile(new Profile("Nome", "Bio", "Avatar URL"))
+                .build();
 
+        // fazer algo com o user...
+    }
 }

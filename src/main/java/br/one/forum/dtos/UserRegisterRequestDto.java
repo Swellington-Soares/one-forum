@@ -27,4 +27,5 @@ public record UserRegisterRequestDto(
         @URL
         String avatarUrl
 ) {
+
 }
