@@ -21,6 +21,7 @@ public final class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     public User findUserById(Integer id, boolean includeDeleted) {
         if (includeDeleted) {
@@ -132,5 +133,14 @@ public final class UserService {
 
             userRepository.save(user);
         }
+    }
+
+    public void confirmEmail(String token) {
+        var tokenObj = tokenService.validateEmailToken(token);
+        var user =findUserByEmail(tokenObj.getEmail(), false);
+        if (user.isEmailVerified()) return;
+        user.setEmailVerified(true);
+        userRepository.save(user);
+        tokenService.deleteToken(tokenObj.getToken());
     }
 }

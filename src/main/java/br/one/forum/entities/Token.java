@@ -44,7 +44,6 @@ public class Token {
         return expiration == null || expiration.isBefore(Instant.now());
     }
 
-
     public enum TokenType {
         EMAIL_TOKEN,
         PASSWORD_TOKEN
