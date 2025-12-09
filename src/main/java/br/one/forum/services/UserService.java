@@ -5,15 +5,18 @@ import br.one.forum.dtos.request.UserPasswordUpdateRequestDto;
 import br.one.forum.dtos.request.UserProfileUpdateRequestDto;
 import br.one.forum.dtos.request.UserRegisterRequestDto;
 import br.one.forum.entities.Profile;
+import br.one.forum.entities.Token;
 import br.one.forum.entities.User;
 import br.one.forum.exception.api.UserAlreadyRegisteredException;
 import br.one.forum.exception.api.UserNotFoundException;
 import br.one.forum.exception.api.UserPasswordNotMatchException;
 import br.one.forum.repositories.UserRepository;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,10 @@ public final class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+
+    @Value("${api-base}")
+    private final String apiBaseUrl = "";
+    private final EmailService emailService;
 
     public User findUserById(Integer id, boolean includeDeleted) {
         if (includeDeleted) {
@@ -115,12 +122,23 @@ public final class UserService {
 
     public void registerUser(UserRegisterRequestDto data) {
         createUser(data);
-        //String emailToken = tokenService.generateEmailToken(data.email());
-        //emailService.SendConfirmAccountEmail(data.email(), emailToken);
+        try {
+            var requestToken = tokenService.generateEmailToken(data.email(), Token.TokenType.EMAIL_TOKEN);
+            var link = apiBaseUrl + "/" + requestToken.getToken();
+
+            emailService.sendHtmlMessage(
+                    data.email(),
+                    "Ativar conta",
+                    "confirm",
+                    Map.of("link", link)
+            );
+        } catch (Exception _) {
+        }
+
     }
 
     public void updateUserProfile(int id, UserProfileUpdateRequestDto data) {
-        if (data.photo() != null || data.name() != null){
+        if (data.photo() != null || data.name() != null) {
             User user = findUserById(id, false);
 
             if (data.photo() != null && (user.getProfile().getPhoto() == null || !user.getProfile().getPhoto().equals(data.photo()))) {
@@ -137,7 +155,7 @@ public final class UserService {
 
     public void confirmEmail(String token) {
         var tokenObj = tokenService.validateEmailToken(token);
-        var user =findUserByEmail(tokenObj.getEmail(), false);
+        var user = findUserByEmail(tokenObj.getEmail(), false);
         if (user.isEmailVerified()) return;
         user.setEmailVerified(true);
         userRepository.save(user);

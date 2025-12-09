@@ -1,12 +1,16 @@
 package br.one.forum.controllers;
 
+import br.one.forum.dtos.ConfirmAccountRequestDto;
+import br.one.forum.dtos.ConfirmAccountResponseDto;
 import br.one.forum.dtos.request.AuthenticationRequestDto;
 import br.one.forum.dtos.response.LoginResponseDto;
 import br.one.forum.dtos.request.RefreshTokenRequestDto;
 import br.one.forum.services.AuthenticationService;
+import br.one.forum.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid AuthenticationRequestDto data) {
@@ -27,6 +32,24 @@ public class AuthenticationController {
     }
 
 
+    @PostMapping("/request-confirm-account")
+    public ResponseEntity<ConfirmAccountResponseDto> requestConfirmAccount(
+            @RequestBody @Valid ConfirmAccountRequestDto dto
+    ) {
+        return ResponseEntity.ok(authenticationService.requestConfirmAccount(dto.email()));
+    }
 
 
+    @GetMapping(value = "/confirm-account/{token}", produces = "text/html")
+    public String activateAccount(
+            @PathVariable String token,
+            Model model
+    ) {
+        try {
+            userService.confirmEmail(token);
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "confirm-info";
+    }
 }

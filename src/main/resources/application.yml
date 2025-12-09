@@ -42,6 +42,9 @@ springdoc:
   show-actuator: true
 
 api:
+  api-base: http://localhost:8080
+  frontend:
+    base-url: https://localhost:4200
   security:
     access-token:
       key: ${JWT_KEY_SECRET:my-secret-key}

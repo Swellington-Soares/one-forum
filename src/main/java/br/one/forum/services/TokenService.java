@@ -107,4 +107,8 @@ public class TokenService {
     public void deleteToken(@NotNull String token) {
         tokenRepository.deleteByTokenIgnoreCase(token);
     }
+
+    public Token findTokenByEmail(String email) {
+        return null;
+    }
 }

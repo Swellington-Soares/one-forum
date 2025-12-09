@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserAuthChangeController {
 
-    private final UserService userService;
-
-    @GetMapping("/confirm-email/${token}")
-    public String getConfirmEmail(
-            @PathVariable("token") String token,
-            Model model
-    )  {
-        try {
-            userService.confirmEmail(token);
-        } catch (Exception e) {
-            model.addAttribute("status", "error");
-        }
-        return "confirm-info";
-    }
+//    private final UserService userService;
+//
+//    @GetMapping("/confirm-email/{token}")
+//    public String getConfirmEmail(
+//            @PathVariable("token") String token,
+//            Model model
+//    )  {
+//        try {
+//            userService.confirmEmail(token);
+//        } catch (Exception e) {
+//            model.addAttribute("status", "error");
+//        }
+//        return "confirm-info";
+//    }
 }
