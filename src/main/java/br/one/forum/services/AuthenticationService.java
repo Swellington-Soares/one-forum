@@ -28,7 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    @Value("${api-base}")
+    @Value("${api.api-base}")
     private final String apiBaseUrl = "";
 
     private final AuthenticationManager authenticationManager;

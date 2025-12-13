@@ -26,7 +26,7 @@ public final class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    @Value("${api-base}")
+    @Value("${api.api-base}")
     private final String apiBaseUrl = "";
     private final EmailService emailService;
 
