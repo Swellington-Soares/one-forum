@@ -17,7 +17,7 @@ public interface TopicResponseMapper {
 
     @Mapping(target = "likes", expression = "java(topic.getLikeCount())")
     @Mapping(target = "likedByCurrentUser", expression = "java(topic.isLikedByUser(user))")
-    @Mapping(target = "content", ignore = true)
+    @Mapping(target = "content", expression = "java(topic.sumarize())")
     @Mapping(target = "commentCount", expression = "java(topic.getCommentCount())")
     TopicResponseDto toDtoExcludeContent(Topic topic, @Context User user);
 }
