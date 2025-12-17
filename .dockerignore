@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build artifacts
+build/
+target/
+bin/
+out/
+*.log
+
+# Gradle
+.gradle/
+gradle-wrapper.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+Dockerfile
+.dockerignore
+compose.yaml
+docker-compose.yml
+
+# Documentation
+*.md
+LICENSE
+docs/
+
+# Test files
+**/test/
+
+# Node modules (if any)
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

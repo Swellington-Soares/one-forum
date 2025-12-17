@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: forum-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    branch: develop
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MYSQL_URL
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: JWT_KEY_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_KEY_SECRET
+        generateValue: true
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: uploads
+      - key: API_BASE_URL
+        value: https://forum-api.onrender.com
+      - key: FRONTEND_URL
+        sync: false
+      - key: SWAGGER_ENABLED
+        value: false

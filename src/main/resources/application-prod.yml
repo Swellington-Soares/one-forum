@@ -1,0 +1,93 @@
+app:
+  upload:
+    base-dir: uploads/
+    images:
+      dir: images/
+      max-size: 5MB
+      allowed-types: image/jpeg,image/png
+
+spring:
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+  
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+  
+  application:
+    name: forum
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  flyway:
+    enabled: false
+
+  docker:
+    compose:
+      enabled: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: ${SWAGGER_ENABLED:false}
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:false}
+    path: /api-docs
+  show-actuator: true
+
+api:
+  api-base: ${API_BASE_URL:https://your-app.onrender.com}
+  frontend:
+    base-url: ${FRONTEND_URL:https://your-frontend.com}
+  security:
+    access-token:
+      key: ${JWT_KEY_SECRET}
+      expiration: 15
+    refresh-token:
+      key: ${JWT_REFRESH_KEY_SECRET}
+      expiration: 10080
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-stacktrace: never
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+supabase:
+  url: ${SUPABASE_URL}
+  key: ${SUPABASE_KEY}
+  bucket: ${SUPABASE_BUCKET:uploads}
+
+logging:
+  level:
+    root: INFO
+    br.one.forum: INFO
+    org.springframework.web: WARN
+    org.hibernate: WARN
