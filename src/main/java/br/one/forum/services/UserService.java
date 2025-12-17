@@ -132,7 +132,7 @@ public final class UserService {
                     "confirm",
                     Map.of("link", link)
             );
-        } catch (Exception _) {
+        } catch (Exception e) {
         }
 
     }

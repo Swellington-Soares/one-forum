@@ -16,7 +16,7 @@ class EMailWorker {
             try {
                 Runnable job = emailQueue.take();
                 job.run();
-            } catch (Exception _) {
+            } catch (Exception e) {
                 Thread.currentThread().interrupt();
                 break;
             }

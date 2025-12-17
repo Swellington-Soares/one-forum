@@ -12,13 +12,13 @@ public class EmailQueue {
     public void add(Runnable job)  {
         try {
             queue.put(job);
-        } catch (InterruptedException _) {}
+        } catch (InterruptedException e) {}
     }
 
     public Runnable take()  {
         try {
             return queue.take();
-        } catch (InterruptedException _) {
+        } catch (InterruptedException e) {
             return null;
         }
     }

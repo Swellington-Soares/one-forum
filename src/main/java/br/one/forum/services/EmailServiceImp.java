@@ -45,7 +45,7 @@ class EmailServiceImp implements EmailService {
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setText(html, true);
             mailSender.send(mimeMessage);
-        } catch (MessagingException _) {
+        } catch (MessagingException e) {
         }
     }
 
@@ -57,7 +57,7 @@ class EmailServiceImp implements EmailService {
             mimeMessageHelper.setText(message);
             mimeMessageHelper.setSubject(subject);
             mailSender.send(mimeMessage);
-        } catch (MessagingException _) {
+        } catch (MessagingException e) {
         }
     }
 }

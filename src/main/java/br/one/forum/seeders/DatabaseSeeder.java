@@ -28,7 +28,7 @@ public final class DatabaseSeeder {
             final CategoryRepository categoryRepository) {
         return (args) -> {
             if (Arrays.stream(args).noneMatch("--add-seed"::equals)) return;
-            IO.println("ATUALIZAÇÃO DOS SEEDERS NO BANCO DE DADOS");
+            System.out.println("ATUALIZAÇÃO DOS SEEDERS NO BANCO DE DADOS");
             List<User> users = userRepository.saveAll(FakeUserFactory.getMore(50));
             List<Category> categories = categoryRepository.saveAll(FakeCategoryFactory.getAll());
             List<Topic> topics = FakeTopicFactory.getMore(50, users);
@@ -36,7 +36,7 @@ public final class DatabaseSeeder {
                 topic.addCategory(categories.get(new Random().nextInt(0, categories.size() - 1)));
             });
             topicRepository.saveAll(topics);
-            IO.println("SEEDS ATUALIZADOS COM SUCESSO.");
+            System.out.println("SEEDS ATUALIZADOS COM SUCESSO.");
 
         };
     }

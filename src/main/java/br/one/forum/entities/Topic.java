@@ -19,7 +19,7 @@ import java.util.function.Function;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"likedBy", "comments", "author", "categories"})
+@ToString(exclude = { "likedBy", "comments", "author", "categories" })
 @Entity
 @Table(name = "topics")
 public class Topic {
@@ -52,21 +52,13 @@ public class Topic {
     @UpdateTimestamp
     private Instant updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinTable(
-            name = "category_has_topic",
-            joinColumns = @JoinColumn(name = "topic_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
+    @JoinTable(name = "category_has_topic", joinColumns = @JoinColumn(name = "topic_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     @Setter(AccessLevel.NONE)
     private Set<Category> categories = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "likes",
-            joinColumns = @JoinColumn(name = "topic_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinTable(name = "likes", joinColumns = @JoinColumn(name = "topic_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @Setter(AccessLevel.NONE)
     @JsonIgnore
     private Set<User> likedBy = new HashSet<>();
@@ -121,10 +113,12 @@ public class Topic {
     }
 
     public void toggleLike(User likeUser) {
-        if (likeUser == null) return;
-        if (likeUser.equals(author)) return;
+        if (likeUser == null)
+            return;
+        if (likeUser.equals(author))
+            return;
 
-        if (likedBy.stream().anyMatch(u -> u.getId().equals(likeUser.getId()))){
+        if (likedBy.stream().anyMatch(u -> u.getId().equals(likeUser.getId()))) {
             likedBy.removeIf(l -> l.getId().equals(likeUser.getId()));
             likeUser.getLikedTopics().removeIf(t -> t.getId().equals(this.id));
         } else {
@@ -137,11 +131,11 @@ public class Topic {
         return comments.size();
     }
 
-
     public String sumarize() {
-        if (this.content == null) return null;
+        if (this.content == null)
+            return null;
         String plainText = content.replaceAll("<[^>]*>", "");
-        return plainText.length()>150 ? plainText.substring(0, 150): plainText;
+        return plainText.length() > 150 ? plainText.substring(0, 150) : plainText;
     }
 
 }
