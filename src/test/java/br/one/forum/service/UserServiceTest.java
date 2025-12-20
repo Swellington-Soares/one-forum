@@ -112,7 +112,7 @@ class UserServiceTest {
     @Test
     void shouldThrow_WhenEmailAlreadyExists() {
         var dto = new UserRegisterRequestDto(
-                "email@teste.com", "123456", "123456", "Fulano", "foto.png"
+                "email@teste.com", "123456", "123456", "Fulano"
         );
 
         when(userRepository.existsByEmailIgnoreCase("email@teste.com")).thenReturn(true);
@@ -124,7 +124,7 @@ class UserServiceTest {
     @Test
     void shouldThrow_WhenPasswordDoesNotMatch() {
         var dto = new UserRegisterRequestDto(
-                "x@x.com", "123", "000", "Name", "avatar.png"
+                "x@x.com", "123", "000", "Name"
         );
 
         assertThatThrownBy(() -> userService.createUser(dto))

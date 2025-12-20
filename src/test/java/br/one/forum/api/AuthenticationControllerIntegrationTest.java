@@ -67,8 +67,7 @@ class AuthenticationControllerIntegrationTest {
                 validEmail,
                 validPassword,
                 validPassword,
-                "Usuário Teste",
-                "https://example.com/avatar.jpg"
+                "Usuário Teste"
         );
 
         userService.createUser(registerDto);
