@@ -1,13 +1,12 @@
 package br.one.forum.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.util.StringUtils;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -135,7 +134,7 @@ public class Topic {
         if (this.content == null)
             return null;
         String plainText = content.replaceAll("<[^>]*>", "");
-        return plainText.length() > 150 ? plainText.substring(0, 150) : plainText;
+        return plainText.length() > 150 ? plainText.substring(0, 150) + "..." : plainText;
     }
 
 }

@@ -9,13 +9,8 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import java.util.concurrent.Executor;
 
 @Configuration
-@EnableAsync
 class AppConfiguration {
 
     @Bean
@@ -37,14 +32,14 @@ class AppConfiguration {
                 .registerModule(new JavaTimeModule());
     }
 
-    @Bean("emailExecutor")
-    public Executor emailExecutor() {
-        var threadPoolExecutor = new ThreadPoolTaskExecutor();
-        threadPoolExecutor.setCorePoolSize(4);
-        threadPoolExecutor.setMaxPoolSize(4);
-        threadPoolExecutor.setThreadNamePrefix("email-");
-        threadPoolExecutor.initialize();
-        return threadPoolExecutor;
-    }
+//    @Bean("emailExecutor")
+//    public Executor emailExecutor() {
+//        var threadPoolExecutor = new ThreadPoolTaskExecutor();
+//        threadPoolExecutor.setCorePoolSize(4);
+//        threadPoolExecutor.setMaxPoolSize(4);
+//        threadPoolExecutor.setThreadNamePrefix("email-");
+//        threadPoolExecutor.initialize();
+//        return threadPoolExecutor;
+//    }
 
 }

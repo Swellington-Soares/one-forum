@@ -1,5 +1,7 @@
 package br.one.forum.exception;
 
+import br.one.forum.dtos.ValidationErrorResponse;
+import br.one.forum.dtos.ValidationErrors;
 import br.one.forum.dtos.response.ApiExceptionResponseDto;
 import br.one.forum.exception.api.ApiException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -9,13 +11,21 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -60,6 +70,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiExceptionResponseDto> handleAccountNotEnabled(DisabledException _exception,
+                                                                           HttpServletRequest request,
+                                                                           Locale locale) {
+        var response = ApiExceptionResponseDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .path(request.getRequestURI())
+                .message(messageSource.getMessage("exception.user-email-not-verified", null, locale))
+                .type(ExceptionType.EMAIL_NOT_VERIFIED.getValue())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiExceptionResponseDto> handleBadCredentialsException(BadCredentialsException exception, HttpServletRequest request) {
         var response = ApiExceptionResponseDto.builder()
@@ -85,10 +111,45 @@ public class GlobalExceptionHandler {
     }
 
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ApiExceptionResponseDto> handleGenericException(Exception exception, HttpServletRequest request) {
-//        IO.println(exception.getMessage());
-//        return null;
-//    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationErrorResponse> handleValidationException(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request
+    ) {
+
+        Map<String, List<String>> fieldErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        FieldError::getField,
+                        Collectors.mapping(
+                                FieldError::getDefaultMessage,
+                                Collectors.toList()
+                        )
+                ));
+
+        List<String> globalErrors = ex.getBindingResult()
+                .getGlobalErrors()
+                .stream()
+                .map(ObjectError::getDefaultMessage)
+                .toList();
+
+        ValidationErrors errors = new ValidationErrors(
+                fieldErrors,
+                globalErrors
+        );
+
+        ValidationErrorResponse response = new ValidationErrorResponse(
+                Instant.now(),
+                400,
+                "Bad Request",
+                "Validation failed",
+                request.getRequestURI(),
+                errors
+        );
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
 }
 

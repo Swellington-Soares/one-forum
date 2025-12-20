@@ -13,6 +13,9 @@ spring:
     password: ${MYSQL_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
   
+  servlet:
+    multipart:
+      max-file-size: 5MB
   mail:
     host: localhost
     port: 1025
@@ -24,7 +27,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -49,14 +52,13 @@ springdoc:
 
 api:
   api-base: http://localhost:8080
-  frontend:
-    base-url: https://localhost:4200
+  front-end: https://localhost:4200
   security:
     access-token:
-      key: ${JWT_KEY_SECRET:my-secret-key}
+      key: ${JWT_KEY_SECRET:7b4a52b6c723caf01718dcf7340396a9f9a0697c37deaef2a74ca419d47cb302}
       expiration: 15
     refresh-token:
-      key: ${JWT_REFRESH_KEY_SECRET:my-refresh-key}
+      key: ${JWT_REFRESH_KEY_SECRET:7b4a52b6c723caf01718dcf7340396a9f9a0697c37deaef2a74ca419d47cb302}
       expiration: 10080
 
 server:
@@ -67,3 +69,4 @@ supabase:
   url: ${SUPABASE_URL:}
   key: ${SUPABASE_KEY:}
   bucket: ${SUPABASE_BUCKET:uploads}
+

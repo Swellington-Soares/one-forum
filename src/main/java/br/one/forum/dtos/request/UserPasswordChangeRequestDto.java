@@ -1,6 +1,6 @@
 package br.one.forum.dtos.request;
 
-import br.one.forum.validation.StrongPassword;
+import br.one.forum.validation.interfaces.StrongPassword;
 import jakarta.validation.constraints.NotBlank;
 
 public record UserPasswordChangeRequestDto(

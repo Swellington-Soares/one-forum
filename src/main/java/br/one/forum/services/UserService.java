@@ -15,19 +15,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public final class UserService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     @Value("${api.api-base}")
-    private final String apiBaseUrl = "";
+    private String apiBaseUrl = "";
+
     private final EmailService emailService;
 
     public User findUserById(Integer id, boolean includeDeleted) {
@@ -48,19 +50,21 @@ public final class UserService {
         if (userRepository.existsByEmailIgnoreCase(dto.email()))
             throw new UserAlreadyRegisteredException();
 
-        if (!dto.password().equals(dto.matchPassword()))
-            throw new UserPasswordNotMatchException();
+//        if (!dto.password().equals(dto.matchPassword()))
+//            throw new MethodArgumentNotValidException(
+//                    "password",
+//
+//            );///new UserPasswordNotMatchException();
 
         var encodedPassword = passwordEncoder.encode(dto.password());
         User user = new User();
         user.setEmail(dto.email());
         user.setPassword(encodedPassword);
         user.setLocked(false);
-        user.setEmailVerified(true);
+        user.setEmailVerified(false);
         user.setProfile(
                 Profile.builder()
                         .name(dto.name())
-                        .photo(dto.avatarUrl())
                         .build());
         userRepository.save(user);
     }
@@ -82,10 +86,6 @@ public final class UserService {
             throw new UserPasswordNotMatchException();
         user.setPassword(passwordEncoder.encode(dto.newPassword()));
         userRepository.save(user);
-    }
-
-    public void updateUserEmailVerified(int userId, String token) {
-        //TODO: DESENVOLVER QUANDO MAIS TARDE
     }
 
     public void lockUserAccount(int userId) {
@@ -124,7 +124,7 @@ public final class UserService {
         createUser(data);
         try {
             var requestToken = tokenService.generateEmailToken(data.email(), Token.TokenType.EMAIL_TOKEN);
-            var link = apiBaseUrl + "/" + requestToken.getToken();
+            var link = apiBaseUrl + "/auth/confirm-account/" + requestToken.getToken();
 
             emailService.sendHtmlMessage(
                     data.email(),
@@ -153,12 +153,14 @@ public final class UserService {
         }
     }
 
+    @Transactional
     public void confirmEmail(String token) {
         var tokenObj = tokenService.validateEmailToken(token);
         var user = findUserByEmail(tokenObj.getEmail(), false);
-        if (user.isEmailVerified()) return;
-        user.setEmailVerified(true);
-        userRepository.save(user);
+        if (!user.isEmailVerified()) {
+            user.setEmailVerified(true);
+            userRepository.save(user);
+        }
         tokenService.deleteToken(tokenObj.getToken());
     }
 }

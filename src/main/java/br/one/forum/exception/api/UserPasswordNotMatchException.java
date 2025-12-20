@@ -8,7 +8,7 @@ public class UserPasswordNotMatchException extends ApiException {
         super(
                 "exception.password-not-match",
                 HttpStatus.BAD_REQUEST,
-                ExceptionType.WRONG_CREDENTIAL.getValue()
+                ExceptionType.BAD_CREDENTIALS.getValue()
         );
     }
 }

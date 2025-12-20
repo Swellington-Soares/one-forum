@@ -1,10 +1,10 @@
 package br.one.forum.controllers;
 
 
-import br.one.forum.dtos.response.UserCommentResponseDto;
-import br.one.forum.dtos.response.UserProfileResponseDto;
 import br.one.forum.dtos.request.UserProfileUpdateRequestDto;
 import br.one.forum.dtos.request.UserRegisterRequestDto;
+import br.one.forum.dtos.response.UserCommentResponseDto;
+import br.one.forum.dtos.response.UserProfileResponseDto;
 import br.one.forum.entities.CurrentUser;
 import br.one.forum.mappers.UserMapper;
 import br.one.forum.services.CommentService;
@@ -31,13 +31,13 @@ public class UserController {
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
     ResponseEntity<UserProfileResponseDto> getUserAuthProfile() {
-        return  ResponseEntity.ok( userMapper.toDto( auth.getUser()) );
+        return ResponseEntity.ok(userMapper.toDto(auth.getUser()));
     }
 
     @GetMapping("/{id}")
     ResponseEntity<UserProfileResponseDto> getUserById(@PathVariable("id") int id) {
         var user = userService.findUserById(id, false);
-        return  ResponseEntity.ok( userMapper.toDto(user) );
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PostMapping("/register")
@@ -46,9 +46,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-   @PatchMapping("/{id}")
-   @ResponseStatus(HttpStatus.NO_CONTENT)
-   @PreAuthorize("isAuthenticated() && @auth.isOwner(#id) ")
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("isAuthenticated() && @auth.isOwner(#id) ")
     public ResponseEntity<Void> updateProfile(
             @PathVariable int id,
             @RequestBody(required = false) @Valid UserProfileUpdateRequestDto data) {

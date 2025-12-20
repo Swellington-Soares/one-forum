@@ -1,6 +1,7 @@
 package br.one.forum.utils;
 
 import net.datafaker.Faker;
+
 import java.util.Locale;
 
 public class DataFaker {
