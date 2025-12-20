@@ -1,5 +1,6 @@
-package br.one.forum.validation;
+package br.one.forum.validation.interfaces;
 
+import br.one.forum.validation.StrongPasswordValidatorImpl;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -10,15 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StrongPassword {
-
     String message() default "{validation.strong-password}";
-
-    int min() default 6;
-
-    int max() default 8;
-
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
-
 }

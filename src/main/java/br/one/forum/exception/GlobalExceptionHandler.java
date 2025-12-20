@@ -1,7 +1,9 @@
 package br.one.forum.exception;
 
 import br.one.forum.dtos.FieldValidationError;
+import br.one.forum.dtos.GlobalValidationError;
 import br.one.forum.dtos.ValidationErrorResponse;
+import br.one.forum.dtos.ValidationErrors;
 import br.one.forum.dtos.response.ApiExceptionResponseDto;
 import br.one.forum.exception.api.ApiException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -12,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,6 +25,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -89,39 +95,46 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex,
             HttpServletRequest request
     ) {
 
-        List<FieldValidationError> fieldErrors = ex.getBindingResult()
+        Map<String, List<String>> fieldErrors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> new FieldValidationError(
-                        error.getField(),
-                        error.getDefaultMessage(),
-                        error.getRejectedValue()
-                ))
+                .collect(Collectors.groupingBy(
+                        FieldError::getField,
+                        Collectors.mapping(
+                                FieldError::getDefaultMessage,
+                                Collectors.toList()
+                        )
+                ));
+
+        List<String> globalErrors = ex.getBindingResult()
+                .getGlobalErrors()
+                .stream()
+                .map(ObjectError::getDefaultMessage)
                 .toList();
+
+        ValidationErrors errors = new ValidationErrors(
+                fieldErrors,
+                globalErrors
+        );
 
         ValidationErrorResponse response = new ValidationErrorResponse(
                 Instant.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                400,
+                "Bad Request",
                 "Validation failed",
                 request.getRequestURI(),
-                fieldErrors
+                errors
         );
 
         return ResponseEntity.badRequest().body(response);
     }
 
-
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ApiExceptionResponseDto> handleGenericException(Exception exception, HttpServletRequest request) {
-//        IO.println(exception.getMessage());
-//        return null;
-//    }
 }
 

@@ -18,7 +18,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -47,10 +47,10 @@ api:
     base-url: https://localhost:4200
   security:
     access-token:
-      key: ${JWT_KEY_SECRET:my-secret-key}
+      key: ${JWT_KEY_SECRET:7b4a52b6c723caf01718dcf7340396a9f9a0697c37deaef2a74ca419d47cb302}
       expiration: 15
     refresh-token:
-      key: ${JWT_REFRESH_KEY_SECRET:my-refresh-key}
+      key: ${JWT_REFRESH_KEY_SECRET:7b4a52b6c723caf01718dcf7340396a9f9a0697c37deaef2a74ca419d47cb302}
       expiration: 10080
 
 server:

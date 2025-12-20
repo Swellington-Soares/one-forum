@@ -11,10 +11,12 @@ import br.one.forum.exception.api.UserAlreadyRegisteredException;
 import br.one.forum.exception.api.UserNotFoundException;
 import br.one.forum.exception.api.UserPasswordNotMatchException;
 import br.one.forum.repositories.UserRepository;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Map;
 
@@ -49,8 +51,11 @@ public final class UserService {
         if (userRepository.existsByEmailIgnoreCase(dto.email()))
             throw new UserAlreadyRegisteredException();
 
-        if (!dto.password().equals(dto.matchPassword()))
-            throw new UserPasswordNotMatchException();
+//        if (!dto.password().equals(dto.matchPassword()))
+//            throw new MethodArgumentNotValidException(
+//                    "password",
+//
+//            );///new UserPasswordNotMatchException();
 
         var encodedPassword = passwordEncoder.encode(dto.password());
         User user = new User();
