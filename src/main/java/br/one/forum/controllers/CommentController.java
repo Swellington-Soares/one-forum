@@ -1,8 +1,8 @@
 package br.one.forum.controllers;
 
 import br.one.forum.dtos.request.CommentCreateRequestDto;
-import br.one.forum.dtos.response.CommentResponseDto;
 import br.one.forum.dtos.request.UpdateCommentRequestDto;
+import br.one.forum.dtos.response.CommentResponseDto;
 import br.one.forum.entities.CurrentUser;
 import br.one.forum.services.CommentService;
 import io.swagger.v3.oas.annotations.Operation;

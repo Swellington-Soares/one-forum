@@ -11,14 +11,11 @@ import br.one.forum.exception.api.UserAlreadyRegisteredException;
 import br.one.forum.exception.api.UserNotFoundException;
 import br.one.forum.exception.api.UserPasswordNotMatchException;
 import br.one.forum.repositories.UserRepository;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 

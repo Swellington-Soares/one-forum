@@ -1,7 +1,5 @@
 package br.one.forum.exception;
 
-import br.one.forum.dtos.FieldValidationError;
-import br.one.forum.dtos.GlobalValidationError;
 import br.one.forum.dtos.ValidationErrorResponse;
 import br.one.forum.dtos.ValidationErrors;
 import br.one.forum.dtos.response.ApiExceptionResponseDto;
