@@ -88,10 +88,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateUserEmailVerified(int userId, String token) {
-        //TODO: DESENVOLVER QUANDO MAIS TARDE
-    }
-
     public void lockUserAccount(int userId) {
         var user = findUserById(userId, false);
         user.setLocked(true);

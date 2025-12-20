@@ -46,8 +46,7 @@ springdoc:
 
 api:
   api-base: http://localhost:8080
-  frontend:
-    base-url: https://localhost:4200
+  front-end: https://localhost:4200
   security:
     access-token:
       key: ${JWT_KEY_SECRET:7b4a52b6c723caf01718dcf7340396a9f9a0697c37deaef2a74ca419d47cb302}
