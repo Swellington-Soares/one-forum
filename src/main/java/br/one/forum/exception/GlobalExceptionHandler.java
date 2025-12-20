@@ -1,5 +1,7 @@
 package br.one.forum.exception;
 
+import br.one.forum.dtos.FieldValidationError;
+import br.one.forum.dtos.ValidationErrorResponse;
 import br.one.forum.dtos.response.ApiExceptionResponseDto;
 import br.one.forum.exception.api.ApiException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -10,11 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 
 @RestControllerAdvice
@@ -82,6 +87,34 @@ public class GlobalExceptionHandler {
                 .type(ExceptionType.TOKEN_VALIDATION.getValue())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationErrorResponse> handleValidationException(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request
+    ) {
+
+        List<FieldValidationError> fieldErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> new FieldValidationError(
+                        error.getField(),
+                        error.getDefaultMessage(),
+                        error.getRejectedValue()
+                ))
+                .toList();
+
+        ValidationErrorResponse response = new ValidationErrorResponse(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "Validation failed",
+                request.getRequestURI(),
+                fieldErrors
+        );
+
+        return ResponseEntity.badRequest().body(response);
     }
 
 
