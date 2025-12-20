@@ -28,6 +28,7 @@ public final class UserService {
 
     @Value("${api.api-base}")
     private final String apiBaseUrl = "";
+
     private final EmailService emailService;
 
     public User findUserById(Integer id, boolean includeDeleted) {
@@ -56,11 +57,10 @@ public final class UserService {
         user.setEmail(dto.email());
         user.setPassword(encodedPassword);
         user.setLocked(false);
-        user.setEmailVerified(true);
+        user.setEmailVerified(false);
         user.setProfile(
                 Profile.builder()
                         .name(dto.name())
-                        .photo(dto.avatarUrl())
                         .build());
         userRepository.save(user);
     }

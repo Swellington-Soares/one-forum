@@ -141,7 +141,7 @@ public class Topic {
     public String sumarize() {
         if (this.content == null) return null;
         String plainText = content.replaceAll("<[^>]*>", "");
-        return plainText.length()>150 ? plainText.substring(0, 150): plainText;
+        return plainText.length() > 150 ? plainText.substring(0, 150) + "..." : plainText;
     }
 
 }

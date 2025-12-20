@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StrongPassword {
 
-    String message() default "validation.strong-password";
+    String message() default "{validation.strong-password}";
 
     int min() default 6;
 

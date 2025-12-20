@@ -21,10 +21,6 @@ public record UserRegisterRequestDto(
 
         @NotBlank
         @Size(max = 75)
-        String name,
-
-        @NotBlank
-        @URL
-        String avatarUrl
+        String name
 ) {
 }
