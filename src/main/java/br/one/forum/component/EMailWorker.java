@@ -1,25 +1,41 @@
 package br.one.forum.component;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.SmartLifecycle;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-class EMailWorker {
+class EMailWorker implements SmartLifecycle {
 
     private final EmailQueue emailQueue;
+    private volatile boolean running = false;
 
-    @Async("emailExecutor")
+    @Async("taskExecutor")
     public void start() {
-        while (true) {
-            try {
-                Runnable job = emailQueue.take();
-                job.run();
-            } catch (Exception _) {
-                Thread.currentThread().interrupt();
-                break;
-            }
+        running = true;
+        System.out.println("E-mail worker is starting");
+        while (!Thread.currentThread().isInterrupted() && running) {
+            Runnable job = emailQueue.take(); // bloqueante
+            job.run();
         }
+    }
+
+    @Override
+    public void stop() {
+        running = false;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public int getPhase() {
+        return Integer.MAX_VALUE;
     }
 }

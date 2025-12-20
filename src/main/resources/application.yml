@@ -7,6 +7,9 @@ app:
       allowed-types: image/jpeg,image/png
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
   mail:
     host: localhost
     port: 1025
@@ -61,3 +64,4 @@ supabase:
   url: ${SUPABASE_URL:}
   key: ${SUPABASE_KEY:}
   bucket: ${SUPABASE_BUCKET:uploads}
+

@@ -27,11 +27,11 @@ public record AppUserDetails(User user) implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !user.isLocked() && user.isEmailVerified();
+        return !user.isLocked();
     }
 
     @Override
     public boolean isEnabled() {
-        return !user.isLocked();
+        return user.isEmailVerified();
     }
 }

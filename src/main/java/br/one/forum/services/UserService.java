@@ -16,20 +16,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public final class UserService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     @Value("${api.api-base}")
-    private final String apiBaseUrl = "";
+    private String apiBaseUrl = "";
 
     private final EmailService emailService;
 
@@ -129,7 +131,7 @@ public final class UserService {
         createUser(data);
         try {
             var requestToken = tokenService.generateEmailToken(data.email(), Token.TokenType.EMAIL_TOKEN);
-            var link = apiBaseUrl + "/" + requestToken.getToken();
+            var link = apiBaseUrl + "/auth/confirm-account/" + requestToken.getToken();
 
             emailService.sendHtmlMessage(
                     data.email(),
@@ -158,12 +160,14 @@ public final class UserService {
         }
     }
 
+    @Transactional
     public void confirmEmail(String token) {
         var tokenObj = tokenService.validateEmailToken(token);
         var user = findUserByEmail(tokenObj.getEmail(), false);
-        if (user.isEmailVerified()) return;
-        user.setEmailVerified(true);
-        userRepository.save(user);
+        if (!user.isEmailVerified()) {
+            user.setEmailVerified(true);
+            userRepository.save(user);
+        }
         tokenService.deleteToken(tokenObj.getToken());
     }
 }

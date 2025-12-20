@@ -15,7 +15,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 
 @Configuration
-@EnableAsync
 class AppConfiguration {
 
     @Bean
@@ -37,14 +36,14 @@ class AppConfiguration {
                 .registerModule(new JavaTimeModule());
     }
 
-    @Bean("emailExecutor")
-    public Executor emailExecutor() {
-        var threadPoolExecutor = new ThreadPoolTaskExecutor();
-        threadPoolExecutor.setCorePoolSize(4);
-        threadPoolExecutor.setMaxPoolSize(4);
-        threadPoolExecutor.setThreadNamePrefix("email-");
-        threadPoolExecutor.initialize();
-        return threadPoolExecutor;
-    }
+//    @Bean("emailExecutor")
+//    public Executor emailExecutor() {
+//        var threadPoolExecutor = new ThreadPoolTaskExecutor();
+//        threadPoolExecutor.setCorePoolSize(4);
+//        threadPoolExecutor.setMaxPoolSize(4);
+//        threadPoolExecutor.setThreadNamePrefix("email-");
+//        threadPoolExecutor.initialize();
+//        return threadPoolExecutor;
+//    }
 
 }

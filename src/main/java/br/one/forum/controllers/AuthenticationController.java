@@ -40,16 +40,5 @@ public class AuthenticationController {
     }
 
 
-    @GetMapping(value = "/confirm-account/{token}", produces = "text/html")
-    public String activateAccount(
-            @PathVariable String token,
-            Model model
-    ) {
-        try {
-            userService.confirmEmail(token);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
-        return "confirm-info";
-    }
+
 }

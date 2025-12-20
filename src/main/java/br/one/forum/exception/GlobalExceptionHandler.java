@@ -13,6 +13,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -70,6 +71,22 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiExceptionResponseDto> handleAccountNotEnabled(DisabledException _exception,
+                                                                           HttpServletRequest request,
+                                                                           Locale locale) {
+        var response = ApiExceptionResponseDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .path(request.getRequestURI())
+                .message(messageSource.getMessage("exception.user-email-not-verified", null, locale))
+                .type(ExceptionType.EMAIL_NOT_VERIFIED.getValue())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiExceptionResponseDto> handleBadCredentialsException(BadCredentialsException exception, HttpServletRequest request) {

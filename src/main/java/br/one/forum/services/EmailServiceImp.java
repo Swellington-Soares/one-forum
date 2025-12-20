@@ -41,6 +41,7 @@ class EmailServiceImp implements EmailService {
             var html = templateEngine.process("email/" + htmlTemplateResource, context);
             var mimeMessage = mailSender.createMimeMessage();
             var mimeMessageHelper = new MimeMessageHelper(mimeMessage, "utf-8");
+            mimeMessageHelper.setFrom("no-reply@forum-one.net");
             mimeMessageHelper.setTo(dest);
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setText(html, true);
