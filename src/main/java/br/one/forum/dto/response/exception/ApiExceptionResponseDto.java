@@ -1,4 +1,4 @@
-package br.one.forum.dto.response;
+package br.one.forum.dto.response.exception;
 
 
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package br.one.forum.infra.security;
 
 
-import br.one.forum.dto.response.ApiExceptionResponseDto;
+import br.one.forum.dto.response.exception.ApiExceptionResponseDto;
 import br.one.forum.exception.ExceptionType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
