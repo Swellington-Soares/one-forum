@@ -24,7 +24,7 @@ public class Topic extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToString.Include
-    private Integer id;
+    private Long id;
 
 
     @Column(nullable = false)
