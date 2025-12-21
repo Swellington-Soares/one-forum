@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 public class UserAccountAlreadyVerified extends ApiException {
     public UserAccountAlreadyVerified() {
         super(
-                "{exception.user-acount-already-verified}",
+                "{exception.user-account-already-verified}",
                 HttpStatus.FORBIDDEN,
                 null
         );

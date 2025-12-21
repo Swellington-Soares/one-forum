@@ -1,7 +1,9 @@
 package br.one.forum.service;
 
 import br.one.forum.dto.request.TopicCreateRequestDto;
+import br.one.forum.dto.request.TopicEditRequestDto;
 import br.one.forum.entity.Topic;
+import br.one.forum.exception.api.EditTopicNotPermittedException;
 import br.one.forum.exception.api.TopicNotFoundException;
 import br.one.forum.infra.spec.TopicSpecification;
 import br.one.forum.repository.TopicRepository;
@@ -26,7 +28,7 @@ public class TopicService {
 
 
     @Transactional
-    public int toggleLike(Long topicId, Long userId) {
+    public Long toggleLike(Long topicId, Long userId) {
         var user = userService.findUserById(userId);
         var topic = findById(topicId);
         if (!topic.isUserAuthor(user)) {
@@ -37,8 +39,8 @@ public class TopicService {
     }
 
     @Transactional
-    public void deleteTopic(Long topicId) {
-        topicRepository.deleteById(topicId);
+    public void deleteTopic(Long topicId, Long userId) {
+        topicRepository.deleteTopicByIdAndAuthorId(topicId, userId);
     }
 
 
@@ -86,4 +88,22 @@ public class TopicService {
     }
 
 
+    @Transactional
+    public Topic updateTopic(Long topicId, Long authorId, TopicEditRequestDto dto) {
+        var topic = findById(topicId);
+        var user = userService.findUserById(authorId);
+        if (!topic.isUserAuthor(user))
+            throw new EditTopicNotPermittedException();
+
+        if  (dto.title() != null && !dto.title().isBlank() && !dto.title().equals(topic.getTitle())) {
+            topic.setTitle(dto.title());
+        }
+
+        if (dto.content() != null && !dto.content().isBlank() && !dto.content().equals(topic.getContent())) {
+            topic.setContent(dto.content());
+        }
+
+        return topicRepository.save(topic);
+
+    }
 }

@@ -51,7 +51,10 @@ public class GlobalExceptionHandler {
         var pattern = "^\\{.+}$";
 
         if (exception.getMessage() != null && exception.getMessage().matches(pattern)) {
-            return messageSource.getMessage(exception.getMessageKey(), exception.getMessageArgs(), locale);
+            var messageKey = exception.getMessageKey()
+                    .replaceFirst("\\{", "")
+                    .replaceFirst("\\}(?!.*})", "");
+            return messageSource.getMessage(messageKey, exception.getMessageArgs(), locale);
         }
         return exception.getMessage();
     }

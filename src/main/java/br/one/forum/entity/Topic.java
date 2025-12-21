@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -68,7 +69,7 @@ public class Topic extends BaseEntity{
     @JsonIgnore
     private Set<Comment> comments = new HashSet<>();
 
-    public int getLikeCount() {
+    public long getLikeCount() {
         return likedBy.size();
     }
 
@@ -106,7 +107,7 @@ public class Topic extends BaseEntity{
         }
     }
 
-    public int getCommentCount() {
+    public long getCommentCount() {
         return comments.size();
     }
 
@@ -139,5 +140,10 @@ public class Topic extends BaseEntity{
         this.title = title;
         this.content = content;
         this.author = author;
+    }
+
+
+    public List<String> getCategoryList() {
+        return categories.stream().map(Category::getName).toList();
     }
 }

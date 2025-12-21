@@ -102,4 +102,16 @@ public class UserService {
 
     }
 
+
+    @Transactional
+    public void confirmEmail(String token) {
+        var tokenObj = tokenService.validateEmailToken(token);
+        var user = findUserByEmail(tokenObj.getEmail());
+        if (!user.isEmailVerified()) {
+            user.setEmailVerified(true);
+            userRepository.save(user);
+        }
+        tokenService.deleteEmailToken(tokenObj.getToken());
+    }
+
 }

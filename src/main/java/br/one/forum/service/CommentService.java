@@ -57,8 +57,10 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long topicId, Long userId) {
-        var comment = commentRepository.findById(topicId).orElseThrow(CommentNotFoundException::new);
+    public void deleteComment(Long topicId, Long commentId, Long userId) {
+        var comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+
+        if (!comment.getTopic().getId().equals(topicId)) return;
 
         if (!Objects.equals(comment.getAuthor().getId(), userId)) {
             throw new CommentCannotBetEditabledException();

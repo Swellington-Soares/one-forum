@@ -1,7 +1,7 @@
 package br.one.forum.infra.validation.domain;
 
 import br.one.forum.dto.request.UserRegisterRequestDto;
-import br.one.forum.exception.UserAlreadyRegisteredException;
+import br.one.forum.exception.api.UserAlreadyRegisteredException;
 import br.one.forum.infra.validation.UserRegisterDomainValidator;
 import br.one.forum.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

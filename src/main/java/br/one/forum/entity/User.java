@@ -60,11 +60,11 @@ public class User extends BaseEntity{
         return "[PROTECTED]";
     }
 
-    public int getCommentsCount() {
+    public long getCommentsCount() {
         return comments.size();
     }
 
-    public int getTopicCreatedCount() {
+    public long getTopicCreatedCount() {
         return createdTopics.size();
     }
 

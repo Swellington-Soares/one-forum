@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,7 +23,19 @@ import org.springframework.security.web.SecurityFilterChain;
 class SecurityConfiguration {
 
     private final JwtSecurityFilter jwtSecurityFilter;
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+
+    private final String[] ALLOWED_ROUTES = {
+            "/avatars/**",
+            "/auth/**",
+            "/actuator",
+            "/topics/**",
+            "/categories/**",
+            "/users/{id}",
+            "/users/{id}/**",
+            "/users/register"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -34,11 +47,9 @@ class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(
                         a -> a.requestMatchers(HttpMethod.GET, "/topics/**").permitAll()
-                                .requestMatchers("/avatars/**").permitAll()
+                                .requestMatchers(ALLOWED_ROUTES).permitAll()
                                 .requestMatchers(HttpMethod.POST, "/topics/**").authenticated()
-                                .requestMatchers("/actuator").permitAll()
                                 .anyRequest().authenticated()
-
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
@@ -46,6 +57,7 @@ class SecurityConfiguration {
                 .exceptionHandling(
                         e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
+                .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

@@ -27,9 +27,8 @@ public record AppUserDetailsInfo(User user) implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !user.isLocked();
+        return !(user.isLocked() || user.isDeleted());
     }
-
 
     @Override
     public boolean isEnabled() {

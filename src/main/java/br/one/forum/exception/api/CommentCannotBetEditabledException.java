@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public class CommentCannotBetEditabledException extends ApiException {
     public CommentCannotBetEditabledException() {
-        super("{exception.comment-cannot-bet-editabled}",
+        super("{exception.comment-cannot-be-editable}",
                 HttpStatus.BAD_REQUEST,
                 null);
     }

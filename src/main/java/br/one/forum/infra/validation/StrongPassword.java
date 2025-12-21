@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = StrongPasswordValidatorImpl.class)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StrongPassword {
-    String message() default "{validation.strong-password}";
+    String message() default "{exception.strong-password}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
