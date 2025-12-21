@@ -16,25 +16,27 @@ import java.util.function.Function;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {})
+@ToString(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "topics")
 public class Topic extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Integer id;
 
-    @NotNull
+
     @Column(nullable = false)
+    @ToString.Include
     private String title;
 
-    @NotNull
+
     @Lob
     @Column(nullable = false, columnDefinition = "LONGTEXT")
+    @ToString.Include
     private String content;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     @JsonIgnore
@@ -48,6 +50,7 @@ public class Topic extends BaseEntity{
     )
     @Setter(AccessLevel.NONE)
     @JsonIgnore
+
     private Set<Category> categories = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -114,4 +117,15 @@ public class Topic extends BaseEntity{
         return plainText.length() > 150 ? plainText.substring(0, 150) + "..." : plainText;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Topic topic = (Topic) o;
+        return Objects.equals(id, topic.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

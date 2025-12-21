@@ -6,7 +6,7 @@ plugins {
     id("org.graalvm.buildtools.native") version "0.10.6"
 }
 
-group = "dev.one"
+group = "br.one"
 version = "0.0.1-SNAPSHOT"
 description = "forum"
 
