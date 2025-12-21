@@ -1,4 +1,4 @@
-package dev.one.forum;
+package br.one.forum;
 
 import org.springframework.boot.SpringApplication;
 
