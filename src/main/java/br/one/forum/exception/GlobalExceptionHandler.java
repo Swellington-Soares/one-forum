@@ -33,17 +33,27 @@ public class GlobalExceptionHandler {
     private final MessageSource messageSource;
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ApiExceptionResponseDto> handleApiException(ApiException exception, HttpServletRequest request,
+    public ResponseEntity<ApiExceptionResponseDto> handleApiException(ApiException exception,
+                                                                      HttpServletRequest request,
                                                                       Locale locale) {
         var response = ApiExceptionResponseDto.builder()
                 .type(exception.getType())
-                .message(messageSource.getMessage(exception.getMessageKey(), exception.getMessageArgs(), locale))
+                .message(getMessage(exception, locale))
                 .path(request.getRequestURI())
                 .status(exception.getHttpStatus().value())
                 .timestamp(exception.getTimestamp())
                 .build();
 
         return ResponseEntity.status(exception.getHttpStatus()).body(response);
+    }
+
+    private String getMessage(ApiException exception, Locale locale) {
+        var pattern = "^\\{.+}$";
+
+        if (exception.getMessage() != null && exception.getMessage().matches(pattern)) {
+            return messageSource.getMessage(exception.getMessageKey(), exception.getMessageArgs(), locale);
+        }
+        return exception.getMessage();
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

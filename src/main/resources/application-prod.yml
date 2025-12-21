@@ -1,3 +1,39 @@
 spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: ${DB_URL:jdbc:mysql://localhost:3306/forum}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
   application:
     name: ForumONE
+  flyway:
+    enabled: true
+  security:
+    user:
+      name: user
+      password: 1234568
+      roles: USER
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  mail:
+    host: ${EMAIL_HOST:localhost}
+    port: ${EMAIL_PORT:25}
+    username: ${EMAIL_USERNAME:}
+    password: ${EMAIL_PASSWORD:}
+    ssl:
+      enabled: ${EMAIL_SSL_ENABLE:false}
+
+jwt:
+  issuer: ${JWT_ISSUER_KEY:FORUM_ONE_JWT_ISSUER}
+  access-token:
+    key: ${JWT_ACCESS_TOKEN_KEY:JWT_KEY_HASH}
+    expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:5} #expiration in minutes after creation
+  refresh-token:
+    key: ${JWT_REFRESH_ACCESS_TOKEN_KEY:JWT_KEY_HASH}
+    expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:150}
+
+api:
+  base-url: ${BASE_API_URL:http://localhost:8080}
+  front-url: ${BASE_FRONT_END_URL:http://localhost:4200}

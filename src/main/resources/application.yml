@@ -17,3 +17,19 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+  mail:
+    host: localhost
+    port: 1025
+
+api:
+  base-url: http://localhost:8080
+  front-url: http://localhost:4200
+
+jwt:
+  issuer: FORUM_ONE_JWT_ISSUER
+  access-token:
+    key: JWT_KEY_HASH
+    expiration: 5 #expiration in minutes after creation
+  refresh-token:
+    key: ${jwt.access-token.key}
+    expiration: 150

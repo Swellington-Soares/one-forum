@@ -3,7 +3,6 @@ package br.one.forum.configuration;
 import br.one.forum.entity.CurrentUser;
 import br.one.forum.entity.User;
 import br.one.forum.infra.security.AppUserDetailsInfo;
-import br.one.forum.services.AppUserDetailsService;
 import jakarta.annotation.Nullable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 @Configuration
 class CurrentLoggedUserConfiguration {
+
     @Bean(name = "auth")
     @RequestScope
     @Nullable

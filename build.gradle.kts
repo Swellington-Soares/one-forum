@@ -10,6 +10,9 @@ group = "br.one"
 version = "0.0.1-SNAPSHOT"
 description = "forum"
 
+var mapStructVersion = "1.6.3"
+
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -50,7 +53,9 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     runtimeOnly("com.mysql:mysql-connector-j")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation ("com.auth0:java-jwt:4.5.0")
+    implementation("com.auth0:java-jwt:4.5.0")
+    implementation("org.mapstruct:mapstruct:$mapStructVersion")
+    annotationProcessor("org.mapstruct:mapstruct-processor:$mapStructVersion")
 }
 
 hibernate {

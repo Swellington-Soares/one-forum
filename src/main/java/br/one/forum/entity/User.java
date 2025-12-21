@@ -68,17 +68,6 @@ public class User extends BaseEntity{
         return createdTopics.size();
     }
 
-    @Builder
-    public User(Long id, String email, String password, Profile profile, boolean locked, boolean deleted) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.profile = profile;
-        this.locked = locked;
-        this.deleted = deleted;
-    }
-
-
     public void addTopic(Topic topic) {
         topic.setAuthor(this);
         createdTopics.add(topic);
@@ -113,5 +102,24 @@ public class User extends BaseEntity{
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Builder
+    public User(Long id, String email, String password, Profile profile,
+                boolean emailVerified, boolean locked, boolean deleted) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.profile = profile;
+        this.emailVerified = emailVerified;
+        this.locked = locked;
+        this.deleted = deleted;
+    }
+
+
+    public void setImageUrl(String imageUrl) {
+        if (profile != null) {
+            profile.setPhoto(imageUrl);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package br.one.forum.services;
+package br.one.forum.service;
 
 import br.one.forum.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

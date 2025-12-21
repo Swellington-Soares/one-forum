@@ -34,6 +34,7 @@ class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(
                         a -> a.requestMatchers(HttpMethod.GET, "/topics/**").permitAll()
+                                .requestMatchers("/avatars/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/topics/**").authenticated()
                                 .requestMatchers("/actuator").permitAll()
                                 .anyRequest().authenticated()

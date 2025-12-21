@@ -128,4 +128,16 @@ public class Topic extends BaseEntity{
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    public boolean isUserAuthor(User user) {
+        return author.equals(user);
+    }
+
+    @Builder
+    public Topic(Long id, String title, String content, User author) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.author = author;
+    }
 }
