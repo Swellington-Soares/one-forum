@@ -1,0 +1,53 @@
+name: "🐛 Bug Report"
+description: "Reporte um problema encontrado no projeto"
+title: "[BUG]: descreva o problema"
+labels: ["bug"]
+assignees: []
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "O que aconteceu?"
+      description: "Descreva o bug e o comportamento esperado."
+      placeholder: "Quando cliquei em enviar..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Como reproduzir"
+      description: "Passo a passo para reproduzir o bug"
+      placeholder: |
+        1. 
+        2. 
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: "Evidências"
+      description: "Prints, vídeos ou logs ajudam muito!"
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: "Versão do projeto"
+      placeholder: "ex.: 1.0.3"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "Ambiente"
+      options:
+        - Dev
+        - Homologação
+        - Produção
+    validations:
+      required: false
