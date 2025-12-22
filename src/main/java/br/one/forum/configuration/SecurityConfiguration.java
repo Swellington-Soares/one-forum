@@ -37,7 +37,6 @@ class SecurityConfiguration {
             "/users/{id}",
             "/users/{id}/**",
             "/users/register",
-            "/upload",
             "/profile/**"
     };
 
