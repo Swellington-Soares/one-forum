@@ -27,8 +27,9 @@ class SecurityConfiguration {
 
 
     private final String[] ALLOWED_ROUTES = {
+            "/error",
             "/avatars/**",
-            "/auth/**",
+            "/auth/*",
             "/actuator",
             "/topics/**",
             "/categories/**",
@@ -46,9 +47,7 @@ class SecurityConfiguration {
                         s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(
-                        a -> a.requestMatchers(HttpMethod.GET, "/topics/**").permitAll()
-                                .requestMatchers(ALLOWED_ROUTES).permitAll()
-                                .requestMatchers(HttpMethod.POST, "/topics/**").authenticated()
+                        a -> a.requestMatchers(ALLOWED_ROUTES).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)

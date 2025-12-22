@@ -32,7 +32,7 @@ public class LoginService {
     private String apiBaseUrl = "";
 
     public LoginResponseDto login(LoginRequestDto data) {
-        var loginToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+        var loginToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         Authentication authentication = authenticationManager.authenticate(loginToken);
         AppUserDetailsInfo info = (AppUserDetailsInfo) authentication.getPrincipal();
 
@@ -61,6 +61,7 @@ public class LoginService {
 
     public void requestConfirmationAccountToken(String email) {
         var user = userService.findUserByEmail(email);
+
         if (user.isEmailVerified())
             throw new UserAccountAlreadyVerified();
 
