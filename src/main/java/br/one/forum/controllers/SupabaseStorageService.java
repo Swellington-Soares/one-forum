@@ -1,7 +1,6 @@
 package br.one.forum.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import br.one.forum.exception.api.StorageUploadResponseException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -28,13 +28,9 @@ public class SupabaseStorageService {
     private String bucket;
 
     private final OkHttpClient client = new OkHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String upload(MultipartFile file) throws IOException {
-        String originalName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "image.jpg";
-        // supabase follows S3 naming convention, the invalid characters must be handled.
-        String sanitizedName = originalName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
-        String fileName = UUID.randomUUID() + "_" + sanitizedName;
+        String fileName = UUID.randomUUID() + "_" + sanitizeFileName(file);
 
         String contentType = file.getContentType();
         if (contentType == null) contentType = "image/jpeg";
@@ -53,28 +49,18 @@ public class SupabaseStorageService {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                String errorResponse = response.body() != null ? response.body().string() : "No error message";
-
-                // Default error message
-                String cleanMessage = "Error while processing image in storage.";
-
-                // Tries to read the error message from the supabase, if exists.
-                try {
-                    JsonNode root = objectMapper.readTree(errorResponse);
-                    if (root.has("message")) {
-                        cleanMessage = root.get("message").asText();
-                    }
-                } catch (Exception e) {
-                    cleanMessage = errorResponse;
-                }
-
-                throw new IOException(cleanMessage);
+                String errorResponse = response.body() != null ? response.body().string() : "Falha ao enviar o arquivo para storage";
+                throw new StorageUploadResponseException(errorResponse);
             }
 
             return supabaseUrl + "/storage/v1/object/public/" + bucket + "/" + fileName;
-        } catch (IOException e) {
-            System.err.println("Upload failed: " + e.getMessage());
-            throw new IOException(e.getMessage());
+        } catch (Exception e) {
+            throw new StorageUploadResponseException(e.getMessage());
         }
+    }
+
+    private String sanitizeFileName(MultipartFile file) {
+        String originalName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "file" + new Date().toString();
+        return originalName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
     }
 }

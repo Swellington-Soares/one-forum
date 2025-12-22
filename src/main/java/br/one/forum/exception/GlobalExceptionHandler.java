@@ -4,6 +4,7 @@ import br.one.forum.dtos.ValidationErrorResponse;
 import br.one.forum.dtos.ValidationErrors;
 import br.one.forum.dtos.response.ApiExceptionResponseDto;
 import br.one.forum.exception.api.ApiException;
+import br.one.forum.exception.api.StorageUploadResponseException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,9 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -111,11 +112,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler(IOException.class)
-    public ResponseEntity<ApiExceptionResponseDto> handleIOException(IOException exception, HttpServletRequest request) {
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiExceptionResponseDto> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException exception, HttpServletRequest request) {
         var response = ApiExceptionResponseDto.builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
+                .status(HttpStatus.PAYLOAD_TOO_LARGE.value())
+                .path(request.getRequestURI())
+                .message(exception.getMessage())
+                .type(ExceptionType.MAX_UPLOAD_SIZE_EXCEED.getValue())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(StorageUploadResponseException.class)
+    public ResponseEntity<ApiExceptionResponseDto> handleStorageUploadResponseException(StorageUploadResponseException exception, HttpServletRequest request) {
+        var response = ApiExceptionResponseDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .path(request.getRequestURI())
                 .message(exception.getMessage())
                 .build();
