@@ -24,6 +24,10 @@ spring:
     password: ${EMAIL_PASSWORD:}
     ssl:
       enabled: ${EMAIL_SSL_ENABLE:false}
+  servlet:
+    multipart:
+      max-request-size: ${MULTIPART_FILE_REQUEST_SIZE:10MB}
+      max-file-size: ${MULTIPART_FILE_MAX_SIZE:10MB}
 
 jwt:
   issuer: ${JWT_ISSUER_KEY:FORUM_ONE_JWT_ISSUER}

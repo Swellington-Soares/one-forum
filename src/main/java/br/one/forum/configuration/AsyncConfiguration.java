@@ -12,13 +12,25 @@ import java.util.concurrent.Executor;
 public class AsyncConfiguration {
 
     @Bean(name="taskEmailExecutor")
-    public Executor taskEmailExecutor() {
+    public Executor taskEmailAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(50);
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("Email-Async-");
         executor.initialize();
         return executor;
+    }
+
+
+    @Bean(name = "taskImageProcessExecutor")
+    public Executor taskImageProcessAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
+        executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors());
+        executor.setQueueCapacity(20);
+        executor.setThreadNamePrefix("Image-Async-");
+        executor.initialize();
+        return  executor;
     }
 }

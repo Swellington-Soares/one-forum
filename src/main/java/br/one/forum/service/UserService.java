@@ -114,4 +114,9 @@ public class UserService {
         tokenService.deleteEmailToken(tokenObj.getToken());
     }
 
+    @Transactional
+    public void updateUserProfileImage(Long userId, String uri) {
+        var user = findUserById(userId);
+        user.setImageUrl(uri);
+    }
 }

@@ -1,19 +1,19 @@
 package br.one.forum.service;
 
 
+import br.one.forum.configuration.JwtProperties;
 import br.one.forum.dto.JwtTokenDto;
 import br.one.forum.entity.Token;
 import br.one.forum.entity.User;
 import br.one.forum.exception.api.TokenNotFoundException;
 import br.one.forum.exception.api.TokenVerificationException;
 import br.one.forum.repository.TokenRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -26,25 +26,26 @@ import java.util.UUID;
 public class TokenService {
 
     private final TokenRepository tokenRepository;
+    private final JwtProperties jwtProperties;
 
-    @Value("${jwt.issuer}")
-    private String jwtIssuer;
-
-    @Value("${jwt.access-token.key}")
-    private String accessTokenKey;
-
-    @Value("${jwt.access-token.expiration}")
-    private int accessTokenExpiration;
-
-    @Value("${jwt.refresh-token.key}")
-    private String refreshTokenKey;
-
-    @Value("${jwt.refresh-token.expiration}")
-    private int refreshTokenExpiration;
+//    @Value("${jwt.issuer}")
+//    private String jwtIssuer;
+//
+//    @Value("${jwt.access-token.key}")
+//    private String accessTokenKey;
+//
+//    @Value("${jwt.access-token.expiration}")
+//    private int accessTokenExpiration;
+//
+//    @Value("${jwt.refresh-token.key}")
+//    private String refreshTokenKey;
+//
+//    @Value("${jwt.refresh-token.expiration}")
+//    private int refreshTokenExpiration;
 
     private String _generateToken(User user, String secret, Instant expirationIn) {
         return JWT.create()
-                .withIssuer(jwtIssuer)
+                .withIssuer(jwtProperties.getIssuer())
                 .withSubject(user.getEmail())
                 .withClaim("id", user.getId())
                 .withExpiresAt(expirationIn)
@@ -53,31 +54,31 @@ public class TokenService {
 
     private DecodedJWT _validateToken(String token, String secret) {
         return JWT.require(Algorithm.HMAC256(secret))
-                .withIssuer(jwtIssuer)
+                .withIssuer(jwtProperties.getIssuer())
                 .build()
                 .verify(token);
     }
 
     public JwtTokenDto generateAccessToken(User user) {
-        var expirationDate = getTokenExpirationDate(accessTokenExpiration);
-        var token = _generateToken(user, accessTokenKey, expirationDate);
+        var expirationDate = getTokenExpirationDate(jwtProperties.getAccessToken().expiration());
+        var token = _generateToken(user, jwtProperties.getAccessToken().key(), expirationDate);
         return new JwtTokenDto(token, expirationDate);
     }
 
     public JwtTokenDto generateRefreshToken(User user) {
-        var expirationDate = getTokenExpirationDate(refreshTokenExpiration);
-        var token = _generateToken(user, refreshTokenKey, expirationDate);
+        var expirationDate = getTokenExpirationDate(jwtProperties.getRefreshToken().expiration());
+        var token = _generateToken(user, jwtProperties.getRefreshToken().key(), expirationDate);
         return new JwtTokenDto(token, expirationDate);
     }
 
 
 
     public DecodedJWT validateRefreshToken(String refreshToken) {
-        return _validateToken(refreshToken, refreshTokenKey);
+        return _validateToken(refreshToken, jwtProperties.getRefreshToken().key());
     }
 
     public DecodedJWT validateAccessToken(String token) {
-        return _validateToken(token, accessTokenKey);
+        return _validateToken(token, jwtProperties.getAccessToken().key());
     }
 
     private Instant getTokenExpirationDate(int expirationMinutes) {

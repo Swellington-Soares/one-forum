@@ -1,7 +1,7 @@
 package br.one.forum.service;
 
 
-import br.one.forum.infra.worker.EmailQueue;
+import br.one.forum.infra.worker.email.ProcessEmailQueue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,7 +17,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
-    private EmailQueue emailQueue;
+    private final ProcessEmailQueue emailQueue;
 
     private void _internalSendHtmlMessage(
             String dest,

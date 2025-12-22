@@ -56,6 +56,8 @@ dependencies {
     implementation("com.auth0:java-jwt:4.5.0")
     implementation("org.mapstruct:mapstruct:$mapStructVersion")
     annotationProcessor("org.mapstruct:mapstruct-processor:$mapStructVersion")
+    implementation("org.jsoup:jsoup:1.21.2")
+    implementation("net.coobird:thumbnailator:0.4.21")
 }
 
 hibernate {

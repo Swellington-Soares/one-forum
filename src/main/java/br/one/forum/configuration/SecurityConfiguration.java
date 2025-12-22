@@ -24,18 +24,21 @@ class SecurityConfiguration {
 
     private final JwtSecurityFilter jwtSecurityFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final UploadImageProperties uploadImageProperties;
 
 
     private final String[] ALLOWED_ROUTES = {
             "/error",
             "/avatars/**",
-            "/auth/*",
+            "/auth/**",
             "/actuator",
             "/topics/**",
             "/categories/**",
             "/users/{id}",
             "/users/{id}/**",
-            "/users/register"
+            "/users/register",
+            "/upload",
+            "/profile/**"
     };
 
     @Bean

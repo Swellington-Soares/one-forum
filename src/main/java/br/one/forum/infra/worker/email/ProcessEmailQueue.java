@@ -1,4 +1,4 @@
-package br.one.forum.infra.worker;
+package br.one.forum.infra.worker.email;
 
 
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 @Component
-public class EmailQueue {
+public class ProcessEmailQueue {
 
     private final BlockingQueue<Runnable> emailQueue = new LinkedBlockingDeque<>();
 
