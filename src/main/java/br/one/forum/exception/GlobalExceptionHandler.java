@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
                 .message(exception.getMessage())
                 .type(ExceptionType.MAX_UPLOAD_SIZE_EXCEED.getValue())
                 .build();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
     }
 
     @ExceptionHandler(StorageUploadResponseException.class)
@@ -130,9 +130,9 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .path(request.getRequestURI())
-                .message(exception.getMessage())
+                .message("File upload to storage failed")
                 .build();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

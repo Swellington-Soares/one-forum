@@ -49,12 +49,12 @@ public class SupabaseStorageService {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                String errorResponse = response.body() != null ? response.body().string() : "Falha ao enviar o arquivo para storage";
+                String errorResponse = response.body() != null ? response.body().string() : "Unidentified error during upload";
                 throw new StorageUploadResponseException(errorResponse);
             }
 
             return supabaseUrl + "/storage/v1/object/public/" + bucket + "/" + fileName;
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new StorageUploadResponseException(e.getMessage());
         }
     }
