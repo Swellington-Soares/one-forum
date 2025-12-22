@@ -8,13 +8,10 @@ import org.mapstruct.*;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,  componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CommentMapper {
 
-    @Mapping(source = "userProfilePhoto", target = "author.profile.photo")
-    @Mapping(source = "userProfileName", target = "author.profile.name")
-    @Mapping(source = "userId", target = "author.id")
-    @Mapping(source = "topicId", target = "topic.id")
-    Comment toEntity(CommentResponseDto commentResponseDto);
-
-    @InheritInverseConfiguration(name = "toEntity")
+    @Mapping(target = "topicId", source = "topic.id")
+    @Mapping(target = "userId", source = "author.id")
+    @Mapping(target = "userProfileName", source = "author.profile.name")
+    @Mapping(target = "userProfilePhoto", source = "author.profile.photo")
     CommentResponseDto toResponseDto(Comment comment);
 
 }
