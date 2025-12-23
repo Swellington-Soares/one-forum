@@ -32,14 +32,21 @@ class SecurityConfiguration {
             "/users/{id}",
             "/users/{id}/**",
             "/users/register",
-            "/profile/**"
+            "/profile/**",
+            "/auth/request-password-change",
+            "/auth/change-password/**",
+            "/favicon.ico",
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
+                //.csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf ->
+                        csrf.ignoringRequestMatchers(
+                                "/auth/request-password-change"
+                        ))
                 .sessionManagement(
                         s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

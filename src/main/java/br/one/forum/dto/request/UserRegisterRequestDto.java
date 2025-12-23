@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@PasswordMatch
+@PasswordMatch(passwordField = "password", confirmPasswordField = "matchPassword")
 public record UserRegisterRequestDto(
         @NotBlank
         @Email

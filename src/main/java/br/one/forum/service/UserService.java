@@ -13,6 +13,7 @@ import br.one.forum.exception.api.UserNotFoundException;
 import br.one.forum.infra.validation.UserRegisterDomainValidator;
 import br.one.forum.mapper.UserMapper;
 import br.one.forum.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -75,18 +76,7 @@ public class UserService {
     }
 
 
-    @Transactional
-    public void updateUserPassword(Long userId, UserPasswordUpdateRequestDto dto) {
-        var user = findUserById(userId);
-        if (!dto.passwordMatch().equals(dto.password()))
-            throw new PasswordNotMatchException();
 
-        if (passwordEncoder.matches(dto.password(), user.getPassword()))
-            throw new PasswordSameAsOldException();
-
-        user.setPassword(passwordEncoder.encode(dto.password()));
-        userRepository.save(user);
-    }
 
     @Transactional
     public void registerUser(UserRegisterRequestDto data) {
@@ -127,7 +117,44 @@ public class UserService {
 
     public UserProfileResponseDto retrieveUserProfile(Long id) {
         var user = findUserById(id);
-        var profileInfo = userMapper.toUserProfileInfoResponseDto(user);
-        return profileInfo;
+        return userMapper.toUserProfileInfoResponseDto(user);
+    }
+
+    public void sendPasswordChangeRequest(String email) {
+        try {
+            var user = findUserByEmail(email);
+            var requestToken = tokenService.generateEmailToken(user.getEmail(), Token.TokenType.PASSWORD_TOKEN);
+            var link = baseApiUrl + "/auth/change-password/" + requestToken.getToken();
+            emailService.sendHtmlMessage(
+                    user.getEmail(),
+                    "Recuperar senha",
+                    "password",
+                    Map.of(
+                            "link", link
+                    )
+            );
+        } catch (Exception ignored) {}
+    }
+
+
+    public void validatePasswordToken(String token) {
+         tokenService.validateEmailToken(token);
+    }
+
+    @Transactional
+    public void checkAndUpdateUserPassword(String tokenStr, UserPasswordUpdateRequestDto dto) {
+        Token token = tokenService.validateEmailToken(tokenStr);
+        User user = findUserByEmail(token.getEmail());
+
+        if (!dto.matchPassword().equals(dto.password()))
+            throw new PasswordNotMatchException();
+
+        if (passwordEncoder.matches(dto.password(), user.getPassword()))
+            throw new PasswordSameAsOldException();
+
+        user.setPassword(passwordEncoder.encode(dto.password()));
+        userRepository.save(user);
+
+        tokenService.deleteEmailToken(token.getToken());
     }
 }

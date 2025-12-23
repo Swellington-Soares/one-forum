@@ -3,6 +3,7 @@ package br.one.forum.exception;
 import br.one.forum.dto.response.exception.ApiExceptionResponseDto;
 import br.one.forum.dto.response.exception.ValidationErrorResponse;
 import br.one.forum.dto.response.exception.ValidationErrors;
+import br.one.forum.infra.I18nUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -27,36 +28,26 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class GlobalExceptionHandler {
+public class GlobalRestControllerAdvice {
 
-    private final MessageSource messageSource;
+    private final I18nUtils i18nUtils;
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ApiExceptionResponseDto> handleApiException(ApiException exception,
+    public ResponseEntity<ApiExceptionResponseDto> handleApiException(ApiException ex,
                                                                       HttpServletRequest request,
                                                                       Locale locale) {
         var response = ApiExceptionResponseDto.builder()
-                .type(exception.getType())
-                .message(getMessage(exception, locale))
+                .type(ex.getType())
+                .message(i18nUtils.translate(ex.getMessageKey(), locale, ex.getMessageArgs()))
                 .path(request.getRequestURI())
-                .status(exception.getHttpStatus().value())
-                .timestamp(exception.getTimestamp())
+                .status(ex.getHttpStatus().value())
+                .timestamp(ex.getTimestamp())
                 .build();
 
-        return ResponseEntity.status(exception.getHttpStatus()).body(response);
+        return ResponseEntity.status(ex.getHttpStatus()).body(response);
     }
 
-    private String getMessage(ApiException exception, Locale locale) {
-        var pattern = "^\\{.+}$";
 
-        if (exception.getMessage() != null && exception.getMessage().matches(pattern)) {
-            var messageKey = exception.getMessageKey()
-                    .replaceFirst("\\{", "")
-                    .replaceFirst("\\}(?!.*})", "");
-            return messageSource.getMessage(messageKey, exception.getMessageArgs(), locale);
-        }
-        return exception.getMessage();
-    }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiExceptionResponseDto> handleApiNoResourceFoundException(NoResourceFoundException exception, HttpServletRequest request) {
@@ -90,7 +81,7 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.FORBIDDEN.value())
                 .path(request.getRequestURI())
-                .message(messageSource.getMessage("exception.user-email-not-verified", null, locale))
+                .message(i18nUtils.translate("{exception.user-email-not-verified}", locale))
                 .type(ExceptionType.EMAIL_NOT_VERIFIED.getValue())
                 .build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
@@ -108,18 +99,6 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
-
-//    @ExceptionHandler(JWTVerificationException.class)
-//    public ResponseEntity<ApiExceptionResponseDto> handleTokenExpiredException(JWTVerificationException exception, HttpServletRequest request) {
-//        var response = ApiExceptionResponseDto.builder()
-//                .timestamp(LocalDateTime.now())
-//                .status(HttpStatus.UNAUTHORIZED.value())
-//                .path(request.getRequestURI())
-//                .message(exception.getMessage())
-//                .type(ExceptionType.TOKEN_VALIDATION.getValue())
-//                .build();
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-//    }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
