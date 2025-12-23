@@ -1,11 +1,9 @@
 package br.one.forum.configuration;
 
-import br.one.forum.infra.security.JwtAuthenticationEntryPoint;
 import br.one.forum.infra.security.JwtSecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -23,9 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfiguration {
 
     private final JwtSecurityFilter jwtSecurityFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final UploadImageProperties uploadImageProperties;
-
 
     private final String[] ALLOWED_ROUTES = {
             "/error",
@@ -55,9 +50,6 @@ class SecurityConfiguration {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .exceptionHandling(
-                        e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                )
                 .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

@@ -116,7 +116,6 @@ public class UserService {
 
     @Transactional
     public void updateUserProfileImage(Long userId, String uri) {
-        var user = findUserById(userId);
-        user.setImageUrl(uri);
+        userRepository.updatePhotoById(userId, uri);
     }
 }

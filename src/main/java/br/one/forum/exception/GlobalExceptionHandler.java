@@ -3,7 +3,6 @@ package br.one.forum.exception;
 import br.one.forum.dto.response.exception.ApiExceptionResponseDto;
 import br.one.forum.dto.response.exception.ValidationErrorResponse;
 import br.one.forum.dto.response.exception.ValidationErrors;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -102,25 +101,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiExceptionResponseDto> handleBadCredentialsException(BadCredentialsException exception, HttpServletRequest request) {
         var response = ApiExceptionResponseDto.builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.FORBIDDEN.value())
+                .status(HttpStatus.UNAUTHORIZED.value())
                 .path(request.getRequestURI())
                 .message(exception.getMessage())
                 .type(ExceptionType.BAD_CREDENTIALS.getValue())
                 .build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
-    @ExceptionHandler(JWTVerificationException.class)
-    public ResponseEntity<ApiExceptionResponseDto> handleTokenExpiredException(JWTVerificationException exception, HttpServletRequest request) {
-        var response = ApiExceptionResponseDto.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .path(request.getRequestURI())
-                .message(exception.getMessage())
-                .type(ExceptionType.TOKEN_VALIDATION.getValue())
-                .build();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
+//    @ExceptionHandler(JWTVerificationException.class)
+//    public ResponseEntity<ApiExceptionResponseDto> handleTokenExpiredException(JWTVerificationException exception, HttpServletRequest request) {
+//        var response = ApiExceptionResponseDto.builder()
+//                .timestamp(LocalDateTime.now())
+//                .status(HttpStatus.UNAUTHORIZED.value())
+//                .path(request.getRequestURI())
+//                .message(exception.getMessage())
+//                .type(ExceptionType.TOKEN_VALIDATION.getValue())
+//                .build();
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+//    }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -11,9 +11,6 @@ import java.util.List;
 @ConfigurationProperties(prefix = "upload.config")
 @Getter @Setter
 public class UploadImageProperties {
-
     private String storagePathBase = "upload/";
-    private List<String> allowedExtensions = List.of("jpg", "png");
-    private boolean autoProcess = true;
-
+    private List<String> allowedExtensions = List.of("jpg", "png", "jpeg");
 }

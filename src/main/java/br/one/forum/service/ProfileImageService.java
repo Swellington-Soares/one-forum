@@ -6,18 +6,14 @@ import br.one.forum.exception.api.UserCannotUpdatePhotoOrInvalid;
 import br.one.forum.infra.worker.processimage.ProcessImageQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.geometry.Position;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +32,7 @@ public class ProfileImageService {
                 uploadBase = "upload/";
             }
 
-            var imageName = "profile_" + UUID.randomUUID().toString().replace("-","") + ".png";
+            var imageName = "profile_" + userId.toString() + ".png";
             Path baseDir = Paths.get(uploadBase);
 
             if (!baseDir.toFile().exists()) {
