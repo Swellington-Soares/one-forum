@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 public class AvatarImageService {
 
     @Value("${api.base-url}")
-    private String baseUrl;
+    private String baseApiUrl;
 
     public String getAvatarImageUrl(long seed) {
-        return baseUrl + "/avatars/" + (seed % 46) + ".png";
+        return baseApiUrl + "/avatars/" + (seed % 46) + ".png";
     }
 
 }

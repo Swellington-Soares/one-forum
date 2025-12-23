@@ -3,6 +3,7 @@ package br.one.forum.service;
 import br.one.forum.dto.JwtTokenDto;
 import br.one.forum.dto.request.UserPasswordUpdateRequestDto;
 import br.one.forum.dto.request.UserRegisterRequestDto;
+import br.one.forum.dto.response.UserProfileResponseDto;
 import br.one.forum.entity.Profile;
 import br.one.forum.entity.Token;
 import br.one.forum.entity.User;
@@ -10,6 +11,7 @@ import br.one.forum.exception.api.PasswordNotMatchException;
 import br.one.forum.exception.api.PasswordSameAsOldException;
 import br.one.forum.exception.api.UserNotFoundException;
 import br.one.forum.infra.validation.UserRegisterDomainValidator;
+import br.one.forum.mapper.UserMapper;
 import br.one.forum.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,9 +32,10 @@ public class UserService {
     private final EmailService emailService;
     private final AvatarImageService avatarImageService;
     private final List<UserRegisterDomainValidator> userDomainValidators;
+    private final UserMapper userMapper;
 
     @Value("${api.base-url}")
-    private String baseUrl;
+    private String baseApiUrl;
 
     public User findUserByEmail(String email) {
         return userRepository.findByEmailIgnoreCaseAndDeletedFalse(email).orElseThrow(UserNotFoundException::new);
@@ -73,7 +76,7 @@ public class UserService {
 
 
     @Transactional
-    public void updateUserPassword(Long userId, UserPasswordUpdateRequestDto dto){
+    public void updateUserPassword(Long userId, UserPasswordUpdateRequestDto dto) {
         var user = findUserById(userId);
         if (!dto.passwordMatch().equals(dto.password()))
             throw new PasswordNotMatchException();
@@ -81,7 +84,7 @@ public class UserService {
         if (passwordEncoder.matches(dto.password(), user.getPassword()))
             throw new PasswordSameAsOldException();
 
-        user.setPassword( passwordEncoder.encode( dto.password()) );
+        user.setPassword(passwordEncoder.encode(dto.password()));
         userRepository.save(user);
     }
 
@@ -90,15 +93,18 @@ public class UserService {
         _createUser(data);
         try {
             var requestToken = tokenService.generateEmailToken(data.email(), Token.TokenType.EMAIL_TOKEN);
-            var link = baseUrl + "/auth/confirm-account/" + requestToken.getToken();
+            var link = baseApiUrl + "/auth/confirm-account/" + requestToken.getToken();
 
             emailService.sendHtmlMessage(
                     data.email(),
                     "Ativar conta",
                     "confirm",
-                    Map.of("link", link)
+                    Map.of(
+                            "link", link
+                    )
             );
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
     }
 
@@ -117,5 +123,11 @@ public class UserService {
     @Transactional
     public void updateUserProfileImage(Long userId, String uri) {
         userRepository.updatePhotoById(userId, uri);
+    }
+
+    public UserProfileResponseDto retrieveUserProfile(Long id) {
+        var user = findUserById(id);
+        var profileInfo = userMapper.toUserProfileInfoResponseDto(user);
+        return profileInfo;
     }
 }

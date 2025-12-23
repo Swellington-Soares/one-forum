@@ -31,7 +31,7 @@ public class UserController {
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
     ResponseEntity<UserProfileResponseDto> getUserAuthProfile() {
-        return ResponseEntity.ok(userMapper.toUserProfileInfoResponseDto(auth.getUser()));
+        return ResponseEntity.ok(userService.retrieveUserProfile(auth.getUser().getId()));
     }
 
     @GetMapping("/{id}")
@@ -43,9 +43,7 @@ public class UserController {
                     .header(HttpHeaders.LOCATION, "/users/profile")
                     .build();
         }
-
-        var user = userService.findUserById(id);
-        return ResponseEntity.ok(userMapper.toUserProfileInfoResponseDto(user));
+        return ResponseEntity.ok(userService.retrieveUserProfile(id));
     }
 
     @PostMapping("/register")

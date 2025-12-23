@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,9 @@ public class ProfileImageService {
     private final UploadImageProperties imageProperties;
     private final ProcessImageQueue processImageQueue;
     private final UserService userService;
+
+    @Value("${api.base-url}")
+    private String baseApiUrl = "http://localhost:8080";
 
     private void _processImage(InputStream photoFile, Long userId) {
         try {
@@ -49,7 +53,7 @@ public class ProfileImageService {
                     .outputQuality(1.0)
                     .toFile(filePath.toFile());
 
-            userService.updateUserProfileImage(userId, "/profile/" + imageName);
+            userService.updateUserProfileImage(userId, baseApiUrl + "/profile/" + imageName);
 
         } catch (Exception e) {
             log.error("_processImage: {}", e.getMessage());
