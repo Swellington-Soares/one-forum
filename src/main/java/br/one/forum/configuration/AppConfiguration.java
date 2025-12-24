@@ -11,8 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 @Configuration
-class AppConfiguration {
-
+public class AppConfiguration {
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         return builder ->
@@ -31,15 +30,4 @@ class AppConfiguration {
                 .registerModule(new Jdk8Module())
                 .registerModule(new JavaTimeModule());
     }
-
-//    @Bean("emailExecutor")
-//    public Executor emailExecutor() {
-//        var threadPoolExecutor = new ThreadPoolTaskExecutor();
-//        threadPoolExecutor.setCorePoolSize(4);
-//        threadPoolExecutor.setMaxPoolSize(4);
-//        threadPoolExecutor.setThreadNamePrefix("email-");
-//        threadPoolExecutor.initialize();
-//        return threadPoolExecutor;
-//    }
-
 }
