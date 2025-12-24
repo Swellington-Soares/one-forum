@@ -56,5 +56,11 @@ public class Comment extends BaseEntity {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    public String sumarize() {
+        if (this.content == null) return null;
+        String plainText = content.replaceAll("<[^>]*>", "");
+        return plainText.length() > 150 ? plainText.substring(0, 150) + "..." : plainText;
+    }
 }
 

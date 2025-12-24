@@ -34,7 +34,7 @@ jwt:
   issuer: FORUM_ONE_JWT_ISSUER
   access-token:
     key: JWT_KEY_HASH
-    expiration: 5 #expiration in minutes after creation
+    expiration: 60 #expiration in minutes after creation
   refresh-token:
     key: ${jwt.access-token.key}
     expiration: 150

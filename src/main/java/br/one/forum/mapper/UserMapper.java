@@ -15,4 +15,8 @@ public interface UserMapper {
     @Mapping(target = "topicCreatedCount", expression = "java(user.getTopicCreatedCount())")
     @Mapping(target = "commentsCount", expression = "java(user.getCommentsCount())")
     UserProfileResponseDto toUserProfileInfoResponseDto(User user);
+
+    @Mapping(target = "profileName", source = "profile.name")
+    @Mapping(target = "profilePhoto", source = "profile.photo")
+    UserInfoResponseDto toUserInfoResponseDto(User user);
 }

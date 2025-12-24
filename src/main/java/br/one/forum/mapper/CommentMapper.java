@@ -12,7 +12,6 @@ import org.mapstruct.ReportingPolicy;
 public interface CommentMapper {
 
     @Mapping(target = "topicId", source = "topic.id")
-    @Mapping(target = "userId", source = "author.id")
     @Mapping(target = "userProfileName", source = "author.profile.name")
     @Mapping(target = "userProfilePhoto", source = "author.profile.photo")
     CommentResponseDto toResponseDto(Comment comment);

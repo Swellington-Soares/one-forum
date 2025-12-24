@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<Token, Long> {
     Optional<Token> findByEmailAndType(String email, Token.TokenType type);
     Optional<Token> findByToken(String token);
-    void deleteByToken(String token);
+    //void deleteByToken(String token);
     void deleteByTokenIgnoreCase(String token);
 }

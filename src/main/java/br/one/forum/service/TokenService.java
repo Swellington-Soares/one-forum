@@ -62,13 +62,13 @@ public class TokenService {
     public JwtTokenDto generateAccessToken(User user) {
         var expirationDate = getTokenExpirationDate(jwtProperties.getAccessToken().expiration());
         var token = _generateToken(user, jwtProperties.getAccessToken().key(), expirationDate);
-        return new JwtTokenDto(token, expirationDate);
+        return new JwtTokenDto(token, expirationDate, Instant.now());
     }
 
     public JwtTokenDto generateRefreshToken(User user) {
         var expirationDate = getTokenExpirationDate(jwtProperties.getRefreshToken().expiration());
         var token = _generateToken(user, jwtProperties.getRefreshToken().key(), expirationDate);
-        return new JwtTokenDto(token, expirationDate);
+        return new JwtTokenDto(token, expirationDate, Instant.now());
     }
 
 

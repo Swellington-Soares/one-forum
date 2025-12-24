@@ -1,7 +1,9 @@
 package br.one.forum.dto.response;
 
+import br.one.forum.dto.JwtTokenDto;
+
 public record LoginResponseDto(
-        String accessToken,
-        String refreshToken
+        JwtTokenDto accessToken,
+        JwtTokenDto refreshToken
 ) {
 }

@@ -40,7 +40,7 @@ public class LoginService {
         var accessToken = tokenService.generateAccessToken(user);
         var refreshToken = tokenService.generateRefreshToken(user);
         userService.updateUserRefreshToken(user, refreshToken);
-        return new LoginResponseDto(accessToken.token(), refreshToken.token());
+        return new LoginResponseDto(accessToken, refreshToken);
     }
 
     public LoginResponseDto refreshToken(String refreshToken) {
@@ -56,7 +56,7 @@ public class LoginService {
         var newAccessToken = tokenService.generateAccessToken(user);
         var newRefreshToken = tokenService.generateRefreshToken(user);
         userService.updateUserRefreshToken(user, newRefreshToken);
-        return new LoginResponseDto(newAccessToken.token(), newRefreshToken.token());
+        return new LoginResponseDto(newAccessToken, newRefreshToken);
     }
 
     public void requestConfirmationAccountToken(String email) {

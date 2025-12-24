@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIdAndDeletedIsFalse(Long id);
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.likedTopics WHERE u.id = :id")
-    Optional<User> findByIdWithLikedTopics(Integer id);
+    //@Query("SELECT u FROM User u LEFT JOIN FETCH u.likedTopics WHERE u.id = :id")
+    //Optional<User> findByIdWithLikedTopics(Integer id);
     Optional<User> findByEmailIgnoreCaseAndDeletedFalse(String email);
 
     boolean existsByEmailIgnoreCase(String email);

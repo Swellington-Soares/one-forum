@@ -13,11 +13,11 @@ import java.util.Optional;
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Long>, JpaSpecificationExecutor<Topic> {
 
-    List<Topic> findByAuthorId(Long author_id);
-
-    List<Topic> findByTitleContainingIgnoreCase(String title);
-
-    Slice<Topic> findByAuthorIdOrderByCreatedAtDesc(Long author_id);
+//    List<Topic> findByAuthorId(Long author_id);
+//
+//    List<Topic> findByTitleContainingIgnoreCase(String title);
+//
+//    Slice<Topic> findByAuthorIdOrderByCreatedAtDesc(Long author_id);
 
     void deleteTopicByIdAndAuthorId(Long id, Long author_id);
 

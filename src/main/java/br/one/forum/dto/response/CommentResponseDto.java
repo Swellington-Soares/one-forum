@@ -5,7 +5,7 @@ import java.time.Instant;
 public record CommentResponseDto(
         Long id,
         Long topicId,
-        Long userId,
+        UserInfoResponseDto author,
         String userProfileName,
         String userProfilePhoto,
         String content,

@@ -6,7 +6,10 @@ import br.one.forum.entity.Topic;
 import br.one.forum.entity.User;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,  componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        componentModel = MappingConstants.ComponentModel.SPRING,
+uses = UserMapper.class)
 public interface TopicMapper {
 
     @Mapping(target = "likes", expression = "java(topic.getLikeCount())")
@@ -16,6 +19,7 @@ public interface TopicMapper {
     @Mapping(target = "createdAt", source = "topic.createdAt")
     @Mapping(target = "updatedAt", source = "topic.updatedAt")
     @Mapping(target = "categories", expression = "java(topic.getCategoryList())")
+    @Mapping(target = "author", source = "topic.author")
     TopicResponseDto toFullResponseDto(Topic topic, User user);
 
     @InheritConfiguration(name = "toFullResponseDto")

@@ -10,7 +10,7 @@ public record TopicResponseDto(
         Long commentCount,
         String content,
         boolean likedByCurrentUser,
-        UserInfoResponseDto profile,
+        UserInfoResponseDto author,
         Instant createdAt,
         Instant updatedAt,
         List<String> categories) {

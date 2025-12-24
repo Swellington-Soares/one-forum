@@ -4,6 +4,7 @@ import java.time.Instant;
 
 public record JwtTokenDto(
         String token,
-        Instant expirationDate
+        Instant expirationDate,
+        Instant createdAt
 ) {
 }
