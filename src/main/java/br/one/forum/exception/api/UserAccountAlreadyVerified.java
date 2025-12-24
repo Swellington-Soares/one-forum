@@ -1,15 +1,14 @@
 package br.one.forum.exception.api;
 
-import br.one.forum.exception.ExceptionType;
+import br.one.forum.exception.ApiException;
 import org.springframework.http.HttpStatus;
 
 public class UserAccountAlreadyVerified extends ApiException {
-
-    public UserAccountAlreadyVerified(){
+    public UserAccountAlreadyVerified() {
         super(
-                "exception.account-verified",
-                HttpStatus.NOT_FOUND,
-                ExceptionType.ACCOUNT_ALREADY_VERIFIED.getValue()
+                "{exception.user-account-already-verified}",
+                HttpStatus.FORBIDDEN,
+                null
         );
     }
 }
