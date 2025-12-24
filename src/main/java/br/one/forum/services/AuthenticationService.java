@@ -25,7 +25,7 @@ import java.util.Map;
 public class AuthenticationService {
 
     @Value("${api.api-base}")
-    private final String apiBaseUrl = "";
+    private String apiBaseUrl = "";
 
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
@@ -59,7 +59,7 @@ public class AuthenticationService {
         DecodedJWT decodedJWT = tokenService.validateRefreshToken(refreshToken);
         String email = decodedJWT.getSubject();
         User user = userService.findUserByEmail(email, false);
-
+    
         if (!refreshToken.equals(user.getRefreshToken())) {
             throw new RefreshTokenInvalidException();
         }

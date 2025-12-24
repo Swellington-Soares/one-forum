@@ -54,6 +54,7 @@ class EmailServiceImp implements EmailService {
         try {
             var mimeMessage = mailSender.createMimeMessage();
             var mimeMessageHelper = new MimeMessageHelper(mimeMessage, "utf-8");
+            mimeMessageHelper.setFrom("no-reply@forum-one.net");
             mimeMessageHelper.setTo(dest);
             mimeMessageHelper.setText(message);
             mimeMessageHelper.setSubject(subject);
