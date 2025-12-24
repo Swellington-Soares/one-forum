@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static br.one.forum.exception.ExceptionType.BAD_CREDENTIALS;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -45,6 +48,21 @@ public class GlobalRestControllerAdvice {
                 .build();
 
         return ResponseEntity.status(ex.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ResponseEntity<ApiExceptionResponseDto> handleAuthenticationCredentialsNotFoundException(
+            AuthenticationCredentialsNotFoundException ex,
+            HttpServletRequest request, Locale locale){
+        var response = ApiExceptionResponseDto.builder()
+                .type(BAD_CREDENTIALS.getValue())
+                .message(i18nUtils.translate("{exception.not-authorized}", locale))
+                .path(request.getRequestURI())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
 
@@ -95,7 +113,7 @@ public class GlobalRestControllerAdvice {
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .path(request.getRequestURI())
                 .message(exception.getMessage())
-                .type(ExceptionType.BAD_CREDENTIALS.getValue())
+                .type(BAD_CREDENTIALS.getValue())
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }

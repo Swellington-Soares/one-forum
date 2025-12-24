@@ -1,6 +1,7 @@
 package br.one.forum.configuration;
 
 import br.one.forum.infra.security.JwtSecurityFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -43,17 +46,19 @@ class SecurityConfiguration {
         return http
                 .cors(AbstractHttpConfigurer::disable)
                 //.csrf(AbstractHttpConfigurer::disable)
-                .csrf(csrf ->
-                        csrf.ignoringRequestMatchers(
-                                "/auth/request-password-change"
-                        ))
+                .csrf(csrf -> csrf.requireCsrfProtectionMatcher(
+                        (RequestMatcher) request -> request.getMethod().equals("GET") &&
+                                request.getRequestURI().startsWith("/auth/change-password/")
+                ))
                 .sessionManagement(
                         s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(
                         a -> a.requestMatchers(ALLOWED_ROUTES).permitAll()
+
                                 .anyRequest().authenticated()
                 )
+                .anonymous(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)

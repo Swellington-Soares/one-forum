@@ -3,6 +3,7 @@ package br.one.forum.service;
 import br.one.forum.dto.JwtTokenDto;
 import br.one.forum.dto.request.UserPasswordUpdateRequestDto;
 import br.one.forum.dto.request.UserRegisterRequestDto;
+import br.one.forum.dto.request.UserUpdateProfileRequestDto;
 import br.one.forum.dto.response.UserProfileResponseDto;
 import br.one.forum.entity.Profile;
 import br.one.forum.entity.Token;
@@ -156,5 +157,23 @@ public class UserService {
         userRepository.save(user);
 
         tokenService.deleteEmailToken(token.getToken());
+    }
+
+    @Transactional
+    public void updateUserProfile(User currentUser, UserUpdateProfileRequestDto dto) {
+        if (currentUser == null || currentUser.getId() == null) throw new UserNotFoundException();
+
+        var user = findUserById(currentUser.getId());
+        var profile = user.getProfile();
+
+        if (!dto.name().equals(profile.getName())) {
+            profile.setName(dto.name());
+        }
+
+        if (!dto.bio().equals(profile.getBio())) {
+            profile.setBio(dto.bio());
+        }
+
+        user.setProfile(profile);
     }
 }

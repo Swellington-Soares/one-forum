@@ -28,6 +28,12 @@ spring:
     multipart:
       max-request-size: ${MULTIPART_FILE_REQUEST_SIZE:10MB}
       max-file-size: ${MULTIPART_FILE_MAX_SIZE:10MB}
+  devtools:
+    livereload:
+      enabled: false
+    remote:
+      restart:
+        enabled: false
 
 jwt:
   issuer: ${JWT_ISSUER_KEY:FORUM_ONE_JWT_ISSUER}
