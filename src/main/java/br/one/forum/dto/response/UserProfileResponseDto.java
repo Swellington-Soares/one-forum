@@ -13,5 +13,4 @@ public record UserProfileResponseDto(
         String profilePhoto,
         String profileBio
 ) {
-
 }
