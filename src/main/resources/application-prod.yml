@@ -34,6 +34,9 @@ spring:
     remote:
       restart:
         enabled: false
+    add-properties: false
+  config:
+    import: file:env.properties
 
 jwt:
   issuer: ${JWT_ISSUER_KEY:FORUM_ONE_JWT_ISSUER}
