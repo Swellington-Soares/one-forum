@@ -36,4 +36,14 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Environment & Secrets ###
 env.properties
+env.test.properties
+.env
+.env.local
+.env.*.local
+
+### Database Scripts (development only) ###
+fix-*.sql
+reset-database.sql

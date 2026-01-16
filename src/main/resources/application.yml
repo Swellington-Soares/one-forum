@@ -1,9 +1,9 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/forum
-    username: root
-    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/forum}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:password}
   application:
     name: ForumONE
   flyway:
@@ -18,24 +18,34 @@ spring:
       ddl-auto: update
     show-sql: true
   mail:
-    host: localhost
-    port: 1025
+    host: ${EMAIL_HOST:localhost}
+    port: ${EMAIL_PORT:1025}
+    username: ${EMAIL_USERNAME:}
+    password: ${EMAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${EMAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${EMAIL_STARTTLS_ENABLE:false}
+          ssl:
+            trust: ${EMAIL_HOST:localhost}
   servlet:
     multipart:
       max-request-size: 10MB
       max-file-size: 10MB
 
 api:
-  base-url: http://localhost:8080
-  front-url: http://localhost:4200
+  base-url: ${API_BASE_URL:http://localhost:8080}
+  front-url: ${FRONTEND_URL:http://localhost:4200}
 
 jwt:
   issuer: FORUM_ONE_JWT_ISSUER
   access-token:
-    key: JWT_KEY_HASH
+    key: ${JWT_KEY_SECRET:your-secret-key-here}
     expiration: 60 #expiration in minutes after creation
   refresh-token:
-    key: ${jwt.access-token.key}
+    key: ${JWT_REFRESH_KEY_SECRET:${jwt.access-token.key}}
     expiration: 150
 
 upload:
@@ -44,3 +54,18 @@ upload:
       - jpeg
       - png
       - jpg
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    doc-expansion: none
+    display-request-duration: true
+    filter: true
+  show-actuator: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

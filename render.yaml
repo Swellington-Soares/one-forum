@@ -1,0 +1,58 @@
+# Render Blueprint - Forum ONE API
+# Documentação: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: forum-one-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free  # Opções: free, starter ($7/mês), standard ($25/mês)
+    branch: main  # Branch para deploy automático
+    autoDeploy: true  # Deploy automático em cada push
+    
+    # Health check (verifica se app está funcionando)
+    healthCheckPath: /actuator/health
+    
+    # Variáveis de ambiente
+    envVars:
+      # Database (MySQL)
+      - key: MYSQL_URL
+        sync: false  # Definir manualmente no painel do Render
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
+      
+      # JWT Secrets (gerados automaticamente)
+      - key: JWT_KEY_SECRET
+        generateValue: true  # Render gera um valor aleatório seguro
+      - key: JWT_REFRESH_KEY_SECRET
+        generateValue: true
+      
+      # URLs da aplicação
+      - key: API_BASE_URL
+        value: https://forum-one-api.onrender.com  # Ajustar com sua URL real
+      - key: FRONTEND_URL
+        sync: false  # Adicionar URL do frontend manualmente
+      
+      # Supabase Storage (Upload de imagens)
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_BUCKET_NAME
+        value: avatars
+      
+      # Email SMTP (Gmail)
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USERNAME
+        sync: false  # Adicionar manualmente
+      - key: EMAIL_PASSWORD
+        sync: false  # Senha de aplicativo do Gmail
+      - key: EMAIL_SMTP_AUTH
+        value: "true"
+      - key: EMAIL_STARTTLS_ENABLE
+        value: "true"

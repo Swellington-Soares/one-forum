@@ -33,13 +33,13 @@ class LoginController {
         return ResponseEntity.ok(loginService.refreshToken(data.refreshToken()));
     }
 
-//    @PostMapping("/request-confirm-account")
-//    public ResponseEntity<Void> requestConfirmAccount(
-//            @RequestBody @Valid ConfirmAccountRequestDto dto
-//    ) {
-//        loginService.requestConfirmationAccountToken(dto.email());
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("/request-confirm-account")
+    public ResponseEntity<Void> requestConfirmAccount(
+            @RequestBody @Valid ConfirmAccountRequestDto dto
+    ) {
+        loginService.requestConfirmationAccountToken(dto.email());
+        return ResponseEntity.ok().build();
+    }
 
 
 }

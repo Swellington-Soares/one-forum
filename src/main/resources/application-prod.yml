@@ -1,13 +1,13 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: ${DB_URL:jdbc:mysql://localhost:3306/forum}
-    username: ${DB_USER:root}
-    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/forum}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:password}
   application:
     name: ForumONE
   flyway:
-    enabled: true
+    enabled: false
   security:
     user:
       name: user
@@ -15,15 +15,21 @@ spring:
       roles: USER
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: false
   mail:
     host: ${EMAIL_HOST:localhost}
-    port: ${EMAIL_PORT:25}
+    port: ${EMAIL_PORT:1025}
     username: ${EMAIL_USERNAME:}
     password: ${EMAIL_PASSWORD:}
-    ssl:
-      enabled: ${EMAIL_SSL_ENABLE:false}
+    properties:
+      mail:
+        smtp:
+          auth: ${EMAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${EMAIL_STARTTLS_ENABLE:false}
+          ssl:
+            trust: ${EMAIL_HOST:localhost}
   servlet:
     multipart:
       max-request-size: ${MULTIPART_FILE_REQUEST_SIZE:10MB}
@@ -35,18 +41,40 @@ spring:
       restart:
         enabled: false
     add-properties: false
-  config:
-    import: file:env.properties
+  # config.import removido - variáveis vêm do ambiente no Docker/Render
 
 jwt:
-  issuer: ${JWT_ISSUER_KEY:FORUM_ONE_JWT_ISSUER}
+  issuer: FORUM_ONE_JWT_ISSUER
   access-token:
-    key: ${JWT_ACCESS_TOKEN_KEY:JWT_KEY_HASH}
-    expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:5} #expiration in minutes after creation
+    key: ${JWT_KEY_SECRET:your-secret-key-here}
+    expiration: 60 #expiration in minutes after creation
   refresh-token:
-    key: ${JWT_REFRESH_ACCESS_TOKEN_KEY:JWT_KEY_HASH}
-    expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:150}
+    key: ${JWT_REFRESH_KEY_SECRET:${jwt.access-token.key}}
+    expiration: 150
 
 api:
-  base-url: ${BASE_API_URL:http://localhost:8080}
-  front-url: ${BASE_FRONT_END_URL:http://localhost:4200}
+  base-url: ${API_BASE_URL:http://localhost:8080}
+  front-url: ${FRONTEND_URL:http://localhost:4200}
+
+upload:
+  config:
+    allowed-extensions:
+      - jpeg
+      - png
+      - jpg
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    doc-expansion: none
+    display-request-duration: true
+    filter: true
+  show-actuator: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

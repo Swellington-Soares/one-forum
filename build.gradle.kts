@@ -58,6 +58,7 @@ dependencies {
     annotationProcessor("org.mapstruct:mapstruct-processor:$mapStructVersion")
     implementation("org.jsoup:jsoup:1.21.2")
     implementation("net.coobird:thumbnailator:0.4.21")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 }
 
 hibernate {
