@@ -29,7 +29,7 @@ class SecurityConfiguration {
             "/error",
             "/avatars/**",
             "/auth/**",
-            "/actuator",
+            "/actuator/**",
             "/topics/**",
             "/categories/**",
             "/users/{id}",
@@ -39,6 +39,10 @@ class SecurityConfiguration {
             "/auth/request-password-change",
             "/auth/change-password/**",
             "/favicon.ico",
+            // Swagger/OpenAPI
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
     };
 
     @Bean

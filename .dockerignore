@@ -1,0 +1,44 @@
+# Docker ignore file for Forum ONE
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+env.properties
+
+# Logs
+logs/
+*.log
+
+# Test results
+test-results/
+coverage/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Documentation (already in image context)
+*.md
