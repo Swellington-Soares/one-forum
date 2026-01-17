@@ -6,5 +6,6 @@ public record UserInfoResponseDto(
         Long id,
         Instant createdAt,
         String profileName,
-        String profilePhoto)  {
+        String profilePhoto,
+        String profileBio)  {
 }
